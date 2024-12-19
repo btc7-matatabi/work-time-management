@@ -7,7 +7,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string('employee_code', 7).notNullable();
     table.date('ymd').notNullable();
     table.integer('schedule_types_id').notNullable();
-    table.string('work_code', 4).notNullable();
+    table.string('work_code', 4);
 
     table.foreign('employee_code').references('m_employees.employee_code').onDelete('CASCADE');
     table.foreign('schedule_types_id').references('m_schedule_types.id').onDelete('CASCADE');

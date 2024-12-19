@@ -8,8 +8,8 @@ export async function up(knex: Knex): Promise<void> {
     table.date('start_date').notNullable();
     table.timestamp('start_ts');
     table.timestamp('end_ts');
-    table.boolean('before_overtime_flag');
-    table.boolean('after_overtime_flag');
+    table.boolean('before_overtime_flag').defaultTo(false);
+    table.boolean('after_overtime_flag').defaultTo(false);
     table.integer('overtime_minute');
 
     table.foreign('employee_code').references('m_employees.employee_code').onDelete('CASCADE');

@@ -4,7 +4,8 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "make-migration": "npx knex migrate:make -x ts"
+    "make-migration": "knex migrate:make -x ts",
+    "make-seed": "knex seed:make -x ts"
   },
   "author": "",
   "license": "ISC",

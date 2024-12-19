@@ -3,7 +3,7 @@ import type { Knex } from "knex";
 
 export async function up(knex: Knex): Promise<void> {
   return knex.schema.createTable('m_work_types', function (table) {
-    table.increments('id').primary();
+    table.integer('id').primary();
     table.string('work_type', 10).unique().notNullable();
   });
 }
