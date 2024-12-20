@@ -13,9 +13,9 @@ export async function seed(knex: Knex): Promise<void> {
         { employee_code: '0000007', ymd: '2024/12/11', schedule_types_id: 2 },
         { employee_code: '0000011', ymd: '2024/12/18', schedule_types_id: 2 },
         { employee_code: '0000010', ymd: '2024/12/20', schedule_types_id: 2 },
-        { employee_code: '0000012', ymd: '2024/12/18', schedule_types_id: 5, work_code: 'B1VA' },
-        { employee_code: '0000012', ymd: '2024/12/19', schedule_types_id: 5, work_code: 'B1VA' },
-        { employee_code: '0000012', ymd: '2024/12/20', schedule_types_id: 5, work_code: 'B1VA' },
+        { employee_code: '0000012', ymd: '2024/12/18', schedule_types_id: 5, work_code: 'B1VA', schedule_description: 'DIG入門' },
+        { employee_code: '0000012', ymd: '2024/12/19', schedule_types_id: 5, work_code: 'B1VA', schedule_description: 'DIG入門' },
+        { employee_code: '0000012', ymd: '2024/12/20', schedule_types_id: 5, work_code: 'B1VA', schedule_description: 'DIG入門' },
         { employee_code: '0000001', ymd: '2024/12/25', schedule_types_id: 2 },
         { employee_code: '0000008', ymd: '2024/12/27', schedule_types_id: 2 }
     ]);
