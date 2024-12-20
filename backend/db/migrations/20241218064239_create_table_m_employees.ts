@@ -7,6 +7,7 @@ export async function up(knex: Knex): Promise<void> {
     table.string('name',50).notNullable();
     table.string('group_code',5).notNullable();
     table.integer('work_positions_id').notNullable();
+    table.decimal('paid_holiday',3,1);
 
     table.foreign('group_code').references('m_groups.group_code').onDelete('CASCADE');
     table.foreign('work_positions_id').references('m_work_positions.id').onDelete('CASCADE')

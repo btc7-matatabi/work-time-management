@@ -7,7 +7,8 @@
     "make-migration": "knex migrate:make -x ts",
     "make-seed": "knex seed:make -x ts",
     "migrate": "knex migrate:latest",
-    "seed": "knex seed:run"
+    "seed": "knex seed:run",
+    "reset": "knex migrate:rollback --all && knex migrate:latest && knex seed:run"
   },
   "author": "",
   "license": "ISC",
