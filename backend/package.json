@@ -5,12 +5,15 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "make-migration": "knex migrate:make -x ts",
-    "make-seed": "knex seed:make -x ts"
+    "make-seed": "knex seed:make -x ts",
+    "migrate": "knex migrate:latest",
+    "seed": "knex seed:run"
   },
   "author": "",
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "knex": "^3.1.0",
     "pg": "^8.13.1"

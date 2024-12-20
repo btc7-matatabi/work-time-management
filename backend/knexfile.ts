@@ -1,4 +1,10 @@
 import type { Knex } from "knex";
+import 'dotenv/config'
+
+// import * as dotenv from "dotenv"
+// dotenv.config()
+
+console.log(`Hello, ${process.env.DB_NAME}`);
 
 const config: { [key: string]: Knex.Config }  = {
   development: {
