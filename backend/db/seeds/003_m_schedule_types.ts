@@ -13,6 +13,7 @@ export async function seed(knex: Knex): Promise<void> {
         { name: '教育' },
         { name: '健診' },
         { name: '研修' },
-        { name: '出張' }
+        { name: '出張' },
+        { name: 'その他'}
     ]);
 };
