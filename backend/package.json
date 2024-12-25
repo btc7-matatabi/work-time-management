@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "dev": "npx tsx watch server.ts",
     "test": "echo \"Error: no test specified\" && exit 1",
     "make-migration": "knex migrate:make -x ts",
     "make-seed": "knex seed:make -x ts",
@@ -14,13 +15,16 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "date-fns": "^4.1.0",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "knex": "^3.1.0",
     "pg": "^8.13.1"
   },
   "devDependencies": {
+    "@types/express": "^5.0.0",
     "@types/node": "^22.10.2",
-    "ts-node-dev": "^2.0.0"
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.2"
   }
 }
