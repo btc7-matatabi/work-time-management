@@ -11,20 +11,24 @@ export async function seed(knex: Knex): Promise<void> {
         { ymd: '2024/12/4', work_types_id: '11', work_code: '0002' },
         { ymd: '2024/12/5', work_types_id: '11', work_code: '0002' },
         { ymd: '2024/12/6', work_types_id: '11', work_code: '0002' },
+
         { ymd: '2024/12/9', work_types_id: '11', work_code: '0002' },
         { ymd: '2024/12/10', work_types_id: '11', work_code: '0002' },
         { ymd: '2024/12/11', work_types_id: '11', work_code: '0002' },
         { ymd: '2024/12/12', work_types_id: '11', work_code: '0002' },
         { ymd: '2024/12/13', work_types_id: '11', work_code: '0002' },
+
         { ymd: '2024/12/16', work_types_id: '11', work_code: '0002' },
         { ymd: '2024/12/17', work_types_id: '11', work_code: '0002' },
         { ymd: '2024/12/18', work_types_id: '11', work_code: '0002' },
         { ymd: '2024/12/19', work_types_id: '11', work_code: '0002' },
         { ymd: '2024/12/20', work_types_id: '11', work_code: '0002' },
+
         { ymd: '2024/12/23', work_types_id: '11', work_code: '0002' },
         { ymd: '2024/12/24', work_types_id: '11', work_code: '0002' },
         { ymd: '2024/12/25', work_types_id: '11', work_code: '0002' },
         { ymd: '2024/12/26', work_types_id: '11', work_code: '0002' },
+
         { ymd: '2025/1/6', work_types_id: '11', work_code: '0002' },
         { ymd: '2025/1/7', work_types_id: '11', work_code: '0002' },
         { ymd: '2025/1/8', work_types_id: '11', work_code: '0002' },
@@ -45,6 +49,7 @@ export async function seed(knex: Knex): Promise<void> {
         { ymd: '2025/1/29', work_types_id: '11', work_code: '0001' },
         { ymd: '2025/1/30', work_types_id: '11', work_code: '0001' },
         { ymd: '2025/1/31', work_types_id: '11', work_code: '0001' },
+
         { ymd: '2024/12/2', work_types_id: '12', work_code: '0001' },
         { ymd: '2024/12/3', work_types_id: '12', work_code: '0001' },
         { ymd: '2024/12/4', work_types_id: '12', work_code: '0001' },

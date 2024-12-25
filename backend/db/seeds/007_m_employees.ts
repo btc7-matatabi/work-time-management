@@ -18,7 +18,8 @@ export async function seed(knex: Knex): Promise<void> {
         { employee_code: '0000010', name: '加藤', group_code: 'LT441', work_positions_id: 6, paid_holiday: 36},
         { employee_code: '0000011', name: '吉田', group_code: 'LT441', work_positions_id: 6, paid_holiday: 21},
         { employee_code: '0000012', name: '山田', group_code: 'LT441', work_positions_id: 6, paid_holiday: 25.5},
-        { employee_code: '0000013', name: '佐々木', group_code: 'LT442', work_positions_id: 1,paid_holiday: 28},
+
+        { employee_code: '0000013', name: '佐々木', group_code: 'LT442', work_positions_id: 1, paid_holiday: 28},
         { employee_code: '0000014', name: '山口', group_code: 'LT442', work_positions_id: 2, paid_holiday: 19},
         { employee_code: '0000015', name: '松本', group_code: 'LT442', work_positions_id: 2, paid_holiday: 34.5},
         { employee_code: '0000016', name: '井上', group_code: 'LT442', work_positions_id: 3, paid_holiday: 10.5},
@@ -27,6 +28,7 @@ export async function seed(knex: Knex): Promise<void> {
         { employee_code: '0000019', name: '斎藤', group_code: 'LT442', work_positions_id: 4, paid_holiday: 14.5},
         { employee_code: '0000020', name: '清水', group_code: 'LT442', work_positions_id: 5, paid_holiday: 27},
         { employee_code: '0000021', name: '山崎', group_code: 'LT442', work_positions_id: 5, paid_holiday: 15},
+
         { employee_code: '0000022', name: '森', group_code: 'PW441', work_positions_id: 1, paid_holiday: 31},
         { employee_code: '0000023', name: '池田', group_code: 'PW441', work_positions_id: 2, paid_holiday: 11},
         { employee_code: '0000024', name: '橋本', group_code: 'PW441', work_positions_id: 3, paid_holiday: 12},
