@@ -13,14 +13,19 @@ import {useContext} from "react";
 import {dateContext} from "./App.tsx";
 
 //サンプルデータ
-// import {employees} from "./Data.ts";
+import {employees} from "./Data.ts";
 import {event} from "./Data.ts";
+import {attendanceTime} from "./Data.ts";
+import {usualSchedule} from "./Data.ts";
+import {scheduleType} from "./Data.ts";
 
 let calendarData : number[];
 let eventData : string[];
+let overTimeData : number[];
+let scheduleData : string[];
 
 function setCalender(startDate : Date, endDate : Date) {
-  console.log(startDate.toDateString())
+  calendarData = [];
   while (startDate <= endDate) {
     calendarData.push(startDate.getDate());
     startDate.setDate(startDate.getDate() + 1)
@@ -28,7 +33,7 @@ function setCalender(startDate : Date, endDate : Date) {
 }
 
 function setEvent(startDate : Date, endDate : Date) {
-
+  eventData = [];
   while (startDate <= endDate) {
     const pickupEvent = event.filter(val => {
       return new Date(val.ymd).toDateString() === startDate.toDateString()
@@ -42,11 +47,39 @@ function setEvent(startDate : Date, endDate : Date) {
   }
 }
 
+function setOverTime(startDate : Date, endDate : Date, employeeCode : string) {
+  overTimeData = [];
+  while (startDate <= endDate) {
+      const pickupData = attendanceTime.filter(data => {
+        return data.employee_code === employeeCode && new Date(data.start_date).toDateString() === startDate.toDateString()
+      })
+      if (pickupData.length === 0) {
+        overTimeData.push(-1);
+      } else {
+        overTimeData.push(pickupData[0].overtime_minute)
+      }
+    startDate.setDate(startDate.getDate() + 1)
+  }
+}
+
+function setSchedule(startDate : Date, endDate : Date, employeeCode : string) {
+  scheduleData = [];
+  while (startDate <= endDate) {
+    const pickupData = usualSchedule.filter(data => {
+      return data.employee_code === employeeCode && new Date(data.ymd).toDateString() === startDate.toDateString()
+    })
+    if (pickupData.length === 0) {
+      scheduleData.push("");
+    } else {
+      scheduleData.push(scheduleType.filter(scheduleType => scheduleType.id === pickupData[0].schedule_types_id)[0].name)
+    }
+    startDate.setDate(startDate.getDate() + 1)
+  }
+}
+
 export function Home() {
 
   const {date} = useContext(dateContext)
-  calendarData = [];
-  eventData = [];
 
   const year : number = date.getFullYear();
   const month : number = date.getMonth()+1;
@@ -56,28 +89,46 @@ export function Home() {
   setCalender(new Date(startDate),new Date(endDate));
   setEvent(new Date(startDate),new Date(endDate));
 
+
+
   return (
     <Table>
       <TableHeader>
         <TableRow>
-          {calendarData.map(date => <TableHead key={date}>{date}</TableHead>)}
+          {calendarData.map(date => <TableHead key={date} className="w-11">{date}</TableHead>)}
         </TableRow>
       </TableHeader>
       <TableBody>
-        {/*{invoices.map((invoice) => (*/}
-          <TableRow>
-            {eventData.map((val, index) => <TableCell key={index}>{val}</TableCell>)}
-        {/*    <TableCell>{invoice.paymentStatus}</TableCell>*/}
-        {/*    <TableCell>{invoice.paymentMethod}</TableCell>*/}
-        {/*    <TableCell className="text-right">{invoice.totalAmount}</TableCell>*/}
-          </TableRow>
-        {/*))}*/}
+        <TableRow>
+          {eventData.map((val, index) => <TableCell key={index}>{val}</TableCell>)}
+        </TableRow>
+        {employees.map(employee => {
+          setOverTime(new Date(startDate),new Date(endDate), employee.employee_code);
+          setSchedule(new Date(startDate),new Date(endDate), employee.employee_code);
+          return (
+            <>
+              <TableRow>{overTimeData.map(overTime => {
+                if(overTime > 0) {
+                  return <TableCell>{`${Math.floor(overTime/60)}:${('00' + (overTime%60)).slice(-2)}`}</TableCell>
+                } else if (overTime === 0) {
+                  return <TableCell>0</TableCell>
+                }
+              })}</TableRow>
+              <TableRow>{scheduleData.map(schedule => {
+                if(schedule !== "") {
+                  return <TableCell>{schedule}</TableCell>
+                } else {
+                  return <TableCell></TableCell>
+                }
+              })}</TableRow>
+            </>
+          )
+        })}
       </TableBody>
       <TableFooter>
-        {/*<TableRow>*/}
-        {/*  <TableCell colSpan={3}>Total</TableCell>*/}
-        {/*  <TableCell className="text-right">$2,500.00</TableCell>*/}
-        {/*</TableRow>*/}
+        <TableRow>
+          <TableCell colSpan={3}>Total</TableCell>
+        </TableRow>
       </TableFooter>
     </Table>
   )
