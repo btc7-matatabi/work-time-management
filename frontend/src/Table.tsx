@@ -8,6 +8,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area"
 
 import {useContext} from "react";
 import {dateContext} from "./App.tsx";
@@ -23,6 +24,7 @@ let calendarData : number[];
 let eventData : string[];
 let overTimeData : number[];
 let scheduleData : string[];
+let sumOverTimeData : number[];
 
 function setCalender(startDate : Date, endDate : Date) {
   calendarData = [];
@@ -77,6 +79,23 @@ function setSchedule(startDate : Date, endDate : Date, employeeCode : string) {
   }
 }
 
+function setSumOverTime(startDate : Date, endDate : Date) {
+  sumOverTimeData = [];
+  while (startDate <= endDate) {
+    const pickupData = attendanceTime.filter(data => {
+      return new Date(data.start_date).toDateString() === startDate.toDateString()
+    })
+    sumOverTimeData.push(pickupData.reduce((sum, overTime) => {
+      if (overTime.overtime_minute > 0) {
+        return sum + overTime.overtime_minute;
+      } else {
+        return sum
+      }
+    },0))
+    startDate.setDate(startDate.getDate() + 1)
+  }
+}
+
 export function Home() {
 
   const {date} = useContext(dateContext)
@@ -88,48 +107,58 @@ export function Home() {
   const endDate : Date = new Date(year, month, 0);
   setCalender(new Date(startDate),new Date(endDate));
   setEvent(new Date(startDate),new Date(endDate));
-
-
+  setSumOverTime(new Date(startDate), new Date(endDate))
 
   return (
-    <Table>
-      <TableHeader>
-        <TableRow>
-          {calendarData.map(date => <TableHead key={date} className="w-11">{date}</TableHead>)}
-        </TableRow>
-      </TableHeader>
-      <TableBody>
-        <TableRow>
-          {eventData.map((val, index) => <TableCell key={index}>{val}</TableCell>)}
-        </TableRow>
-        {employees.map(employee => {
-          setOverTime(new Date(startDate),new Date(endDate), employee.employee_code);
-          setSchedule(new Date(startDate),new Date(endDate), employee.employee_code);
-          return (
-            <>
-              <TableRow>{overTimeData.map(overTime => {
-                if(overTime > 0) {
-                  return <TableCell>{`${Math.floor(overTime/60)}:${('00' + (overTime%60)).slice(-2)}`}</TableCell>
-                } else if (overTime === 0) {
-                  return <TableCell>0</TableCell>
-                }
-              })}</TableRow>
-              <TableRow>{scheduleData.map(schedule => {
-                if(schedule !== "") {
-                  return <TableCell>{schedule}</TableCell>
-                } else {
-                  return <TableCell></TableCell>
-                }
-              })}</TableRow>
-            </>
-          )
-        })}
-      </TableBody>
-      <TableFooter>
-        <TableRow>
-          <TableCell colSpan={3}>Total</TableCell>
-        </TableRow>
-      </TableFooter>
-    </Table>
+    <ScrollArea className="whitespace-nowrap rounded-md border">
+      <Table>
+        <TableHeader>
+          <TableRow className="h-10">
+            {calendarData.map(date => <TableHead key={date} className="text-center border w-12">{date}</TableHead>)}
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          <TableRow className="text-center h-10">
+            {eventData.map((val, index) => <TableCell key={index} className="border">{val}</TableCell>)}
+          </TableRow>
+          {employees.map(employee => {
+            setOverTime(new Date(startDate),new Date(endDate), employee.employee_code);
+            setSchedule(new Date(startDate),new Date(endDate), employee.employee_code);
+            return (
+              <>
+                <TableRow className="h-5">{overTimeData.map(overTime => {
+                  if(overTime > 0) {
+                    return <TableCell className="text-center border p-0">{`${Math.floor(overTime/60)}:${('00' + (overTime%60)).slice(-2)}`}</TableCell>
+                  } else if (overTime === 0) {
+                    return <TableCell className="text-center border p-0">0</TableCell>
+                  } else {
+                    return <TableCell></TableCell>
+                  }
+                })}</TableRow>
+                <TableRow className="h-5">{scheduleData.map(schedule => {
+                  if(schedule !== "") {
+                    return <TableCell className="text-center border p-0">{schedule}</TableCell>
+                  } else {
+                    return <TableCell className="text-center border p-0"></TableCell>
+                  }
+                })}</TableRow>
+              </>
+            )
+          })}
+        </TableBody>
+        <TableFooter>
+          <TableRow>
+            {sumOverTimeData.map(overTime => {
+              if (overTime > 0) {
+                return <TableCell className="text-center border p-0">{`${Math.floor(overTime/60)}:${('00' + (overTime%60)).slice(-2)}`}</TableCell>
+              } else {
+                return <TableCell className="text-center border p-0"></TableCell>
+              }
+            })}
+          </TableRow>
+        </TableFooter>
+      </Table>
+      <ScrollBar orientation="horizontal" />
+    </ScrollArea>
   )
 }
