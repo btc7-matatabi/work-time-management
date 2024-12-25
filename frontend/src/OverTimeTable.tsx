@@ -18,8 +18,9 @@ import {event} from "./Data.ts";
 import {attendanceTime} from "./Data.ts";
 import {usualSchedule} from "./Data.ts";
 import {scheduleType} from "./Data.ts";
+import {workDate} from "./Data.ts";
 
-let calendarData : number[];
+let calendarData : Date[];
 let eventData : string[];
 let overTimeData : number[];
 let scheduleData : string[];
@@ -28,7 +29,7 @@ let sumOverTimeData : number[];
 function setCalender(startDate : Date, endDate : Date) {
   calendarData = [];
   while (startDate <= endDate) {
-    calendarData.push(startDate.getDate());
+    calendarData.push(new Date(startDate));
     startDate.setDate(startDate.getDate() + 1)
   }
 }
@@ -109,52 +110,67 @@ export function OverTimeTable() {
   setSumOverTime(new Date(startDate), new Date(endDate))
 
   return (
-      <Table>
-        <TableHeader>
-          <TableRow className="h-10">
-            {calendarData.map(date => <TableHead key={date} className="text-center border w-12">{date}</TableHead>)}
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          <TableRow className="text-center h-11">
-            {eventData.map((val, index) => <TableCell key={index} className="border">{val}</TableCell>)}
-          </TableRow>
-          {employees.map(employee => {
-            setOverTime(new Date(startDate),new Date(endDate), employee.employee_code);
-            setSchedule(new Date(startDate),new Date(endDate), employee.employee_code);
-            return (
-              <>
-                <TableRow className="h-6">{overTimeData.map(overTime => {
-                  if(overTime > 0) {
-                    return <TableCell className="text-center border p-0">{`${Math.floor(overTime/60)}:${('00' + (overTime%60)).slice(-2)}`}</TableCell>
-                  } else if (overTime === 0) {
-                    return <TableCell className="text-center border p-0">0</TableCell>
+      <div className="flex-shrink-0">
+        <Table className="bg-gray-50 text-2xl">
+          <TableHeader>
+            <TableRow className="h-20">
+              {calendarData.map(date => {
+                const pickupWorkDate = workDate.filter(val => new Date(val.ymd).toDateString() === date.toDateString())
+                if (pickupWorkDate.length === 1) {
+                  if (pickupWorkDate[0].work_code === "0001") {
+                    return <TableHead key={date.getDate()} className="text-center border w-24 bg-yellow-300">{date.getDate()}</TableHead>
                   } else {
-                    return <TableCell></TableCell>
+                    return <TableHead key={date.getDate()} className="text-center border w-24 bg-green-300">{date.getDate()}</TableHead>
                   }
-                })}</TableRow>
-                <TableRow className="h-6">{scheduleData.map(schedule => {
-                  if(schedule !== "") {
-                    return <TableCell className="text-center border p-0">{schedule}</TableCell>
-                  } else {
-                    return <TableCell className="text-center border p-0"></TableCell>
-                  }
-                })}</TableRow>
-              </>
-            )
-          })}
-        </TableBody>
-        <TableFooter>
-          <TableRow className="text-center h-10">
-            {sumOverTimeData.map(overTime => {
-              if (overTime > 0) {
-                return <TableCell className="text-center border p-0">{`${Math.floor(overTime/60)}:${('00' + (overTime%60)).slice(-2)}`}</TableCell>
-              } else {
-                return <TableCell className="text-center border p-0"></TableCell>
-              }
+                } else {
+                  return <TableHead key={date.getDate()} className="text-center border w-24 text-red-600">{date.getDate()}</TableHead>
+                }
+              })}
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            <TableRow className="text-center h-22">
+              {eventData.map((val, index) => <TableCell key={index} className="border">{val}</TableCell>)}
+            </TableRow>
+            {employees.map((employee,index) => {
+              setOverTime(new Date(startDate),new Date(endDate), employee.employee_code);
+              setSchedule(new Date(startDate),new Date(endDate), employee.employee_code);
+              const zebraCss = index % 2 === 0 ? "h-10 bg-gray-300" : "h-10"
+              return (
+                <>
+                  <TableRow className={zebraCss} key={index}>{overTimeData.map(overTime => {
+                    if(overTime > 0) {
+                      return <TableCell className="text-center border p-0">{`${Math.floor(overTime/60)}:${('00' + (overTime%60)).slice(-2)}`}</TableCell>
+                    } else if (overTime === 0) {
+                      return <TableCell className="text-center border p-0">0</TableCell>
+                    } else {
+                      return <TableCell className="border p-0"></TableCell>
+                    }
+                  })}</TableRow>
+                  <TableRow className={zebraCss}>{scheduleData.map(schedule => {
+                    if(schedule !== "") {
+                      const textColorCss = schedule === "年休" ? "text-center border p-0 text-red-500" : "text-center border p-0"
+                      return <TableCell className={textColorCss}>{schedule}</TableCell>
+                    } else {
+                      return <TableCell className="text-center border p-0 "></TableCell>
+                    }
+                  })}</TableRow>
+                </>
+              )
             })}
-          </TableRow>
-        </TableFooter>
-      </Table>
+          </TableBody>
+          <TableFooter>
+            <TableRow className="text-center h-20 bg-gray-200">
+              {sumOverTimeData.map(overTime => {
+                if (overTime > 0) {
+                  return <TableCell className="text-center border p-0">{`${Math.floor(overTime/60)}:${('00' + (overTime%60)).slice(-2)}`}</TableCell>
+                } else {
+                  return <TableCell className="text-center border p-0"></TableCell>
+                }
+              })}
+            </TableRow>
+          </TableFooter>
+        </Table>
+      </div>
   )
 }
