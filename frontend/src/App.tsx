@@ -1,5 +1,5 @@
 import {createContext, useEffect, useState, Dispatch, SetStateAction} from 'react'
-import { Home } from './Table.tsx'
+import { Table } from './Table.tsx'
 import { Header } from "./Header.tsx";
 
 export const dateContext = createContext({} as {
@@ -33,7 +33,7 @@ export function App() {
     <dateContext.Provider value={{date, setDate}}>
       <selectDateContext.Provider value={{selectDate, setSelectDate}}>
         <Header/>
-        <Home/>
+        <Table/>
       </selectDateContext.Provider>
     </dateContext.Provider>
   )
