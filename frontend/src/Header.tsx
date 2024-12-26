@@ -37,7 +37,7 @@ export function Header(){
             <SelectGroup>
               {selectDate.map((dt) => {
                 const inputDate = `${dt.getFullYear()}年${dt.getMonth() + 1}月`;
-                return <SelectItem value={dt.toString()} key={dt.toString()} className="text-2xl">{inputDate}</SelectItem>
+                return <SelectItem value={dt.toLocaleDateString('sv-SE')} key={dt.toString()} className="text-2xl">{inputDate}</SelectItem>
               })}
             </SelectGroup>
           </SelectContent>

@@ -43,7 +43,7 @@ export function MemberTable() {
         <TableHeader>
           <TableRow className="h-20">
             <TableHead className="text-center border w-16">No</TableHead>
-            <TableHead className="text-center border w-40">氏名</TableHead>
+            <TableHead className="text-center border w-60">氏名</TableHead>
             <TableHead colSpan={3} className="text-center border">年休</TableHead>
             <TableHead colSpan={2} className="text-center border">残業</TableHead>
           </TableRow>
