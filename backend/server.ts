@@ -130,20 +130,22 @@ async function upsertData(oldAT: ClockInCheck, updateAT: SaveAT) {
 app.get("/users/:id/:ymd", wrapErrorHandler(async (req: Request, res: Response) => {
     const { id, ymd } = req.params;
     console.log(`GET /users/${id}/${ymd}`);
-    const data = await db('m_employees as t1')
-        .join('attendance_times as t2', 't1.employee_code', 't2.employee_code')
+    const [data] = await db('m_employees as t1')
         .join('m_groups as t3', 't1.group_code', 't3.group_code')
         .where('t1.employee_code', id) // 社員コードでフィルタリング
-        .andWhere('t2.start_date', ymd) // 開始日でフィルタリング
         .select(
             't1.name',          // 必要な列: 名前
             't1.group_code',    // 必要な列: グループコード
             't3.group_name',    // 必要な列: グループ名
-            't2.start_ts',      // 必要な列: 開始タイムスタンプ
-            't2.end_ts'         // 必要な列: 終了タイムスタンプ
         );
-    if (data.length > 0) {
-        res.status(200).send(data);
+    if (data) {
+        const regularTimes : StartEndDate = await getRegularTimes(ymd, id);
+        const outputData = {
+            ...data,
+            start_time: regularTimes.startDate?.toLocaleString('ja-JP', {timeZone: 'Asia/Tokyo'}),
+            end_time: regularTimes.endDate?.toLocaleString('ja-JP', {timeZone: 'Asia/Tokyo'})
+        }
+        res.status(200).send(outputData);
     }
     else {
         res.status(404).send({message : 'No data found'});
