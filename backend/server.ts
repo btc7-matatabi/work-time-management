@@ -211,6 +211,69 @@ app.post("/attendance-time", wrapErrorHandler(async (req: Request, res: Response
 
 }));
 
+app.get("/members-overtime/:id/:ymd", wrapErrorHandler(async (req: Request, res: Response) => {
+    const {id, ymd} = req.params;
+    console.log(`GET /members-overtime/${id}/${ymd}`);
+
+    // const employeesInGroup = await db('m_employees')
+    //     .whereIn('group_code', db('m_employees')
+    //         .where('employee_code', id)
+    //         .select('group_code'))
+    //     .select('*');
+    // console.log("employeesInGroup: ", employeesInGroup);
+
+    const baseEmployees = await db('m_employees as t1')
+        .join('m_groups as t3', 't1.group_code', 't3.group_code')
+        .whereIn('t1.group_code', db('m_employees')
+            .where('employee_code', id)
+            .select('group_code'))
+        .select(
+            't1.name',          // 必要な列: 名前
+            't1.employee_code',
+            // 't1.group_code',    // 必要な列: グループコード
+            // 't3.group_name',    // 必要な列: グループ名
+            't1.paid_holiday'
+        );
+    // console.log("baseEmployees: ", baseEmployees);
+
+    const rtn  = baseEmployees.map(async (employee) => {
+        const schedules: {ymd: string, name: string}[] =  await db('unusual_schedules as t1')
+            .join('m_schedule_types as t2', 't1.schedule_types_id', 't2.id')
+            .where('employee_code', employee.employee_code)
+            .andWhere('t1.ymd', '>=', ymd)
+            .andWhere('t1.ymd', '<', db.raw(`?::date + INTERVAL '1 month'`, [ymd]))
+            .select(
+                db.raw("to_char(t1.ymd AT TIME ZONE 'Asia/Tokyo', 'YYYY-MM-DD') as ymd"),
+                't2.name'
+            );
+        // console.log("schedules: ", schedules);
+        const rest_paid_holidays = employee.paid_holiday - schedules.filter(elm => elm.name === '年休').length;
+        const overtimes = await db('attendance_times as t1')
+            .where('t1.employee_code', employee.employee_code)
+            .where('t1.start_date', '>=', ymd)
+            .andWhere('t1.start_date', '<', db.raw(`?::date + INTERVAL '1 month'`, [ymd]))
+            .select(
+                db.raw("to_char(start_date, 'YYYY-MM-DD') as start_date"),
+                db.raw("to_char(start_ts AT TIME ZONE 'Asia/Tokyo', 'YYYY-MM-DD HH24:MI:SS') as start_ts"),
+                db.raw("to_char(end_ts AT TIME ZONE 'Asia/Tokyo', 'YYYY-MM-DD HH24:MI:SS') as end_ts"),
+                't1.before_overtime_flag',
+                't1.after_overtime_flag',
+                't1.overtime_minute'
+            );
+        return {
+            name: employee.name,
+            employee_code: employee.employee_code,
+            rest_paid_holidays,
+            overtimes,
+            schedules
+        }
+    });
+
+    const result = await Promise.all(rtn);
+    res.status(200).send(result);
+}));
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server listening on: http://localhost:${PORT}/`);
