@@ -135,7 +135,7 @@ export function OverTimeTable() {
             {employees.map((employee,index) => {
               setOverTime(new Date(startDate),new Date(endDate), employee.employee_code);
               setSchedule(new Date(startDate),new Date(endDate), employee.employee_code);
-              const zebraCss = index % 2 === 0 ? "h-10 bg-gray-300" : "h-10"
+              const zebraCss = index % 2 === 0 ? "h-10 bg-gray-200" : "h-10"
               return (
                 <>
                   <TableRow className={zebraCss} key={index}>{overTimeData.map(overTime => {
@@ -160,7 +160,7 @@ export function OverTimeTable() {
             })}
           </TableBody>
           <TableFooter>
-            <TableRow className="text-center h-20 bg-gray-200">
+            <TableRow className="text-center h-20 bg-gray-400">
               {sumOverTimeData.map(overTime => {
                 if (overTime > 0) {
                   return <TableCell className="text-center border p-0">{`${Math.floor(overTime/60)}:${('00' + (overTime%60)).slice(-2)}`}</TableCell>

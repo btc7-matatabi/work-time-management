@@ -58,7 +58,7 @@ export function MemberTable() {
         </TableHeader>
         <TableBody>
           {employees.map((employee, index) => {
-            const zebraCss = index % 2 === 0 ? "h-20 bg-gray-300" : "h-20"
+            const zebraCss = index % 2 === 0 ? "h-20 bg-gray-200" : "h-20"
             return (
               <TableRow className={zebraCss} key={index}>
                 <TableCell className="text-center border">{index+1}</TableCell>
@@ -84,7 +84,7 @@ export function MemberTable() {
 
         </TableBody>
         <TableFooter>
-          <TableRow className="text-center h-20 bg-gray-200">
+          <TableRow className="text-center h-20 bg-gray-400">
             <TableCell colSpan={3} className="text-center border">集計</TableCell>
             <TableCell className="border">{usualSchedule.filter(data => {
               return startDate <= new Date(data.ymd) && new Date(data.ymd) <= endDate && data.schedule_types_id === 2
