@@ -129,7 +129,7 @@ export function OverTimeTable() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow className="text-center h-22">
+            <TableRow className="text-center h-20 m-0">
               {eventData.map((val, index) => <TableCell key={index} className="border">{val}</TableCell>)}
             </TableRow>
             {employees.map((employee,index) => {

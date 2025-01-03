@@ -10,6 +10,8 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
+import {Link} from "react-router-dom";
+
 
 import {useContext} from "react";
 import {dateContext} from "./App.tsx";
@@ -55,7 +57,9 @@ export function Header(){
       <h3 className="scroll-m-20 text-2xl font-semibold tracking-tight mt-5 mb-5 p-1 bg-gray-50  rounded-r-lg">
         {`${workCode.filter(val => val.work_code === workName[1].work_code)[0].start_time}~${workCode.filter(val => val.work_code === workName[1].work_code)[0].end_time}`}
       </h3>
-      <Button className="bg-gray-500 m-6 text-2xl">始業 終業時刻一覧へ</Button>
+      <Link to="/stamp-list">
+        <Button className="bg-gray-500 m-6 text-2xl">始業 終業時刻一覧へ</Button>
+      </Link>
     </div>
   )
 }

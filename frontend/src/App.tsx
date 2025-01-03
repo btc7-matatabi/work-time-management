@@ -1,6 +1,7 @@
 import {createContext, useEffect, useState, Dispatch, SetStateAction} from 'react'
-import { Table } from './Table.tsx'
-import { Header } from "./Header.tsx";
+import {OverTimePage} from "@/OverTimePage.tsx";
+import {Route, Routes, BrowserRouter} from "react-router-dom"
+import {ClockinTimePage} from "@/ClockinTimePage.tsx";
 
 export const dateContext = createContext({} as {
   date: Date
@@ -32,8 +33,12 @@ export function App() {
   return (
     <dateContext.Provider value={{date, setDate}}>
       <selectDateContext.Provider value={{selectDate, setSelectDate}}>
-        <Header/>
-        <Table/>
+        <BrowserRouter>
+          <Routes>
+              <Route path="/" element={<OverTimePage/>} />
+              <Route path="/stamp-list" element={<ClockinTimePage/>} />
+          </Routes>
+        </BrowserRouter>
       </selectDateContext.Provider>
     </dateContext.Provider>
   )
