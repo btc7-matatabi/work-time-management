@@ -6,7 +6,7 @@ import {workHourResult} from "@/Data.ts";
 
 //CSS
 const headerCss = "text-center border"
-const contentsCss = "text-center border"
+const contentsCss = "text-center border p-1"
 
 function restWorkHour(id : number, totalTime : number) {
   return (totalTime * 60) - workHourResult.filter(result => {
@@ -42,7 +42,7 @@ export function WorkContentsTable() {
             const viewTime = restWorkHour(content.id, content.total_work_minute)
             const totalMinute = totalWorkHour(content.id)
             return (
-              <TableRow>
+              <TableRow className="h-12">
                 <TableCell className={contentsCss}>{content.work_content}</TableCell>
                 <TableCell className={contentsCss}>{content.order_number}</TableCell>
                 <TableCell className={contentsCss}>{content.total_work_minute}</TableCell>

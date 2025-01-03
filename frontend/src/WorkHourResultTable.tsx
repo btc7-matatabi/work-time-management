@@ -69,17 +69,17 @@ export function WorkHourResultTable() {
             workContents.map(content => {
               setResult(content.id,new Date(startDate),new Date(endDate));
               return (
-              <TableRow key={content.id}>
+              <TableRow key={content.id} className="h-12">
                 {resultTime.map(time => {
                   if (time > 0) {
                     return (
-                      <TableCell className="text-center border">
+                      <TableCell className="text-center border p-1">
                         {`${Math.floor(time/60)}:${('00' + (time%60)).slice(-2)}`}
                       </TableCell>
                     )
                   } else {
                     return (
-                      <TableCell className="text-center border"></TableCell>
+                      <TableCell className="text-center border p-1"></TableCell>
                     )
                   }
                 })}
