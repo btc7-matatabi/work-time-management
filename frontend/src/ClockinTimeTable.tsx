@@ -91,19 +91,19 @@ export function ClockinTimeTable() {
 
   return (
     <div className="flex-shrink-0">
-      <Table className="bg-gray-50 text-2xl">
+      <Table className="bg-gray-50 text-xl">
         <TableHeader>
-          <TableRow className="h-14">
+          <TableRow className="h-12">
             {calendarData.map(date => {
               const pickupWorkDate = workDate.filter(val => new Date(val.ymd).toDateString() === date.toDateString())
               if (pickupWorkDate.length === 1) {
                 if (pickupWorkDate[0].work_code === "0001") {
-                  return <TableHead key={date.getDate()} className="text-center border w-48 bg-yellow-300">{date.getDate()}</TableHead>
+                  return <TableHead key={date.getDate()} className="text-center border w-32 bg-yellow-300">{date.getDate()}</TableHead>
                 } else {
-                  return <TableHead key={date.getDate()} className="text-center border w-48 bg-green-300">{date.getDate()}</TableHead>
+                  return <TableHead key={date.getDate()} className="text-center border w-32 bg-green-300">{date.getDate()}</TableHead>
                 }
               } else {
-                return <TableHead key={date.getDate()} className="text-center border w-48 text-red-600">{date.getDate()}</TableHead>
+                return <TableHead key={date.getDate()} className="text-center border w-32 text-red-600">{date.getDate()}</TableHead>
               }
             })}
           </TableRow>
@@ -113,25 +113,25 @@ export function ClockinTimeTable() {
           {employees.map(employee => {
             return (
               <>
-                <TableRow className="bg-white h-12 text-xl text-center border-b-2 border-dashed">
+                <TableRow className="bg-white h-8 text-base text-center border-b-2 border-dashed">
                 {calendarData.map(date => {
                   setSchedule(employee.employee_code,date)
                   const startTime = setStartTime(employee.employee_code,date)
                   const endTime = setEndTime(employee.employee_code,date)
                   return (
                     <TableCell className={`${bgColor} p-0 border-r-2`}>
-                      <TableCell className={`${startBgColor} w-24 h-11 border-r-2 border-dashed`}>{startTime}</TableCell>
-                      <TableCell className={`${endBgColor} w-24 h-11`}>{endTime}</TableCell>
+                      <TableCell className={`${startBgColor} w-24 h-7 border-r-2 border-dashed p-0`}>{startTime}</TableCell>
+                      <TableCell className={`${endBgColor} w-24 h-7 p-0`}>{endTime}</TableCell>
                     </TableCell>
                   )
                 })}
                 </TableRow>
-                <TableRow className="h-12 text-xl text-center">
+                <TableRow className="h-8 text-base text-center">
                   {calendarData.map(date => {
                     const schedule = setSchedule(employee.employee_code,date)
                       return (
                           <DialogTrigger asChild>
-                            <TableCell className={`${bgColor} h-6 border-r-2 border-b-2`} onClick={() => {
+                            <TableCell className={`${bgColor} h-6 border-r-2 border-b-2 p-0`} onClick={() => {
                               setDialogEmployee(employee.name);
                               setDialogDate(date);
                             }}>{schedule}</TableCell>

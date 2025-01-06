@@ -26,14 +26,14 @@ export function DialogDemo() {
   const labelCss = "text-xl"
 
   return (
-      <DialogContent className="sm:max-w-[600px] bg-white">
+      <DialogContent>
         <DialogHeader>
           <DialogTitle className="text-2xl text-center">予定登録</DialogTitle>
         </DialogHeader>
         <div className="grid gap-4 py-4">
             <Label className={labelCss}>氏名</Label>
             <Select>
-              <SelectTrigger className="w-[180px] col-span-3 text-lg">
+              <SelectTrigger className="w-80 col-span-3 text-lg bg-white">
                 <SelectValue placeholder={dialogEmployee} />
               </SelectTrigger>
               <SelectContent>
@@ -46,7 +46,7 @@ export function DialogDemo() {
             <DatePickerWithRange/>
             <Label className={labelCss}>予定内容</Label>
             <Select>
-              <SelectTrigger className="w-[180px] col-span-3 text-lg">
+              <SelectTrigger className="w-80 col-span-3 text-lg bg-white">
                 <SelectValue placeholder={"年休"} />
               </SelectTrigger>
               <SelectContent>
@@ -57,7 +57,7 @@ export function DialogDemo() {
             </Select>
             <Label className={labelCss}>時間コード</Label>
             <Select>
-              <SelectTrigger className="w-[180px] col-span-3 text-lg">
+              <SelectTrigger className="w-80 col-span-3 text-lg bg-white">
                 <SelectValue placeholder={""} />
               </SelectTrigger>
               <SelectContent>
@@ -67,7 +67,7 @@ export function DialogDemo() {
               </SelectContent>
             </Select>
             <Label className={labelCss}>備考</Label>
-            <Textarea className="col-span-3 text-lg"/>
+            <Textarea className="text-2xl col-span-3 bg-white"/>
         </div>
         <DialogFooter>
           <Button type="submit" className="bg-blue-500 text-2xl h-10">登録する</Button>
