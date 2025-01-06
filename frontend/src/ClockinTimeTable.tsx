@@ -1,7 +1,9 @@
 import {useContext} from "react";
-import {dateContext} from "./App.tsx";
-import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
+import {dateContext, dialogEmployeeContext, dialogDateContext} from "./App.tsx";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
 import {employees, workDate, attendanceTime, usualSchedule, scheduleType, workCode} from "@/Data.ts";
+import {DialogDemo} from "@/DialogDemo.tsx";
+import {Dialog, DialogTrigger} from "@/components/ui/dialog.tsx";
 
 let calendarData : Date[];
 let bgColor = "";
@@ -77,7 +79,9 @@ function setSchedule(employeeCode : string, date : Date) {
 
 export function ClockinTimeTable() {
 
-  const {date} = useContext(dateContext)
+  const {date} = useContext(dateContext);
+  const {setDialogEmployee} = useContext(dialogEmployeeContext);
+  const {setDialogDate} = useContext(dialogDateContext);
 
   const year : number = date.getFullYear();
   const month : number = date.getMonth()+1;
@@ -105,6 +109,7 @@ export function ClockinTimeTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
+          <Dialog>
           {employees.map(employee => {
             return (
               <>
@@ -124,17 +129,22 @@ export function ClockinTimeTable() {
                 <TableRow className="h-12 text-xl text-center">
                   {calendarData.map(date => {
                     const schedule = setSchedule(employee.employee_code,date)
-                    return <TableCell className={`${bgColor} h-6 border-r-2 border-b-2`}>{schedule}</TableCell>
+                      return (
+                          <DialogTrigger asChild>
+                            <TableCell className={`${bgColor} h-6 border-r-2 border-b-2`} onClick={() => {
+                              setDialogEmployee(employee.name);
+                              setDialogDate(date);
+                            }}>{schedule}</TableCell>
+                          </DialogTrigger>
+                        )
                   })}
                 </TableRow>
               </>
             )
           })}
-
+            <DialogDemo/>
+          </Dialog>
         </TableBody>
-        <TableFooter>
-
-        </TableFooter>
       </Table>
     </div>
   )
