@@ -214,7 +214,10 @@ app.post("/attendance-time", wrapErrorHandler(async (req: Request, res: Response
 app.get("/members-overtime/:id/:ymd", wrapErrorHandler(async (req: Request, res: Response) => {
     const {id, ymd} = req.params;
     console.log(`GET /members-overtime/${id}/${ymd}`);
-
+    function forceFirstDayOfMonth(dateString: string) {
+        return dateString.replace(/-\d{2}$/, '-01');
+    }
+    const ym01 = forceFirstDayOfMonth(ymd);
     // const employeesInGroup = await db('m_employees')
     //     .whereIn('group_code', db('m_employees')
     //         .where('employee_code', id)
@@ -240,18 +243,28 @@ app.get("/members-overtime/:id/:ymd", wrapErrorHandler(async (req: Request, res:
         const schedules: {ymd: string, name: string}[] =  await db('unusual_schedules as t1')
             .join('m_schedule_types as t2', 't1.schedule_types_id', 't2.id')
             .where('employee_code', employee.employee_code)
-            .andWhere('t1.ymd', '>=', ymd)
-            .andWhere('t1.ymd', '<', db.raw(`?::date + INTERVAL '1 month'`, [ymd]))
+            .andWhere('t1.ymd', '>=', ym01)
+            .andWhere('t1.ymd', '<', db.raw(`?::date + INTERVAL '1 month'`, [ym01]))
             .select(
                 db.raw("to_char(t1.ymd AT TIME ZONE 'Asia/Tokyo', 'YYYY-MM-DD') as ymd"),
                 't2.name'
             );
+
+        const [paidHolidaysCount]: { count: number }[] =  await db('unusual_schedules as t1')
+            .join('m_schedule_types as t2', 't1.schedule_types_id', 't2.id')
+            .where('employee_code', employee.employee_code)
+            .andWhere('t1.ymd', '>=', '2024-12-01')
+            .andWhere('t1.ymd', '<', db.raw(`?::date + INTERVAL '1 month'`, [ym01]))
+            .andWhere('t2.name', '年休')
+            .count({ count: '*'});
+
         // console.log("schedules: ", schedules);
-        const rest_paid_holidays = employee.paid_holiday - schedules.filter(elm => elm.name === '年休').length;
+        const rest_paid_holidays = employee.paid_holiday - paidHolidaysCount.count + (ym01.startsWith('2025') ? 20 : 0);
+
         const overtimes = await db('attendance_times as t1')
             .where('t1.employee_code', employee.employee_code)
-            .where('t1.start_date', '>=', ymd)
-            .andWhere('t1.start_date', '<', db.raw(`?::date + INTERVAL '1 month'`, [ymd]))
+            .where('t1.start_date', '>=', ym01)
+            .andWhere('t1.start_date', '<', db.raw(`?::date + INTERVAL '1 month'`, [ym01]))
             .select(
                 db.raw("to_char(start_date, 'YYYY-MM-DD') as start_date"),
                 db.raw("to_char(start_ts AT TIME ZONE 'Asia/Tokyo', 'YYYY-MM-DD HH24:MI:SS') as start_ts"),
