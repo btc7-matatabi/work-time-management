@@ -46,7 +46,7 @@ export const workName = [
 ]
 
 export const workCode = [
-  { work_code: '0001', start_time: '6:30', end_time: '15:05'},
+  { work_code: '0001', start_time: '6:30', end_time: '15:20'},
   { work_code: '0002', start_time: '16:05', end_time: '0:40'},
 ]
 
