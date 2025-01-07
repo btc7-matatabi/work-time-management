@@ -120,15 +120,17 @@ function forceFirstDayOfMonth(dateString: string) {
     return dateString.replace(/-\d{2}$/, '-01');
 }
 
-async function upsertData(oldAT: ClockInCheck, updateAT: SaveAT) {
+async function upsertATData(oldAT: ClockInCheck, updateAT: SaveAT) {
+    let result: { id: number };
     if (oldAT) {
-        await db('attendance_times as t1')
+        [result] = await db('attendance_times as t1')
             .where('t1.id', oldAT.id)
             .update(updateAT, ['id']);
     } else {
-        await db('attendance_times as t1')
+        [result] = await db('attendance_times as t1')
             .insert(updateAT, ['id']);
     }
+    return result;
 }
 
 app.get("/users/:id/:ymd", wrapErrorHandler(async (req: Request, res: Response) => {
@@ -210,8 +212,8 @@ app.post("/attendance-time", wrapErrorHandler(async (req: Request, res: Response
     } else {
         setATFields(tmpClockInDate, regularTimes, updateAT);
         console.log("newAT: ", updateAT);
-        await upsertData(oldAT, updateAT);
-        res.status(200).send({message: 'ok'});
+        const result = await upsertATData(oldAT, updateAT);
+        res.status(200).send(result);
     }
 
 }));
@@ -402,11 +404,6 @@ app.get("/work-contents/:ymd/:groupCode",wrapErrorHandler(async (req: Request, r
     }
 
     const baseWorkContents: WorkContent[] = await db('work_contents as t1')
-        .whereIn('t1.id', db('work_hour_results')
-            .where('ymd', '>=', ym01)
-            .andWhere('ymd', '<', db.raw(`?::date + INTERVAL '1 month'`, [ym01]))
-            .select('work_contents_id')
-        )
         .where('t1.group_code', groupCode);
 
     const rtn: Promise<WorkContentReturn>[] = baseWorkContents.map(async (wc: WorkContent) => {
@@ -420,6 +417,7 @@ app.get("/work-contents/:ymd/:groupCode",wrapErrorHandler(async (req: Request, r
             )
             .orderBy(1);
         return {
+            id: wc.id,
             work_content: wc.work_content,
             order_number: wc.order_number,
             total_work_minute: wc.total_work_minute,
@@ -436,6 +434,125 @@ app.get("/work-contents/:ymd/:groupCode",wrapErrorHandler(async (req: Request, r
     }
 }));
 
+app.get("/schedule-types",wrapErrorHandler(async (req: Request, res: Response) => {
+    console.log(`GET /schedule-types`);
+    const results = await db('m_schedule_types').orderBy('id');
+    if (results.length) {
+        res.status(200).send(results);
+    } else {
+        res.status(404).send({message : 'No data found'});
+    }
+}));
+
+app.get("/work-codes",wrapErrorHandler(async (req: Request, res: Response) => {
+    console.log(`GET /work-codes`);
+    const results: { work_code: string, start_time: string, end_time: string }[] = await db('m_work_codes')
+        .whereNot('work_code', 'like', '0%')
+        .orderBy('work_code');
+    if (results.length) {
+        res.status(200).send(results);
+    } else {
+        res.status(404).send({message : 'No data found'});
+    }
+}));
+
+app.get("/sum-work-hour-results/:workContentsId",wrapErrorHandler(async (req: Request, res: Response) => {
+    const { workContentsId } = req.params;
+    console.log(`GET /sum-work-hour-results/${workContentsId}`);
+
+    const [result] = await db('work_hour_results')
+        .sum('work_minute as sum_work_minute')
+        .where('work_contents_id', workContentsId);
+    if (result !== undefined) {
+        res.status(200).send(result);
+    } else {
+        res.status(404).send({message : 'No data found'});
+    }
+}));
+
+type UnusualSchedule = {
+    employee_code: string,
+    ymd: string,
+    schedule_types_id: number,
+    work_code: string,
+    schedule_description: string,
+}
+
+async function updateUnusualSchedules(id: number, obj: UnusualSchedule){
+    const [result]: {id: number}[] = await db('unusual_schedules as t1')
+        .update(obj, ['id'])
+        .where('t1.id', id);
+    return result;
+}
+
+async function upsertUnusualSchedules(obj: UnusualSchedule){
+    const check: {id: number}[] = await db('unusual_schedules as t1')
+        .where('t1.employee_code', obj.employee_code)
+        .andWhere('t1.ymd', obj.ymd)
+        .select('t1.id');
+
+    let result: {id: number};
+    if (check.length){
+        console.log("update unusual_schedules");
+        result = await updateUnusualSchedules(check[0].id, obj);
+    } else {
+        console.log("insert unusual_schedules");
+        [result] = await db('unusual_schedules as t1')
+            .insert(obj, ['id']);
+    }
+    return result;
+}
+
+app.post("/unusual-schedules",wrapErrorHandler(async (req: Request, res: Response) => {
+    const { employee_code, ymd, schedule_types_id, work_code, schedule_description } = req.body;
+    console.log(`POST /unusual-schedules`);
+    const usObj: UnusualSchedule = { employee_code, ymd, schedule_types_id, work_code, schedule_description };
+    const result: {id: number} = await upsertUnusualSchedules(usObj);
+    if (result) {
+        res.status(200).send(result);
+    } else {
+        res.status(400).send({message : 'NG'});
+    }
+}));
+
+app.put("/unusual-schedules/:id",wrapErrorHandler(async (req: Request, res: Response) => {
+    const { employee_code, ymd, schedule_types_id, work_code, schedule_description } = req.body;
+    const id = Number(req.params.id);
+    console.log(`PUT /unusual-schedules/${id}`);
+    const usObj: UnusualSchedule = { employee_code, ymd, schedule_types_id, work_code, schedule_description };
+    const result: {id: number} = await updateUnusualSchedules(id, usObj);
+    if (result) {
+        res.status(200).send(result);
+    } else {
+        res.status(400).send({message : 'NG'});
+    }
+}));
+
+app.delete("/unusual-schedules/:id",wrapErrorHandler(async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    console.log(`DELETE /unusual-schedules/${id}`);
+
+    const [result]: {id: number}[] = await db('unusual_schedules as t1').where('t1.id', id).returning('id').del();
+    if (result) {
+        res.status(200).send(result);
+    } else {
+        res.status(400).send({message : 'NG'});
+    }
+}));
+
+
+
+// app.post("",wrapErrorHandler(async (req: Request, res: Response) => {
+//     const { employee_code, ymd, schedule_types_id, work_code, schedule_description } = req.body;
+//     console.log(`POST / `);
+//
+//     const results = await db('');
+//     if (results) {
+//         res.status(200).send(results);
+//     } else {
+//         res.status(404).send({message : 'No data found'});
+//     }
+// }));
 
 // app.get("",wrapErrorHandler(async (req: Request, res: Response) => {
 //     const { id, ymd } = req.params;
