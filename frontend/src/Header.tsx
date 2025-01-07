@@ -26,7 +26,7 @@ export function Header(){
   const {selectDate} = useContext(selectDateContext)
 
   return (
-    <div className="flex">
+    <div className="flex fixed z-50 bg-slate-300 w-full">
       <h2 className="scroll-m-20 p-6 text-2xl font-semibold tracking-tight first:mt-0">
         LT442組
       </h2>
