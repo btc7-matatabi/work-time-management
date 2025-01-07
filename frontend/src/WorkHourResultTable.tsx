@@ -44,22 +44,22 @@ export function WorkHourResultTable() {
 
   return (
     <div className="flex-shrink-0">
-      <Table className="bg-gray-50 text-2xl">
+      <Table className="bg-gray-50 text-xl">
         <TableHeader>
-          <TableRow className="h-14">
+          <TableRow className="h-12">
             {calendarData.map(date => {
               const pickupWorkDate = workDate.filter(val => new Date(val.ymd).toDateString() === date.toDateString())
               if (pickupWorkDate.length === 1) {
                 if (pickupWorkDate[0].work_code === "0001") {
                   return <TableHead key={date.getDate()}
-                                    className="text-center border w-24 bg-yellow-300">{date.getDate()}</TableHead>
+                                    className="text-center border w-16 bg-yellow-300">{date.getDate()}</TableHead>
                 } else {
                   return <TableHead key={date.getDate()}
-                                    className="text-center border w-24 bg-green-300">{date.getDate()}</TableHead>
+                                    className="text-center border w-16 bg-green-300">{date.getDate()}</TableHead>
                 }
               } else {
                 return <TableHead key={date.getDate()}
-                                  className="text-center border w-24 text-red-600">{date.getDate()}</TableHead>
+                                  className="text-center border w-16 text-red-600">{date.getDate()}</TableHead>
               }
             })}
           </TableRow>
@@ -69,7 +69,7 @@ export function WorkHourResultTable() {
             workContents.map(content => {
               setResult(content.id,new Date(startDate),new Date(endDate));
               return (
-              <TableRow key={content.id} className="h-12">
+              <TableRow key={content.id} className="h-10">
                 {resultTime.map(time => {
                   if (time > 0) {
                     return (
