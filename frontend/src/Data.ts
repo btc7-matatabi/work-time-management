@@ -119,7 +119,15 @@ export const attendanceTime = [
   { employee_code: '0000021', start_date: '2024/12/6', start_ts: '2024/12/6 06:30:00', end_ts: '2024/12/6 15:20:00', before_overtime_flag: false, after_overtime_flag: false, overtime_minute: 0},
 ]
 
-export const usualSchedule = [
+interface Obj {
+  employee_code: string;
+  ymd: string;
+  schedule_types_id: number;
+  work_code?: string;
+  schedule_description?: string;
+}
+
+export const usualSchedule:Obj[] = [
   { employee_code: '0000015', ymd: '2024/12/5', schedule_types_id: 2 },
   { employee_code: '0000019', ymd: '2024/12/5', schedule_types_id: 2 },
   { employee_code: '0000016', ymd: '2024/12/11', schedule_types_id: 2 },

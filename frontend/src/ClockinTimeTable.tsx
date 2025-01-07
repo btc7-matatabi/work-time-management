@@ -133,7 +133,7 @@ export function ClockinTimeTable() {
                       return (
                           <DialogTrigger asChild>
                             <TableCell className={`${bgColor} h-6 border-r-2 border-b-2 p-0`} onClick={() => {
-                              setDialogEmployee(employee.name);
+                              setDialogEmployee(employee.employee_code);
                               setDialogDate(date);
                             }}>{schedule}</TableCell>
                           </DialogTrigger>
