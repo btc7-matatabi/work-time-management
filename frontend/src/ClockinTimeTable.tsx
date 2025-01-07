@@ -1,4 +1,4 @@
-import {useContext} from "react";
+import {useContext, useState} from "react";
 import {dateContext, dialogEmployeeContext, dialogDateContext} from "./App.tsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
 import {employees, workDate, attendanceTime, usualSchedule, scheduleType, workCode} from "@/Data.ts";
@@ -82,6 +82,7 @@ export function ClockinTimeTable() {
   const {date} = useContext(dateContext);
   const {setDialogEmployee} = useContext(dialogEmployeeContext);
   const {setDialogDate} = useContext(dialogDateContext);
+  const [open, setOpen] = useState(false);
 
   const year : number = date.getFullYear();
   const month : number = date.getMonth()+1;
@@ -90,7 +91,7 @@ export function ClockinTimeTable() {
   setCalender(new Date(startDate),new Date(endDate));
 
   return (
-    <div className="flex-shrink-0">
+    <div className="flex-shrink-0 w-max">
       <Table className="bg-gray-50 text-xl">
         <TableHeader>
           <TableRow className="h-12">
@@ -109,7 +110,7 @@ export function ClockinTimeTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          <Dialog>
+          <Dialog open={open} onOpenChange={setOpen}>
           {employees.map(employee => {
             return (
               <>
@@ -132,7 +133,7 @@ export function ClockinTimeTable() {
                       return (
                           <DialogTrigger asChild>
                             <TableCell className={`${bgColor} h-6 border-r-2 border-b-2 p-0`} onClick={() => {
-                              setDialogEmployee(employee.name);
+                              setDialogEmployee(employee.employee_code);
                               setDialogDate(date);
                             }}>{schedule}</TableCell>
                           </DialogTrigger>
@@ -142,7 +143,7 @@ export function ClockinTimeTable() {
               </>
             )
           })}
-            <DialogDemo/>
+            <DialogDemo setOpen={setOpen}/>
           </Dialog>
         </TableBody>
       </Table>

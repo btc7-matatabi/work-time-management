@@ -1,9 +1,8 @@
 "use client"
 
-import * as React from "react"
 import { format } from "date-fns"
 import { CalendarIcon } from "lucide-react"
-import { DateRange } from "react-day-picker"
+
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
@@ -13,16 +12,15 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import {useContext} from "react";
-import {dialogDateContext} from "@/App.tsx";
+import {Dispatch, SetStateAction} from "react";
+import {DateRange} from "react-day-picker";
 
-export function DatePickerWithRange() {
-  const {dialogDate} = useContext(dialogDateContext);
+type Props = {
+  date: DateRange | undefined
+  setDate: Dispatch<SetStateAction<DateRange | undefined>>
+}
 
-  const [date, setDate] = React.useState<DateRange | undefined>({
-    from: new Date(dialogDate),
-  })
-
+export function DatePickerWithRange({date , setDate}:Props) {
   return (
     <div className={cn("grid gap-2 col-span-3")}>
       <Popover>
