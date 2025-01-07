@@ -1,4 +1,4 @@
-import {useContext} from "react";
+import {useContext, useState} from "react";
 import {dateContext, dialogEmployeeContext, dialogDateContext} from "./App.tsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
 import {employees, workDate, attendanceTime, usualSchedule, scheduleType, workCode} from "@/Data.ts";
@@ -82,6 +82,7 @@ export function ClockinTimeTable() {
   const {date} = useContext(dateContext);
   const {setDialogEmployee} = useContext(dialogEmployeeContext);
   const {setDialogDate} = useContext(dialogDateContext);
+  const [open, setOpen] = useState(false);
 
   const year : number = date.getFullYear();
   const month : number = date.getMonth()+1;
@@ -109,7 +110,7 @@ export function ClockinTimeTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          <Dialog>
+          <Dialog open={open} onOpenChange={setOpen}>
           {employees.map(employee => {
             return (
               <>
@@ -142,7 +143,7 @@ export function ClockinTimeTable() {
               </>
             )
           })}
-            <DialogDemo/>
+            <DialogDemo setOpen={setOpen}/>
           </Dialog>
         </TableBody>
       </Table>
