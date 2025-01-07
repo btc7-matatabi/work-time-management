@@ -27,14 +27,14 @@ function totalWorkHour(id : number) {
 export function WorkContentsTable() {
   return(
     <div className="flex-shrink-0">
-      <Table className="bg-gray-50 text-2xl overflow-hidden">
+      <Table className="bg-gray-50 text-xl overflow-hidden">
         <TableHeader>
-          <TableRow className="h-14">
-            <TableHead className={`${headerCss} w-80`}>作業内容</TableHead>
-            <TableHead className={`${headerCss} w-80`}>管理番号</TableHead>
-            <TableHead className={`${headerCss} w-32`}>全工数</TableHead>
-            <TableHead className={`${headerCss} w-32`}>残工数</TableHead>
-            <TableHead className={`${headerCss} w-32`}>今月合計</TableHead>
+          <TableRow className="h-12">
+            <TableHead className={`${headerCss} w-64`}>作業内容</TableHead>
+            <TableHead className={`${headerCss} w-64`}>管理番号</TableHead>
+            <TableHead className={`${headerCss} w-28`}>全工数</TableHead>
+            <TableHead className={`${headerCss} w-28`}>残工数</TableHead>
+            <TableHead className={`${headerCss} w-28`}>今月合計</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
@@ -42,7 +42,7 @@ export function WorkContentsTable() {
             const viewTime = restWorkHour(content.id, content.total_work_minute)
             const totalMinute = totalWorkHour(content.id)
             return (
-              <TableRow className="h-12">
+              <TableRow className="h-10">
                 <TableCell className={contentsCss}>{content.work_content}</TableCell>
                 <TableCell className={contentsCss}>{content.order_number}</TableCell>
                 <TableCell className={contentsCss}>{content.total_work_minute}</TableCell>
