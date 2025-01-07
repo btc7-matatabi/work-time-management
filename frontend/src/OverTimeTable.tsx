@@ -111,31 +111,31 @@ export function OverTimeTable() {
 
   return (
       <div className="flex-shrink-0">
-        <Table className="bg-gray-50 text-2xl">
+        <Table className="bg-gray-50 text-xl">
           <TableHeader>
-            <TableRow className="h-20">
+            <TableRow className="h-12">
               {calendarData.map(date => {
                 const pickupWorkDate = workDate.filter(val => new Date(val.ymd).toDateString() === date.toDateString())
                 if (pickupWorkDate.length === 1) {
                   if (pickupWorkDate[0].work_code === "0001") {
-                    return <TableHead key={date.getDate()} className="text-center border w-24 bg-yellow-300">{date.getDate()}</TableHead>
+                    return <TableHead key={date.getDate()} className="text-center border w-16 bg-yellow-300">{date.getDate()}</TableHead>
                   } else {
-                    return <TableHead key={date.getDate()} className="text-center border w-24 bg-green-300">{date.getDate()}</TableHead>
+                    return <TableHead key={date.getDate()} className="text-center border w-16 bg-green-300">{date.getDate()}</TableHead>
                   }
                 } else {
-                  return <TableHead key={date.getDate()} className="text-center border w-24 text-red-600">{date.getDate()}</TableHead>
+                  return <TableHead key={date.getDate()} className="text-center border w-16 text-red-600">{date.getDate()}</TableHead>
                 }
               })}
             </TableRow>
           </TableHeader>
           <TableBody>
-            <TableRow className="text-center h-20 m-0">
-              {eventData.map((val, index) => <TableCell key={index} className="border">{val}</TableCell>)}
+            <TableRow className="text-center h-14 m-0">
+              {eventData.map((val, index) => <TableCell key={index} className="border text-base p-0 m-0">{val}</TableCell>)}
             </TableRow>
             {employees.map((employee,index) => {
               setOverTime(new Date(startDate),new Date(endDate), employee.employee_code);
               setSchedule(new Date(startDate),new Date(endDate), employee.employee_code);
-              const zebraCss = index % 2 === 0 ? "h-10 bg-gray-200" : "h-10"
+              const zebraCss = index % 2 === 0 ? "h-7 bg-gray-200 text-base" : "h-7 text-base"
               return (
                 <>
                   <TableRow className={zebraCss} key={index}>{overTimeData.map(overTime => {
@@ -160,7 +160,7 @@ export function OverTimeTable() {
             })}
           </TableBody>
           <TableFooter>
-            <TableRow className="text-center h-20 bg-gray-400">
+            <TableRow className="text-center h-14 bg-gray-400">
               {sumOverTimeData.map(overTime => {
                 if (overTime > 0) {
                   return <TableCell className="text-center border p-0">{`${Math.floor(overTime/60)}:${('00' + (overTime%60)).slice(-2)}`}</TableCell>
