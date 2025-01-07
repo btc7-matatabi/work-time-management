@@ -40,26 +40,26 @@ export function MemberTable() {
 
   return(
     <div className="flex-shrink-0">
-      <Table className="bg-gray-50 text-2xl">
+      <Table className="bg-gray-50 text-xl">
         <TableHeader>
-          <TableRow className="h-20">
-            <TableHead className="text-center border w-16">No</TableHead>
-            <TableHead className="text-center border w-64">氏名</TableHead>
+          <TableRow className="h-12">
+            <TableHead className="text-center border w-12">No</TableHead>
+            <TableHead className="text-center border w-52">氏名</TableHead>
             <TableHead colSpan={3} className="text-center border">年休</TableHead>
             <TableHead colSpan={2} className="text-center border">残業</TableHead>
           </TableRow>
-          <TableRow className="h-20">
+          <TableRow className="h-14">
             <TableHead colSpan={2} className="text-center border">行事</TableHead>
-            <TableHead className="text-center border w-[141px] p-2">年間残り</TableHead>
-            <TableHead className="text-center border w-[141px] p-2">当月予定</TableHead>
-            <TableHead className="text-center border w-[141px] p-2">当月実績</TableHead>
-            <TableHead className="text-center border w-[141px] p-2">当月予定</TableHead>
-            <TableHead className="text-center border w-[141px] p-2">当月実績</TableHead>
+            <TableHead className="text-center border w-[118.4px] p-2">年間残り</TableHead>
+            <TableHead className="text-center border w-[118.4px] p-2">当月予定</TableHead>
+            <TableHead className="text-center border w-[118.4px] p-2">当月実績</TableHead>
+            <TableHead className="text-center border w-[118.4px] p-2">当月予定</TableHead>
+            <TableHead className="text-center border w-[118.4px] p-2">当月実績</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {employees.map((employee, index) => {
-            const zebraCss = index % 2 === 0 ? "h-20 bg-gray-200" : "h-20"
+            const zebraCss = index % 2 === 0 ? "h-14 bg-gray-200" : "h-14"
             const sumTime= sumOverTime(employee.employee_code)
             return (
               <TableRow className={zebraCss} key={index}>
@@ -84,7 +84,7 @@ export function MemberTable() {
 
         </TableBody>
         <TableFooter>
-          <TableRow className="text-center h-20 bg-gray-400">
+          <TableRow className="text-center h-14 bg-gray-400">
             <TableCell colSpan={3} className="text-center border">集計</TableCell>
             <TableCell className="border">{usualSchedule.filter(data => {
               return startDate <= new Date(data.ymd) && new Date(data.ymd) <= endDate && data.schedule_types_id === 2
