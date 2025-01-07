@@ -116,6 +116,10 @@ function setATFields(tmpClockInDate: StartEndDate, regularTimes: StartEndDate, u
     }
 }
 
+function forceFirstDayOfMonth(dateString: string) {
+    return dateString.replace(/-\d{2}$/, '-01');
+}
+
 async function upsertData(oldAT: ClockInCheck, updateAT: SaveAT) {
     if (oldAT) {
         await db('attendance_times as t1')
@@ -176,6 +180,7 @@ app.get("/attendance-time-start/:id/:ymd", wrapErrorHandler(async (req: Request,
 
 app.post("/attendance-time", wrapErrorHandler(async (req: Request, res: Response) => {
     const { employee_code, start_date, start_ts, end_ts } = req.body;
+    console.log(`POST /attendance-time`);
     const updateAT: SaveAT = {
         employee_code: employee_code,
         start_date: start_date,
@@ -214,9 +219,7 @@ app.post("/attendance-time", wrapErrorHandler(async (req: Request, res: Response
 app.get("/members-overtime/:id/:ymd", wrapErrorHandler(async (req: Request, res: Response) => {
     const {id, ymd} = req.params;
     console.log(`GET /members-overtime/${id}/${ymd}`);
-    function forceFirstDayOfMonth(dateString: string) {
-        return dateString.replace(/-\d{2}$/, '-01');
-    }
+
     const ym01 = forceFirstDayOfMonth(ymd);
     // const employeesInGroup = await db('m_employees')
     //     .whereIn('group_code', db('m_employees')
@@ -225,7 +228,24 @@ app.get("/members-overtime/:id/:ymd", wrapErrorHandler(async (req: Request, res:
     //     .select('*');
     // console.log("employeesInGroup: ", employeesInGroup);
 
-    const baseEmployees = await db('m_employees as t1')
+    type Overtime = {
+        start_date: string,
+        start_ts: string,
+        end_ts: string,
+        before_overtime_flag:boolean,
+        after_overtime_flag:boolean,
+        overtime_minute: number
+    };
+
+    type MembersOvertime = {
+        name: string,
+        employee_code: string,
+        rest_paid_holiday: number,
+        overtimes: Overtime[],
+        schedules:{ ymd:string, name:string }[],
+    };
+
+    const baseEmployees: { name: string, employee_code: string, paid_holiday: number }[] = await db('m_employees as t1')
         .join('m_groups as t3', 't1.group_code', 't3.group_code')
         .whereIn('t1.group_code', db('m_employees')
             .where('employee_code', id)
@@ -236,10 +256,10 @@ app.get("/members-overtime/:id/:ymd", wrapErrorHandler(async (req: Request, res:
             // 't1.group_code',    // 必要な列: グループコード
             // 't3.group_name',    // 必要な列: グループ名
             't1.paid_holiday'
-        );
-    // console.log("baseEmployees: ", baseEmployees);
+        )
+        .orderBy('t1.work_positions_id');
 
-    const rtn  = baseEmployees.map(async (employee) => {
+    const rtn: Promise<MembersOvertime>[]  = baseEmployees.map(async (employee) => {
         const schedules: {ymd: string, name: string}[] =  await db('unusual_schedules as t1')
             .join('m_schedule_types as t2', 't1.schedule_types_id', 't2.id')
             .where('employee_code', employee.employee_code)
@@ -258,10 +278,9 @@ app.get("/members-overtime/:id/:ymd", wrapErrorHandler(async (req: Request, res:
             .andWhere('t2.name', '年休')
             .count({ count: '*'});
 
-        // console.log("schedules: ", schedules);
-        const rest_paid_holidays = employee.paid_holiday - paidHolidaysCount.count + (ym01.startsWith('2025') ? 20 : 0);
+        const rest_paid_holiday: number = employee.paid_holiday - paidHolidaysCount.count + (ym01.startsWith('2025') ? 20 : 0);
 
-        const overtimes = await db('attendance_times as t1')
+        const overtimes: Overtime[] = await db('attendance_times as t1')
             .where('t1.employee_code', employee.employee_code)
             .where('t1.start_date', '>=', ym01)
             .andWhere('t1.start_date', '<', db.raw(`?::date + INTERVAL '1 month'`, [ym01]))
@@ -276,15 +295,159 @@ app.get("/members-overtime/:id/:ymd", wrapErrorHandler(async (req: Request, res:
         return {
             name: employee.name,
             employee_code: employee.employee_code,
-            rest_paid_holidays,
+            rest_paid_holiday,
             overtimes,
             schedules
         }
     });
 
     const result = await Promise.all(rtn);
-    res.status(200).send(result);
+    if (result) {
+        res.status(200).send(result);
+    } else {
+        res.status(404).send({message : 'No data found'});
+    }
 }));
+
+app.get("/groups/:groupCode", wrapErrorHandler(async (req: Request, res: Response) => {
+    const { groupCode } = req.params;
+    console.log(`GET /groups/${groupCode}`);
+
+    const groupName: { group_name: string }[] = await db('m_groups as t1')
+        .where('t1.group_code', groupCode)
+        .select('t1.group_name');
+
+    const work_codes: { work_code: string, start_time: string, end_time: string }[] = await db('m_groups as t1')
+        .distinct('t2.work_code', 't3.start_time', 't3.end_time')
+        .join('m_working_dates as t2', 't1.work_types_id', 't2.work_types_id')
+        .join('m_work_codes as t3', 't2.work_code', 't3.work_code')
+        .where('t1.group_code', groupCode);
+
+    const result = {
+        group_name: groupName[0]?.group_name,
+        work_codes
+    }
+
+    if (result.group_name) {
+        res.status(200).send(result);
+    } else {
+        res.status(404).send({message : 'No data found'});
+    }
+}));
+
+app.get("/working-dates/:ymd/:groupCode",wrapErrorHandler(async (req: Request, res: Response) => {
+    const { ymd, groupCode } = req.params;
+    console.log(`GET /working-dates/${ymd}/${groupCode}`);
+    const ym01 = forceFirstDayOfMonth(ymd);
+
+    const result: { ymd: string, work_code: string }[] = await db('m_working_dates as t1')
+        .whereIn('t1.work_types_id', db('m_groups')
+            .where('group_code', groupCode)
+            .select('work_types_id'))
+        .andWhere('t1.ymd', '>=', ym01)
+        .andWhere('t1.ymd', '<', db.raw(`?::date + INTERVAL '1 month'`, [ym01]))
+        .select(
+            db.raw("to_char(t1.ymd, 'YYYY-MM-DD') as ymd"),
+            't1.work_code'
+        )
+        .orderBy(1);
+
+    if (result.length) {
+        res.status(200).send(result);
+    } else {
+        res.status(404).send({message : 'No data found'});
+    }
+}));
+
+app.get("/group-events/:ymd/:groupCode",wrapErrorHandler(async (req: Request, res: Response) => {
+    const { ymd, groupCode } = req.params;
+    console.log(`GET /group-events/${ymd}/${groupCode}`);
+    const ym01 = forceFirstDayOfMonth(ymd);
+
+    const results: { ymd: string, event_name: string }[]  = await db('group_events as t1')
+        .where('t1.group_code', groupCode)
+        .andWhere('t1.ymd', '>=', ym01)
+        .andWhere('t1.ymd', '<', db.raw(`?::date + INTERVAL '1 month'`, [ym01]))
+        .select(
+            db.raw("to_char(t1.ymd, 'YYYY-MM-DD') as ymd"),
+            't1.event_name'
+        )
+        .orderBy(1);
+
+    if (results.length) {
+        res.status(200).send(results);
+    } else {
+        res.status(404).send({message : 'No data found'});
+    }
+}));
+
+app.get("/work-contents/:ymd/:groupCode",wrapErrorHandler(async (req: Request, res: Response) => {
+    const { ymd, groupCode } = req.params;
+    console.log(`GET /work-contents/${ymd}/${groupCode}`);
+    const ym01 = forceFirstDayOfMonth(ymd);
+
+    type WorkContent = {
+        id: number,
+        group_code: string,
+        work_content: string,
+        order_number: string,
+        total_work_minute: number
+    }
+
+    type WorkContentReturn = {
+        work_content: string,
+        order_number: string,
+        total_work_minute: number,
+        work_hour_results: { ymd: string, work_minute: number }[]
+    }
+
+    const baseWorkContents: WorkContent[] = await db('work_contents as t1')
+        .whereIn('t1.id', db('work_hour_results')
+            .where('ymd', '>=', ym01)
+            .andWhere('ymd', '<', db.raw(`?::date + INTERVAL '1 month'`, [ym01]))
+            .select('work_contents_id')
+        )
+        .where('t1.group_code', groupCode);
+
+    const rtn: Promise<WorkContentReturn>[] = baseWorkContents.map(async (wc: WorkContent) => {
+        const work_hour_results: { ymd: string, work_minute: number}[] = await db('work_hour_results as t1')
+            .where('t1.work_contents_id', wc.id)
+            .andWhere('ymd', '>=', ym01)
+            .andWhere('ymd', '<', db.raw(`?::date + INTERVAL '1 month'`, [ym01]))
+            .select(
+                db.raw("to_char(t1.ymd, 'YYYY-MM-DD') as ymd"),
+                't1.work_minute'
+            )
+            .orderBy(1);
+        return {
+            work_content: wc.work_content,
+            order_number: wc.order_number,
+            total_work_minute: wc.total_work_minute,
+            work_hour_results: work_hour_results
+        }
+    })
+
+    const results = await Promise.all(rtn);
+
+    if (results.length) {
+        res.status(200).send(results);
+    } else {
+        res.status(404).send({message : 'No data found'});
+    }
+}));
+
+
+// app.get("",wrapErrorHandler(async (req: Request, res: Response) => {
+//     const { id, ymd } = req.params;
+//     console.log(`GET /??/${id}/${ymd}`);
+//
+//     const results = await db('');
+//     if (results) {
+//         res.status(200).send(results);
+//     } else {
+//         res.status(404).send({message : 'No data found'});
+//     }
+// }));
 
 
 const PORT = process.env.PORT || 3000;
