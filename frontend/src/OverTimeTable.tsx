@@ -110,7 +110,7 @@ export function OverTimeTable() {
   setSumOverTime(new Date(startDate), new Date(endDate))
 
   return (
-      <div className="flex-shrink-0">
+      <div className="flex-shrink-0 w-max">
         <Table className="bg-gray-50 text-xl">
           <TableHeader>
             <TableRow className="h-12">
