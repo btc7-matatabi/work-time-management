@@ -3,15 +3,16 @@ import { Request, Response } from "express";
 import db from "./knex";
 import cors from 'cors';
 import {
+    calcDifferenceTime,
     forceFirstDayOfMonth,
     getRegularTimes,
     setATFields,
-    setTmpClockInDate,
     updateUnusualSchedules,
     upsertATData,
     upsertUnusualSchedules, upsertWorkHourResults,
     wrapErrorHandler,
 } from "./utils/funcs";
+import {isAfter, isBefore} from "date-fns";
 
 const app = express();
 app.use(express.json());
@@ -29,11 +30,11 @@ app.get("/users/:id/:ymd", wrapErrorHandler(async (req: Request, res: Response) 
             't3.group_name',    // 必要な列: グループ名
         );
     if (data) {
-        const regularTimes: StartEndDate = await getRegularTimes(ymd, id);
+        const regularTimes: StartEndDate | null = await getRegularTimes(ymd, id);
         const outputData = {
             ...data,
-            start_time: regularTimes.startDate?.toLocaleString('ja-JP', {timeZone: 'Asia/Tokyo'}),
-            end_time: regularTimes.endDate?.toLocaleString('ja-JP', {timeZone: 'Asia/Tokyo'})
+            start_time: regularTimes?.startDate?.toLocaleString('ja-JP', {timeZone: 'Asia/Tokyo'}),
+            end_time: regularTimes?.endDate?.toLocaleString('ja-JP', {timeZone: 'Asia/Tokyo'})
         }
         res.status(200).send(outputData);
     } else {
@@ -70,8 +71,9 @@ app.post("/attendance-time", wrapErrorHandler(async (req: Request, res: Response
         start_date: start_date,
         overtime_minute: 0
     };
-
-    const [oldAT]: ClockInCheck[] | undefined = await db('attendance_times as t1')
+    console.log("start_ts", start_ts);
+    console.log("end_ts", end_ts);
+    const [oldAT]: ClockInCheck[] | undefined[] = await db('attendance_times as t1')
         .select(
             't1.id',
             db.raw("to_char(start_date, 'YYYY-MM-DD') as start_date"),
@@ -82,20 +84,33 @@ app.post("/attendance-time", wrapErrorHandler(async (req: Request, res: Response
         .andWhere('t1.start_date', start_date); // 開始日 (start_date) でフィルタ
 
     console.log("oldAT: ", oldAT);
-
-    const tmpClockInDate: StartEndDate = {};
-    setTmpClockInDate(oldAT, start_ts, end_ts, tmpClockInDate);
-
-    const regularTimes: StartEndDate = await getRegularTimes(start_date, employee_code);
-    console.log('====================');
-
+    const regularTimes: StartEndDate | null  = await getRegularTimes(start_date, employee_code);
     if (!regularTimes) {
-        res.status(400).send({ message: 'NG' });
+        res.status(400).send({message: 'NG'});
     } else {
-        setATFields(tmpClockInDate, regularTimes, updateAT);
+        if (start_ts !== undefined) {
+            if (start_ts === null) {
+                updateAT["before_overtime_flag"] = false;
+            } else {
+                setATFields(new Date(start_ts), regularTimes.startDate, updateAT, isBefore, "before_overtime_flag");
+            }
+            updateAT["start_ts"] = start_ts;
+        } else if (oldAT?.start_ts) {
+            updateAT["overtime_minute"] += calcDifferenceTime(new Date(oldAT.start_ts), regularTimes.startDate);
+        }
+        if (end_ts !== undefined) {
+            if (end_ts === null) {
+                updateAT["after_overtime_flag"] = false;
+            } else {
+                setATFields(new Date(end_ts), regularTimes.endDate, updateAT, isAfter, "after_overtime_flag");
+            }
+            updateAT["end_ts"] = end_ts;
+        } else if (oldAT?.end_ts){
+            updateAT["overtime_minute"] += calcDifferenceTime(new Date(oldAT.end_ts), regularTimes.endDate);
+        }
         console.log("newAT: ", updateAT);
         const result = await upsertATData(oldAT, updateAT);
-        res.status(200).send(result);
+        res.status(201).send(result);
     }
 }));
 
@@ -318,7 +333,7 @@ app.post('/unusual-schedules', wrapErrorHandler(async (req: Request, res: Respon
     const usObj: UnusualSchedule = { employee_code, ymd, schedule_types_id, work_code, schedule_description };
     const result: {id: number} = await upsertUnusualSchedules(usObj);
     if (result) {
-        res.status(200).send(result);
+        res.status(201).send(result);
     } else {
         res.status(400).send({ message: 'NG' });
     }
@@ -331,7 +346,7 @@ app.put("/unusual-schedules/:id",wrapErrorHandler(async (req: Request, res: Resp
     const usObj: UnusualSchedule = { employee_code, ymd, schedule_types_id, work_code, schedule_description };
     const result: {id: number} = await updateUnusualSchedules(id, usObj);
     if (result) {
-        res.status(200).send(result);
+        res.status(201).send(result);
     } else {
         res.status(400).send({ message: 'NG' });
     }
@@ -361,7 +376,33 @@ app.post('/work-contents', wrapErrorHandler(async (req: Request, res: Response) 
         if (work_hour_results?.length) {
             await upsertWorkHourResults(workContentsId.id, work_hour_results);
         }
-        res.status(200).send(workContentsId);
+        res.status(201).send(workContentsId);
+    } else {
+        res.status(400).send({ message: 'NG' });
+    }
+}));
+
+app.put("/work-contents/:id",wrapErrorHandler(async (req: Request, res: Response) => {
+    const { group_code, work_content, order_number, total_work_minute }: WorkContentCreate = req.body;
+    const workContentsCreateObj: WorkContentCreate = { group_code, work_content, order_number, total_work_minute};
+    const id = Number(req.params.id);
+    console.log(`PUT /work-contents/${id}`);
+
+    const [result]: { id: number }[] = await db('work_contents').update(workContentsCreateObj,['id']).where('id', id);
+    if (result) {
+        res.status(201).send(result);
+    } else {
+        res.status(400).send({ message: 'NG' });
+    }
+}));
+
+app.delete("/work-contents/:id",wrapErrorHandler(async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    console.log(`DELETE /work-contents/${id}`);
+
+    const [result]: { id: number }[] = await db('work_contents').where('id', id).returning('id').del();
+    if (result) {
+        res.status(200).send(result);
     } else {
         res.status(400).send({ message: 'NG' });
     }
@@ -375,58 +416,11 @@ app.post('/work-contents/:id/work-hour-results', wrapErrorHandler(async (req: Re
 
     if (checkId.length && work_hour_results?.length) {
         const ids = await upsertWorkHourResults(workContentsId, work_hour_results);
-        res.status(200).send(ids);
+        res.status(201).send(ids);
     } else {
         res.status(400).send({ message: 'NG' });
     }
 }));
-
-
-// {
-//     "group_code": "LT442",
-//     "work_content": "todo2 ",
-//     "order_number": "0000-0000-1234-5678",
-//     "total_work_minute": 500
-// }
-
-// {
-//     "group_code": "LT442",
-//     "work_content": "todo3 ",
-//     "order_number": "0000-0000-1234-5679",
-//     "total_work_minute": 400,
-//     "work_hour_results": [
-//     { "ymd":"2024-12-02", "work_minute": 20 },
-//     { "ymd":"2024-12-03", "work_minute": 30 },
-//     { "ymd":"2024-12-04", "work_minute": 40 }
-// ]
-// }
-
-
-
-
-// app.post('',wrapErrorHandler(async (req: Request, res: Response) => {
-//     const { employee_code, ymd, schedule_types_id, work_code, schedule_description } = req.body;
-//     console.log(`POST / `);
-//
-//     const results = await db('');
-//     if (results) {
-//         res.status(200).send(results);
-//     } else {
-//         res.status(404).send({message : 'No data found'});
-//     }
-// }));
-
-// app.get('',wrapErrorHandler(async (req: Request, res: Response) => {
-//     const { id, ymd } = req.params;
-//     console.log(`GET /??/${id}/${ymd}`);
-//
-//     const results = await db('');
-//     if (results) {
-//         res.status(200).send(results);
-//     } else {
-//         res.status(404).send({message : 'No data found'});
-//     }
-// }));
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {

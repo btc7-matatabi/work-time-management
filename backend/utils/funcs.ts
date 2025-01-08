@@ -20,7 +20,7 @@ export async function getRegularTimes(start_date: string, employee_code: string)
             "t4.end_time" // 必要な列: 終了時間
         );
 
-    if (!data) return { startDate: null, endDate: null };
+    if (!data) return null;
 
     const startTime: string = data.start_time;
     const endTime: string = data.end_time;
@@ -45,80 +45,26 @@ export async function getRegularTimes(start_date: string, employee_code: string)
     };
 }
 
-export function setTmpClockInDate(
-    oldAT: ClockInCheck,
-    start_ts: string,
-    end_ts: string,
-    tmpClockInDate: StartEndDate
-) {
-    // 打刻済のデータ
-    if (oldAT) {
-        if (oldAT.start_ts) {
-            tmpClockInDate["startDate"] = new Date(oldAT.start_ts);
-        }
-        if (oldAT.end_ts) {
-            tmpClockInDate["endDate"] = new Date(oldAT.end_ts);
-        }
-    }
-    // 新しく入力されたデータ
-    if (start_ts) {
-        tmpClockInDate["startDate"] = new Date(start_ts);
-    }
-    if (end_ts) {
-        tmpClockInDate["endDate"] = new Date(end_ts); // dateにすると日本時間じゃなくなっている
+export function setATFields(clockInTime: Date, regularTime: Date, updateAT: SaveAT, func: Function, flagKey: 'before_overtime_flag'|'after_overtime_flag') {
+    if (isEqual(clockInTime, regularTime)) {
+        console.log(flagKey + " 定時");
+        updateAT[flagKey] = false;
+    } else if(func(clockInTime, regularTime)) {
+        console.log(flagKey + " 残業時間: ", calcDifferenceTime(clockInTime, regularTime));
+        updateAT["overtime_minute"] += calcDifferenceTime(clockInTime, regularTime);
+        updateAT[flagKey] = true;
     }
 }
 
-export function setATFields(
-    tmpClockInDate: StartEndDate,
-    regularTimes: StartEndDate,
-    updateAT: SaveAT
-) {
-    if (tmpClockInDate.startDate && regularTimes.startDate) {
-        if (isEqual(regularTimes.startDate, tmpClockInDate.startDate)) {
-            console.log("はやざんなし");
-            updateAT["before_overtime_flag"] = false;
-        } else if (isAfter(regularTimes.startDate, tmpClockInDate.startDate)) {
-            console.log(
-                "はやざん:",
-                differenceInMinutes(regularTimes.startDate, tmpClockInDate.startDate)
-            );
-            updateAT["overtime_minute"] += differenceInMinutes(
-                regularTimes.startDate,
-                tmpClockInDate.startDate
-            );
-            updateAT["before_overtime_flag"] = true;
-        }
-        updateAT["start_ts"] = tmpClockInDate.startDate.toLocaleString("ja-JP", {
-            timeZone: "Asia/Tokyo",
-        });
-    }
-    if (tmpClockInDate.endDate && regularTimes.endDate) {
-        if (isEqual(tmpClockInDate.endDate, regularTimes.endDate)) {
-            console.log("おそざんなし");
-            updateAT["after_overtime_flag"] = false;
-        } else if (isAfter(tmpClockInDate.endDate, regularTimes.endDate)) {
-            console.log(
-                "おそざん: ",
-                differenceInMinutes(tmpClockInDate.endDate, regularTimes.endDate)
-            );
-            updateAT["overtime_minute"] += differenceInMinutes(
-                tmpClockInDate.endDate,
-                regularTimes.endDate
-            );
-            updateAT["after_overtime_flag"] = true;
-        }
-        updateAT["end_ts"] = tmpClockInDate.endDate.toLocaleString("ja-JP", {
-            timeZone: "Asia/Tokyo",
-        });
-    }
+export function calcDifferenceTime(clockInTime: Date, regularTime: Date){
+    return Math.abs(differenceInMinutes(clockInTime, regularTime));
 }
 
 export function forceFirstDayOfMonth(dateString: string) {
     return dateString.replace(/-\d{2}$/, "-01");
 }
 
-export async function upsertATData(oldAT: ClockInCheck, updateAT: SaveAT) {
+export async function upsertATData(oldAT: ClockInCheck | undefined, updateAT: SaveAT) {
     let result: { id: number };
     if (oldAT) {
         [result] = await db("attendance_times as t1")

@@ -15,8 +15,8 @@ type ClockInCheck = {
 };
 
 type StartEndDate = {
-  startDate?: Date | null;
-  endDate?: Date | null;
+  startDate: Date;
+  endDate: Date;
 };
 
 type Overtime = {
