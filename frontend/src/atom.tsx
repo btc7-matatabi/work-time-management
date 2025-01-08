@@ -11,7 +11,7 @@ for (let i = 0; i < 3; i++) {
 }
 export const selectDateAtom = atom<Date[]>(selectDateArr)
 
-interface employeeIF {
+export interface employeeIF {
       name:string;
       employee_code:string;
       rest_paid_holiday:number;
@@ -26,9 +26,25 @@ interface employeeIF {
         }
       ],
       schedules:[
-        ymd:string,
-        name:string
+        {
+          ymd:string,
+          name:string
+        }
       ]
+}
+
+export interface overtimeIF {
+  start_date:string,
+  start_ts:string,
+  end_ts:string,
+  before_overtime_flag:boolean,
+  after_overtime_flag:boolean,
+  overtime_minute:number
+}
+
+export interface scheduleIF {
+  ymd:string,
+  name:string
 }
 
 export const employeesAtom = atom<employeeIF[]>([])

@@ -1,30 +1,31 @@
 import {Table, TableBody, TableHead, TableFooter, TableHeader, TableRow, TableCell} from "@/components/ui/table.tsx";
 import {useAtom} from "jotai";
-import {dateAtom, employeesAtom} from "@/atom.tsx";
+import {dateAtom, employeeIF, employeesAtom, overtimeIF} from "@/atom.tsx";
 
 //サンプルデータ
 import {usualSchedule} from "@/Data.ts";
-import {attendanceTime} from "@/Data.ts";
 import {useAtomValue} from "jotai/index";
 const today = new Date('2024/12/6')
 
 
 
-function sumOverTime(employeeCode:string) {
-  return attendanceTime.filter(data => {
-    return new Date(data.start_date) <= today &&
-      data.employee_code === employeeCode
+function sumOverTime(overtimes:overtimeIF[]) {
+  return overtimes.filter(data => {
+    return new Date(data.start_date) <= today
   }).reduce((sum, val) => {
     return sum + val.overtime_minute
   },0)
 }
 
-function allSumOverTime() {
-  return attendanceTime.filter(data => {
-    return new Date(data.start_date) <= today
-  }).reduce((sum,val) => {
-    return sum + val.overtime_minute;
-  },0)
+function allSumOverTime(employees:employeeIF[]) {
+
+  return employees.map(data => {
+    return data.overtimes.filter(data => {
+      return new Date(data.start_date) <= today
+    }).reduce((sum,val) => {
+      return sum + val.overtime_minute;
+    },0)
+  }).reduce((sum, val) => sum + val,0)
 }
 
 export function MemberTable() {
@@ -37,7 +38,7 @@ export function MemberTable() {
   const startDate : Date = new Date(year, month - 1, 1);
   const endDate : Date = new Date(year, month, 0);
 
-  const allOverTime = allSumOverTime()
+  const allOverTime = allSumOverTime(employees)
 
   return(
     <div className="flex-shrink-0">
@@ -61,7 +62,7 @@ export function MemberTable() {
         <TableBody>
           {employees.map((employee, index) => {
             const zebraCss = index % 2 === 0 ? "h-14 bg-gray-200" : "h-14"
-            const sumTime= sumOverTime(employee.employee_code)
+            const sumTime= sumOverTime(employee.overtimes)
             return (
               <TableRow className={zebraCss} key={index}>
                 <TableCell className="text-center border">{index+1}</TableCell>

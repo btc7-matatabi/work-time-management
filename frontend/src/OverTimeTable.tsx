@@ -12,12 +12,9 @@ import {
 
 //サンプルデータ
 import {event} from "./Data.ts";
-import {attendanceTime} from "./Data.ts";
-import {usualSchedule} from "./Data.ts";
-import {scheduleType} from "./Data.ts";
 import {workDate} from "./Data.ts";
 import {useAtom, useAtomValue} from "jotai";
-import {dateAtom, employeesAtom} from "@/atom.tsx";
+import {dateAtom, employeeIF, employeesAtom, overtimeIF, scheduleIF} from "@/atom.tsx";
 
 let calendarData : Date[];
 let eventData : string[];
@@ -49,12 +46,10 @@ function setEvent(startDate : Date, endDate : Date) {
   }
 }
 
-function setOverTime(startDate : Date, endDate : Date, employeeCode : string) {
+function setOverTime(startDate : Date, endDate : Date, overtimes:overtimeIF[]) {
   overTimeData = [];
   while (startDate <= endDate) {
-      const pickupData = attendanceTime.filter(data => {
-        return data.employee_code === employeeCode && new Date(data.start_date).toDateString() === startDate.toDateString()
-      })
+      const pickupData = overtimes.filter(data => new Date(data.start_date).toDateString() === startDate.toDateString())
       if (pickupData.length === 0) {
         overTimeData.push(-1);
       } else {
@@ -64,32 +59,32 @@ function setOverTime(startDate : Date, endDate : Date, employeeCode : string) {
   }
 }
 
-function setSchedule(startDate : Date, endDate : Date, employeeCode : string) {
+function setSchedule(startDate : Date, endDate : Date, schedules:scheduleIF[]) {
   scheduleData = [];
   while (startDate <= endDate) {
-    const pickupData = usualSchedule.filter(data => {
-      return data.employee_code === employeeCode && new Date(data.ymd).toDateString() === startDate.toDateString()
-    })
-    if (pickupData.length === 0) {
+    const pickupData = schedules.filter(data => {
+      return new Date(data.ymd).toDateString() === startDate.toDateString()
+    })[0]
+    if (pickupData === undefined) {
       scheduleData.push("");
     } else {
-      scheduleData.push(scheduleType.filter(scheduleType => scheduleType.id === pickupData[0].schedule_types_id)[0].name)
+      scheduleData.push(pickupData.name)
     }
     startDate.setDate(startDate.getDate() + 1)
   }
 }
 
-function setSumOverTime(startDate : Date, endDate : Date) {
+function setSumOverTime(startDate : Date, endDate : Date, employees: employeeIF[]) {
   sumOverTimeData = [];
   while (startDate <= endDate) {
-    const pickupData = attendanceTime.filter(data => {
-      return new Date(data.start_date).toDateString() === startDate.toDateString()
-    })
+    const pickupData = employees.map(data => {
+      return data.overtimes.filter(data => new Date(data.start_date).toDateString() === startDate.toDateString())
+    })[0]
     sumOverTimeData.push(pickupData.reduce((sum, overTime) => {
       if (overTime.overtime_minute > 0) {
         return sum + overTime.overtime_minute;
       } else {
-        return sum
+        return sum;
       }
     },0))
     startDate.setDate(startDate.getDate() + 1)
@@ -108,7 +103,7 @@ export function OverTimeTable() {
   const endDate : Date = new Date(year, month, 0);
   setCalender(new Date(startDate),new Date(endDate));
   setEvent(new Date(startDate),new Date(endDate));
-  setSumOverTime(new Date(startDate), new Date(endDate))
+  setSumOverTime(new Date(startDate), new Date(endDate), employees)
 
   return (
       <div className="flex-shrink-0 w-max">
@@ -134,8 +129,8 @@ export function OverTimeTable() {
               {eventData.map((val, index) => <TableCell key={index} className="border text-base p-0 m-0">{val}</TableCell>)}
             </TableRow>
             {employees.map((employee,index) => {
-              setOverTime(new Date(startDate),new Date(endDate), employee.employee_code);
-              setSchedule(new Date(startDate),new Date(endDate), employee.employee_code);
+              setOverTime(new Date(startDate),new Date(endDate), employee.overtimes);
+              setSchedule(new Date(startDate),new Date(endDate), employee.schedules);
               const zebraCss = index % 2 === 0 ? "h-7 bg-gray-200 text-base" : "h-7 text-base"
               return (
                 <>
