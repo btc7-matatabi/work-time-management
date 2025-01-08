@@ -16,7 +16,7 @@ import {useAtom} from "jotai";
 //サンプルデータ
 import {workCode} from "./Data.ts";
 import {workName} from "./Data.ts";
-import {dateAtom, selectDateAtom} from "@/atom.ts";
+import {dateAtom, selectDateAtom} from "@/atom.tsx";
 
 export function Header(){
   const [date, setDate] = useAtom(dateAtom)

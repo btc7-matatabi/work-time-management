@@ -11,14 +11,13 @@ import {
 
 
 //サンプルデータ
-import {employees} from "./Data.ts";
 import {event} from "./Data.ts";
 import {attendanceTime} from "./Data.ts";
 import {usualSchedule} from "./Data.ts";
 import {scheduleType} from "./Data.ts";
 import {workDate} from "./Data.ts";
-import {useAtom} from "jotai";
-import {dateAtom} from "@/atom.ts";
+import {useAtom, useAtomValue} from "jotai";
+import {dateAtom, employeesAtom} from "@/atom.tsx";
 
 let calendarData : Date[];
 let eventData : string[];
@@ -35,6 +34,7 @@ function setCalender(startDate : Date, endDate : Date) {
 }
 
 function setEvent(startDate : Date, endDate : Date) {
+
   eventData = [];
   while (startDate <= endDate) {
     const pickupEvent = event.filter(val => {
@@ -99,6 +99,7 @@ function setSumOverTime(startDate : Date, endDate : Date) {
 export function OverTimeTable() {
 
   const [date] = useAtom(dateAtom)
+  const employees = useAtomValue(employeesAtom)
 
   const year : number = date.getFullYear();
   const month : number = date.getMonth()+1;

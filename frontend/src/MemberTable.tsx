@@ -1,11 +1,11 @@
 import {Table, TableBody, TableHead, TableFooter, TableHeader, TableRow, TableCell} from "@/components/ui/table.tsx";
 import {useAtom} from "jotai";
-import {dateAtom} from "@/atom.ts";
+import {dateAtom, employeesAtom} from "@/atom.tsx";
 
 //サンプルデータ
-import {employees} from "@/Data.ts";
 import {usualSchedule} from "@/Data.ts";
 import {attendanceTime} from "@/Data.ts";
+import {useAtomValue} from "jotai/index";
 const today = new Date('2024/12/6')
 
 
@@ -29,6 +29,7 @@ function allSumOverTime() {
 
 export function MemberTable() {
   const [date] = useAtom(dateAtom)
+  const employees = useAtomValue(employeesAtom)
 
   const year : number = date.getFullYear();
   const month : number = date.getMonth()+1;
@@ -65,7 +66,7 @@ export function MemberTable() {
               <TableRow className={zebraCss} key={index}>
                 <TableCell className="text-center border">{index+1}</TableCell>
                 <TableCell className="text-center border">{employee.name}</TableCell>
-                <TableCell className="text-center border">{employee.paid_holiday}</TableCell>
+                <TableCell className="text-center border">{employee.rest_paid_holiday}</TableCell>
                 <TableCell className="text-center border">{usualSchedule.filter(data => {
                   return data.employee_code === employee.employee_code &&
                     data.schedule_types_id === 2;

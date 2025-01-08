@@ -3,22 +3,22 @@ import {OverTimePage} from "@/OverTimePage.tsx";
 import {Route, Routes, BrowserRouter} from "react-router-dom"
 import {ClockinTimePage} from "@/ClockinTimePage.tsx";
 import {format} from "date-fns";
-import {useAtom} from "jotai";
-import {dateAtom} from "@/atom.ts";
+import {useAtom, useSetAtom} from "jotai";
+import {dateAtom, employeesAtom} from "@/atom.tsx";
 
 export function App() {
 
   const [date] = useAtom(dateAtom);
+  const setEmployees = useSetAtom(employeesAtom)
 
   useEffect(() => {
     //仮置き
     const leaderEmployeeCode= "0000013"
     const paramsDate = new Date(date).setUTCDate(1)
 
-
     fetch(`http://localhost:3000/members-overtime/${leaderEmployeeCode}/${format(paramsDate,"yyyy-MM-dd")}`)
       .then(response => response.json())
-      .then(data => console.log(data));
+      .then(data => setEmployees(data))
   }, [date]);
 
   return (

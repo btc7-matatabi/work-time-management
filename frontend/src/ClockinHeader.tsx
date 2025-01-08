@@ -3,7 +3,7 @@ import {Link} from "react-router-dom";
 import {workCode, workName} from "@/Data.ts";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {useAtom} from "jotai/index";
-import {dateAtom, selectDateAtom} from "@/atom.ts";
+import {dateAtom, selectDateAtom} from "@/atom.tsx";
 
 export function ClockinHeader() {
 

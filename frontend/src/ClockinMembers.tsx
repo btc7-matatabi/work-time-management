@@ -1,7 +1,10 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
-import {employees} from "@/Data.ts";
+import {useAtomValue} from "jotai/index";
+import {employeesAtom} from "@/atom.tsx";
 
 export function ClockinMembers() {
+
+  const employees = useAtomValue(employeesAtom)
 
   const headerCss = "text-center border"
   return (
