@@ -65,3 +65,10 @@ export interface workCodesIF {
 }
 
 export const workCodesAtom = atom<workCodesIF[]>([])
+
+export interface workDateIF {
+  ymd:string;
+  work_code:string;
+}
+
+export const workDateAtom = atom<workDateIF[]>([])

@@ -4,7 +4,7 @@ import {Route, Routes, BrowserRouter} from "react-router-dom"
 import {ClockinTimePage} from "@/ClockinTimePage.tsx";
 import {format} from "date-fns";
 import {useAtom, useSetAtom} from "jotai";
-import {dateAtom, employeesAtom, groupCodeAtom, groupInfoAtom, workCodesAtom} from "@/atom.ts";
+import {dateAtom, employeesAtom, groupCodeAtom, groupInfoAtom, workCodesAtom, workDateAtom} from "@/atom.ts";
 import {useAtomValue} from "jotai/index";
 
 export function App() {
@@ -14,6 +14,7 @@ export function App() {
   const setGroupInfo = useSetAtom(groupInfoAtom)
   const setWorkCodes = useSetAtom(workCodesAtom)
   const groupCode = useAtomValue(groupCodeAtom);
+  const setWorkDate = useSetAtom(workDateAtom)
 
   useEffect(() => {
     //仮置き
@@ -23,6 +24,11 @@ export function App() {
     fetch(`http://localhost:3000/members-overtime/${leaderEmployeeCode}/${format(paramsDate,"yyyy-MM-dd")}`)
       .then(response => response.json())
       .then(data => setEmployees(data))
+
+    fetch(`http://localhost:3000/working-dates/${format(paramsDate,"yyyy-MM-dd")}/${groupCode}`)
+      .then(response => response.json())
+      .then(data => setWorkDate(data))
+
   }, [date]);
 
   useEffect(() => {

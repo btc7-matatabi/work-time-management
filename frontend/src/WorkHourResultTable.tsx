@@ -1,7 +1,8 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx"
-import {workContents, workDate, workHourResult} from "@/Data.ts";
+import {workContents, workHourResult} from "@/Data.ts";
 import {useAtom} from "jotai";
-import {dateAtom} from "@/atom.ts";
+import {dateAtom, workDateAtom} from "@/atom.ts";
+import {useAtomValue} from "jotai/index";
 
 //サンプルデータ
 
@@ -35,6 +36,8 @@ function setResult(id : number, startDate : Date, endDate : Date) {
 
 export function WorkHourResultTable() {
   const [date] = useAtom(dateAtom)
+  const workDate = useAtomValue(workDateAtom);
+
   const year : number = date.getFullYear();
   const month : number = date.getMonth()+1;
 

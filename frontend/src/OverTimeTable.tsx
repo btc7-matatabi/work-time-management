@@ -12,9 +12,8 @@ import {
 
 //サンプルデータ
 import {event} from "./Data.ts";
-import {workDate} from "./Data.ts";
 import {useAtom, useAtomValue} from "jotai";
-import {dateAtom, employeeIF, employeesAtom, overtimeIF, scheduleIF} from "@/atom.ts";
+import {dateAtom, employeeIF, employeesAtom, overtimeIF, scheduleIF, workDateAtom} from "@/atom.ts";
 
 let calendarData : Date[];
 let eventData : string[];
@@ -96,6 +95,7 @@ export function OverTimeTable() {
 
   const [date] = useAtom(dateAtom)
   const employees = useAtomValue(employeesAtom)
+  const workDate = useAtomValue(workDateAtom);
 
   const year : number = date.getFullYear();
   const month : number = date.getMonth()+1;
