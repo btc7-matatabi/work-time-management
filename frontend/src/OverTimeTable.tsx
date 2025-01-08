@@ -14,7 +14,7 @@ import {
 import {event} from "./Data.ts";
 import {workDate} from "./Data.ts";
 import {useAtom, useAtomValue} from "jotai";
-import {dateAtom, employeeIF, employeesAtom, overtimeIF, scheduleIF} from "@/atom.tsx";
+import {dateAtom, employeeIF, employeesAtom, overtimeIF, scheduleIF} from "@/atom.ts";
 
 let calendarData : Date[];
 let eventData : string[];
@@ -78,8 +78,9 @@ function setSumOverTime(startDate : Date, endDate : Date, employees: employeeIF[
   sumOverTimeData = [];
   while (startDate <= endDate) {
     const pickupData = employees.map(data => {
-      return data.overtimes.filter(data => new Date(data.start_date).toDateString() === startDate.toDateString())
-    })[0]
+      return data.overtimes.filter(data => new Date(data.start_date).toDateString() === startDate.toDateString())[0]
+    }).filter(val => val !== undefined)
+
     sumOverTimeData.push(pickupData.reduce((sum, overTime) => {
       if (overTime.overtime_minute > 0) {
         return sum + overTime.overtime_minute;

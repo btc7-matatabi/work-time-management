@@ -4,7 +4,7 @@ import {Route, Routes, BrowserRouter} from "react-router-dom"
 import {ClockinTimePage} from "@/ClockinTimePage.tsx";
 import {format} from "date-fns";
 import {useAtom, useSetAtom} from "jotai";
-import {dateAtom, employeesAtom} from "@/atom.tsx";
+import {dateAtom, employeesAtom} from "@/atom.ts";
 
 export function App() {
 

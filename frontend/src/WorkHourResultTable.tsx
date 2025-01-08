@@ -1,7 +1,7 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx"
 import {workContents, workDate, workHourResult} from "@/Data.ts";
 import {useAtom} from "jotai";
-import {dateAtom} from "@/atom.tsx";
+import {dateAtom} from "@/atom.ts";
 
 //サンプルデータ
 

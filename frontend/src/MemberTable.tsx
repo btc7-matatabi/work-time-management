@@ -1,6 +1,6 @@
 import {Table, TableBody, TableHead, TableFooter, TableHeader, TableRow, TableCell} from "@/components/ui/table.tsx";
 import {useAtom} from "jotai";
-import {dateAtom, employeeIF, employeesAtom, overtimeIF} from "@/atom.tsx";
+import {dateAtom, employeeIF, employeesAtom, overtimeIF} from "@/atom.ts";
 
 //サンプルデータ
 import {usualSchedule} from "@/Data.ts";

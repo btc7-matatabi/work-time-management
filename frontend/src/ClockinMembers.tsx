@@ -1,6 +1,6 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
 import {useAtomValue} from "jotai/index";
-import {employeesAtom} from "@/atom.tsx";
+import {employeesAtom} from "@/atom.ts";
 
 export function ClockinMembers() {
 
