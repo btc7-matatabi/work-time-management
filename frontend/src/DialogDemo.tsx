@@ -16,16 +16,11 @@ import {Label} from "@/components/ui/label"
 import {employees, scheduleType, usualSchedule, workCode} from "@/Data.ts";
 import {DatePickerWithRange} from "@/DatePickerWithRange.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
-import {Dispatch, SetStateAction, useContext, useEffect, useState} from "react";
-import {dialogDateContext, dialogEmployeeContext} from "@/App.tsx";
+import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {DateRange} from "react-day-picker";
 import {format} from "date-fns";
 
-type Props = {
-  setOpen: Dispatch<SetStateAction<boolean>>
-}
-
-function scheduleRegistration({setOpen}:Props, selectMember:string, date:DateRange | undefined, selectSchedule:string, selectWorkCode:string, description:string) {
+function scheduleRegistration(setOpen:Dispatch<SetStateAction<boolean>>, selectMember:string, date:DateRange | undefined, selectSchedule:string, selectWorkCode:string, description:string) {
 
   const inputDate = date?.from
 
@@ -67,10 +62,14 @@ function scheduleRegistration({setOpen}:Props, selectMember:string, date:DateRan
   setOpen(false);
 }
 
-export function DialogDemo({setOpen}: Props) {
+type Props = {
+  dialogEmployee: string
+  dialogDate: Date
+  setOpen: Dispatch<SetStateAction<boolean>>
+}
 
-  const {dialogEmployee} = useContext(dialogEmployeeContext);
-  const {dialogDate} = useContext(dialogDateContext);
+export function DialogDemo({dialogEmployee, dialogDate, setOpen}: Props) {
+
   const [date, setDate] = useState<DateRange | undefined>()
   const [selectMember, setSelectMember] = useState<string>(dialogEmployee);
   const [selectSchedule, setSelectSchedule] = useState<string>("2");
@@ -135,7 +134,7 @@ export function DialogDemo({setOpen}: Props) {
         <Textarea className="text-2xl col-span-3 bg-white" onChange={e => setDescription(e.target.value)}/>
       </div>
       <DialogFooter>
-        <Button type="button" className="bg-blue-500 text-2xl h-10" onClick={() => scheduleRegistration({setOpen}, selectMember, date, selectSchedule, selectWorkCode, description)}>登録する</Button>
+        <Button type="button" className="bg-blue-500 text-2xl h-10" onClick={() => scheduleRegistration(setOpen, selectMember, date, selectSchedule, selectWorkCode, description)}>登録する</Button>
       </DialogFooter>
     </DialogContent>
   )

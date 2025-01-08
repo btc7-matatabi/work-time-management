@@ -1,5 +1,5 @@
 import {useContext, useState} from "react";
-import {dateContext, dialogEmployeeContext, dialogDateContext} from "./App.tsx";
+import {dateContext} from "./App.tsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
 import {employees, workDate, attendanceTime, usualSchedule, scheduleType, workCode} from "@/Data.ts";
 import {DialogDemo} from "@/DialogDemo.tsx";
@@ -80,8 +80,8 @@ function setSchedule(employeeCode : string, date : Date) {
 export function ClockinTimeTable() {
 
   const {date} = useContext(dateContext);
-  const {setDialogEmployee} = useContext(dialogEmployeeContext);
-  const {setDialogDate} = useContext(dialogDateContext);
+  const [dialogEmployee, setDialogEmployee] = useState("");
+  const [dialogDate, setDialogDate] = useState(new Date());
   const [open, setOpen] = useState(false);
 
   const year : number = date.getFullYear();
@@ -143,7 +143,7 @@ export function ClockinTimeTable() {
               </>
             )
           })}
-            <DialogDemo setOpen={setOpen}/>
+            <DialogDemo setOpen={setOpen} dialogEmployee={dialogEmployee} dialogDate={dialogDate}/>
           </Dialog>
         </TableBody>
       </Table>
