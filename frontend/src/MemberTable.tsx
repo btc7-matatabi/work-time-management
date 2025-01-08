@@ -79,15 +79,15 @@ export function MemberTable() {
               return employee.schedules.filter(data => {
                 return data.name === "年休"
               }).length
-            }).reduce((sum) => {
-              return sum + 1;
+            }).reduce((sum,val) => {
+              return sum + val;
             },0)}</TableCell>
             <TableCell className="border">{employees.map(employee => {
               return employee.schedules.filter(data => {
                 return new Date(data.ymd) <= today && data.name === "年休"
               }).length
-            }).reduce((sum) => {
-              return sum + 1;
+            }).reduce((sum,val) => {
+              return sum + val;
             },0)}</TableCell>
             <TableCell className="border">{20*employees.length}</TableCell>
             <TableCell className="border">
