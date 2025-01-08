@@ -9,8 +9,6 @@ import {
   TableRow,
 } from "@/components/ui/table"
 
-import {useContext} from "react";
-import {dateContext} from "./App.tsx";
 
 //サンプルデータ
 import {employees} from "./Data.ts";
@@ -19,6 +17,8 @@ import {attendanceTime} from "./Data.ts";
 import {usualSchedule} from "./Data.ts";
 import {scheduleType} from "./Data.ts";
 import {workDate} from "./Data.ts";
+import {useAtom} from "jotai";
+import {dateAtom} from "@/atom.ts";
 
 let calendarData : Date[];
 let eventData : string[];
@@ -98,7 +98,7 @@ function setSumOverTime(startDate : Date, endDate : Date) {
 
 export function OverTimeTable() {
 
-  const {date} = useContext(dateContext)
+  const [date] = useAtom(dateAtom)
 
   const year : number = date.getFullYear();
   const month : number = date.getMonth()+1;

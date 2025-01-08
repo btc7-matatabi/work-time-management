@@ -1,9 +1,10 @@
-import {useContext, useState} from "react";
-import {dateContext} from "./App.tsx";
+import {useState} from "react";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
 import {employees, workDate, attendanceTime, usualSchedule, scheduleType, workCode} from "@/Data.ts";
 import {DialogDemo} from "@/DialogDemo.tsx";
 import {Dialog, DialogTrigger} from "@/components/ui/dialog.tsx";
+import {useAtom} from "jotai";
+import {dateAtom} from "@/atom.ts";
 
 let calendarData : Date[];
 let bgColor = "";
@@ -79,7 +80,7 @@ function setSchedule(employeeCode : string, date : Date) {
 
 export function ClockinTimeTable() {
 
-  const {date} = useContext(dateContext);
+  const [date] = useAtom(dateAtom);
   const [dialogEmployee, setDialogEmployee] = useState("");
   const [dialogDate, setDialogDate] = useState(new Date());
   const [open, setOpen] = useState(false);

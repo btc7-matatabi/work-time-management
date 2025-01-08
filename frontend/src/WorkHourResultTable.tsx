@@ -1,7 +1,7 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx"
-import {useContext} from "react";
-import {dateContext} from "./App.tsx";
 import {workContents, workDate, workHourResult} from "@/Data.ts";
+import {useAtom} from "jotai";
+import {dateAtom} from "@/atom.ts";
 
 //サンプルデータ
 
@@ -34,7 +34,7 @@ function setResult(id : number, startDate : Date, endDate : Date) {
 }
 
 export function WorkHourResultTable() {
-  const {date} = useContext(dateContext)
+  const [date] = useAtom(dateAtom)
   const year : number = date.getFullYear();
   const month : number = date.getMonth()+1;
 

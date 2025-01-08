@@ -11,19 +11,16 @@ import {
 } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import {Link} from "react-router-dom";
-
-
-import {useContext} from "react";
-import {dateContext} from "./App.tsx";
-import {selectDateContext} from "./App.tsx";
+import {useAtom} from "jotai";
 
 //サンプルデータ
 import {workCode} from "./Data.ts";
 import {workName} from "./Data.ts";
+import {dateAtom, selectDateAtom} from "@/atom.ts";
 
 export function Header(){
-  const {date, setDate} = useContext(dateContext)
-  const {selectDate} = useContext(selectDateContext)
+  const [date, setDate] = useAtom(dateAtom)
+  const [selectDate] = useAtom(selectDateAtom)
 
   return (
     <div className="flex fixed z-50 bg-slate-300 w-full">

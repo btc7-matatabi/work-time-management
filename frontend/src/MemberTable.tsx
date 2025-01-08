@@ -1,6 +1,6 @@
 import {Table, TableBody, TableHead, TableFooter, TableHeader, TableRow, TableCell} from "@/components/ui/table.tsx";
-import {useContext} from "react";
-import {dateContext} from "./App.tsx";
+import {useAtom} from "jotai";
+import {dateAtom} from "@/atom.ts";
 
 //サンプルデータ
 import {employees} from "@/Data.ts";
@@ -28,7 +28,7 @@ function allSumOverTime() {
 }
 
 export function MemberTable() {
-  const {date} = useContext(dateContext)
+  const [date] = useAtom(dateAtom)
 
   const year : number = date.getFullYear();
   const month : number = date.getMonth()+1;
