@@ -13,18 +13,6 @@ export const selectDateContext = createContext({} as {
   setSelectDate: Dispatch<SetStateAction<Date[]>>
 })
 
-export const dialogEmployeeContext = createContext({} as {
-  dialogEmployee: string
-  setDialogEmployee: Dispatch<SetStateAction<string>>
-})
-
-export const dialogDateContext = createContext({} as {
-  dialogDate: Date
-  setDialogDate: Dispatch<SetStateAction<Date>>
-})
-
-
-
 export function App() {
 
   const dt = new Date();
@@ -37,8 +25,6 @@ export function App() {
 
   const [date, setDate] = useState<Date>(new Date());
   const [selectDate, setSelectDate] = useState<Date[]>(selectDateArr);
-  const [dialogEmployee, setDialogEmployee] = useState<string>("")
-  const [dialogDate, setDialogDate] = useState<Date>(new Date())
 
   useEffect(() => {
 
@@ -47,16 +33,12 @@ export function App() {
   return (
     <dateContext.Provider value={{date, setDate}}>
       <selectDateContext.Provider value={{selectDate, setSelectDate}}>
-        <dialogEmployeeContext.Provider value={{dialogEmployee, setDialogEmployee}}>
-          <dialogDateContext.Provider value={{dialogDate, setDialogDate}}>
-            <BrowserRouter>
-              <Routes>
-                <Route path="/" element={<OverTimePage/>}/>
-                <Route path="/stamp-list" element={<ClockinTimePage/>}/>
-              </Routes>
-            </BrowserRouter>
-          </dialogDateContext.Provider>
-         </dialogEmployeeContext.Provider>
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<OverTimePage/>}/>
+            <Route path="/stamp-list" element={<ClockinTimePage/>}/>
+          </Routes>
+        </BrowserRouter>
       </selectDateContext.Provider>
     </dateContext.Provider>
 )
