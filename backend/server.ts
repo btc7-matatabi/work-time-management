@@ -1,7 +1,7 @@
 import express from "express";
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import db from "./knex";
-import { differenceInMinutes, isAfter, isEqual, addDays } from "date-fns";
+import cors from 'cors';
 import {
     forceFirstDayOfMonth,
     getRegularTimes,
@@ -9,12 +9,13 @@ import {
     setTmpClockInDate,
     updateUnusualSchedules,
     upsertATData,
-    upsertUnusualSchedules,
+    upsertUnusualSchedules, upsertWorkHourResults,
     wrapErrorHandler,
 } from "./utils/funcs";
 
 const app = express();
 app.use(express.json());
+app.use(cors());
 
 app.get("/users/:id/:ymd", wrapErrorHandler(async (req: Request, res: Response) => {
     const { id, ymd } = req.params;
@@ -347,6 +348,59 @@ app.delete("/unusual-schedules/:id",wrapErrorHandler(async (req: Request, res: R
         res.status(400).send({ message: 'NG' });
     }
 }));
+
+app.post('/work-contents', wrapErrorHandler(async (req: Request, res: Response) => {
+    const { group_code, work_content, order_number, total_work_minute, work_hour_results }: WorkContentCreate = req.body;
+    const workContentsCreateObj: WorkContentCreate = { group_code, work_content, order_number, total_work_minute};
+    console.log(`POST /work-contents`);
+
+    const [workContentsId]: { id: number }[] = await db('work_contents')
+        .insert(workContentsCreateObj, ['id']);
+
+    if (workContentsId) {
+        if (work_hour_results?.length) {
+            await upsertWorkHourResults(workContentsId.id, work_hour_results);
+        }
+        res.status(200).send(workContentsId);
+    } else {
+        res.status(400).send({ message: 'NG' });
+    }
+}));
+
+app.post('/work-contents/:id/work-hour-results', wrapErrorHandler(async (req: Request, res: Response) => {
+    const { work_hour_results } = req.body;
+    const workContentsId = Number(req.params.id);
+    console.log(`POST /work-contents/${workContentsId}/work-hour-results`);
+    const checkId: { id: number }[] = await db('work_contents').where('id', workContentsId).select('id');
+
+    if (checkId.length && work_hour_results?.length) {
+        const ids = await upsertWorkHourResults(workContentsId, work_hour_results);
+        res.status(200).send(ids);
+    } else {
+        res.status(400).send({ message: 'NG' });
+    }
+}));
+
+
+// {
+//     "group_code": "LT442",
+//     "work_content": "todo2 ",
+//     "order_number": "0000-0000-1234-5678",
+//     "total_work_minute": 500
+// }
+
+// {
+//     "group_code": "LT442",
+//     "work_content": "todo3 ",
+//     "order_number": "0000-0000-1234-5679",
+//     "total_work_minute": 400,
+//     "work_hour_results": [
+//     { "ymd":"2024-12-02", "work_minute": 20 },
+//     { "ymd":"2024-12-03", "work_minute": 30 },
+//     { "ymd":"2024-12-04", "work_minute": 40 }
+// ]
+// }
+
 
 
 

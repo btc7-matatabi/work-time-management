@@ -153,3 +153,24 @@ export async function upsertUnusualSchedules(obj: UnusualSchedule) {
     }
     return result;
 }
+
+export async function upsertWorkHourResults(workContentsId: number, workHourResults: {ymd: string, work_minute: number, work_contents_id?: number}[]){
+    // console.log("upsertWorkHourResults");
+    const rtn = workHourResults.map(async (workHourResult) => {
+        // console.log("ymd: ", workHourResult.ymd);
+        const checkId: { id: number }[] = await db('work_hour_results')
+            .where('work_contents_id', workContentsId)
+            .andWhere('ymd', workHourResult.ymd)
+            .select('id');
+
+        let result: { id: number };
+        if (checkId.length) {
+            [result] = await db('work_hour_results').update(workHourResult, ['id']).where('id', checkId[0].id);
+        } else {
+            workHourResult["work_contents_id"] = workContentsId;
+            [result] = await db('work_hour_results').insert(workHourResult, ['id']);
+        }
+        return result;
+    });
+    return await Promise.all(rtn);
+}
