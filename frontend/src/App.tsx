@@ -10,7 +10,7 @@ import {
   eventsAtom,
   groupCodeAtom,
   groupInfoAtom, scheduleTypeAtom,
-  workCodesAtom,
+  workCodesAtom, workContentsAtom,
   workDateAtom
 } from "@/atom.ts";
 import {useAtomValue} from "jotai/index";
@@ -25,6 +25,7 @@ export function App() {
   const setWorkDate = useSetAtom(workDateAtom)
   const setEvents = useSetAtom(eventsAtom);
   const setScheduleType = useSetAtom(scheduleTypeAtom);
+  const setWorkContents = useSetAtom(workContentsAtom);
 
   useEffect(() => {
     //仮置き
@@ -52,6 +53,14 @@ export function App() {
       .then(data => {
         if (Array.isArray(data)) {
           setEvents(data)
+        }
+      })
+
+    fetch(`http://localhost:3000/work-contents/${format(paramsDate,"yyyy-MM-dd")}/${"groupCode"}`)
+      .then(response => response.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setWorkContents(data)
         }
       })
 

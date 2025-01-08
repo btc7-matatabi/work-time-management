@@ -1,30 +1,29 @@
 import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx"
 
 //サンプルデータ
-import {workContents} from "@/Data.ts";
-import {workHourResult} from "@/Data.ts";
+import {useAtomValue} from "jotai/index";
+import {workContentsAtom, workHourResultIF} from "@/atom.ts";
 
 //CSS
 const headerCss = "text-center border"
 const contentsCss = "text-center border p-1"
 
-function restWorkHour(id : number, totalTime : number) {
-  return (totalTime * 60) - workHourResult.filter(result => {
-    return result.work_contents_id === id
-  }).reduce((sum, time) => {
+function restWorkHour(totalTime : number, workHourResult:workHourResultIF[]) {
+  return (totalTime * 60) - workHourResult.reduce((sum, time) => {
     return sum + time.work_minute;
   },0)
 }
 
-function totalWorkHour(id : number) {
-  return workHourResult.filter(result => {
-    return result.work_contents_id === id;
-  }).reduce((sum, time) => {
+function totalWorkHour(workHourResult:workHourResultIF[]) {
+  return workHourResult.reduce((sum, time) => {
     return sum + time.work_minute
   },0)
 }
 
 export function WorkContentsTable() {
+
+  const workContents = useAtomValue(workContentsAtom);
+
   return(
     <div className="flex-shrink-0">
       <Table className="bg-gray-50 text-xl overflow-hidden">
@@ -39,8 +38,8 @@ export function WorkContentsTable() {
         </TableHeader>
         <TableBody>
           {workContents.map(((content, index) => {
-            const viewTime = restWorkHour(content.id, content.total_work_minute)
-            const totalMinute = totalWorkHour(content.id)
+            const viewTime = restWorkHour(content.total_work_minute,content.work_hour_results)
+            const totalMinute = totalWorkHour(content.work_hour_results)
             return (
               <TableRow className="h-10" key={index}>
                 <TableCell className={contentsCss}>{content.work_content}</TableCell>

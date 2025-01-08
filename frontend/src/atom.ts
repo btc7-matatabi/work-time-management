@@ -86,3 +86,25 @@ export interface scheduleTypeIF{
 }
 
 export const scheduleTypeAtom = atom<scheduleTypeIF[]>([]);
+
+export interface workContentsIF {
+  id: number;
+  work_content:string;
+  order_number:string;
+  total_work_minute:number;
+  work_hour_results:workHourResultIF[];
+}
+
+export interface workHourResultIF {
+  ymd:string;
+  work_minute:number;
+}
+
+export const workContentsAtom = atom<workContentsIF[]>([]);
+
+export interface sumWorkHourResultIF {
+  work_contents_id: number;
+    sum_work_minute: number;
+}
+
+export const sumWorkHourResultAtom = atom<sumWorkHourResultIF[]>([])
