@@ -422,6 +422,95 @@ app.post('/work-contents/:id/work-hour-results', wrapErrorHandler(async (req: Re
     }
 }));
 
+
+/* 新時間管理システムmocのためのendpoint */
+
+app.get(
+    "/loginUserInfo/:id",
+    wrapErrorHandler(async (req: Request, res: Response) => {
+        const { id } = req.params;
+        console.log(`GET /loginUserInfo/${id}`);
+
+        const data = await db("m_accounts as t1")
+            .join("m_employees as t2", "t1.employee_code", "t2.employee_code")
+            .where("t1.employee_code", id)
+            .select(
+                "t2.employee_code",
+                "t2.group_code",
+            );
+        if (data.length > 0) {
+            res.status(200).send(data);
+        } else {
+            res.status(404).send({ message: "No data found" });
+        }
+    }),
+);
+//get   /groupMemberInfos/:group_code/:yyyy-mm-dd
+app.get(
+    "/groupMemberInfos/:group_code/:ymd",
+    wrapErrorHandler(async (req: Request, res: Response) => {
+        const { group_code, ymd } = req.params;
+        console.log("params group_code:", group_code, " ymd:", ymd);
+        console.log(`GET /groupMemberInfos/${group_code}/${ymd}`);
+
+        const data = await db("m_employees as t1")
+            .where("t1.group_code", group_code) //
+            .select("t1.employee_code", "t1.name");
+        if (data.length > 0) {
+            res.status(200).send(data);
+        } else {
+            res.status(404).send({ message: "No data found" });
+        }
+    }),
+
+    //get   /attendanceInfos/:group_code/:yyyy-mm-dd
+    app.get(
+        "/attendanceInfos/:group_code/:ymd",
+        wrapErrorHandler(async (req: Request, res: Response) => {
+            const { group_code, ymd } = req.params;
+            console.log(`GET /attendanceInfos/${group_code}/${ymd}`);
+
+            const data = await db("m_employees as t1")
+                .leftJoin("attendance_times as t5", "t1.employee_code", "t5.employee_code")
+                .join("m_groups as t2", "t1.group_code", "t2.group_code") // m_groupsと結合
+                .join("m_working_dates as t3", "t2.work_types_id", "t3.work_types_id") // m_working_datesと結合
+                .join("m_work_codes as t4", "t3.work_code", "t4.work_code") // m_work_codesと結合
+                .where("t1.group_code", group_code)
+                .andWhere(function() {
+                    this.where('t5.start_date', ymd)
+                        .orWhereNull('t5.start_date');
+                })
+                .andWhere("t3.ymd", ymd)
+                .select(
+                    "t1.employee_code",
+                    "t1.name",
+                    db.raw("to_char(t5.start_date, 'YYYY-MM-DD') as start_date"), // 必要列: 開始日 start_dateをフォーマット
+                    "t4.work_code",
+                    "t4.start_time as startToWorkTime",
+                    "t4.end_time as endToWorkTime",
+                    db.raw(
+                        "to_char(t5.start_ts AT TIME ZONE 'Asia/Tokyo', 'HH24') as startHour",
+                    ),
+                    db.raw(
+                        "to_char(t5.start_ts AT TIME ZONE 'Asia/Tokyo', 'MI') as startMinute",
+                    ),
+                    db.raw(
+                        "to_char(t5.end_ts AT TIME ZONE 'Asia/Tokyo', 'HH24') as endHour",
+                    ),
+                    db.raw(
+                        "to_char(t5.end_ts AT TIME ZONE 'Asia/Tokyo', 'MI') as endMinute",
+                    ),
+                );
+            // console.log(query.toString());
+            if (data.length > 0) {
+                res.status(200).send(data);
+            } else {
+                res.status(404).send({ message: "No data found" });
+            }
+        }),
+    ),
+);
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server listening on: http://localhost:${PORT}/`);
