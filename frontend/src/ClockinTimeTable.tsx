@@ -1,10 +1,10 @@
 import {useState} from "react";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
-import {workDate, usualSchedule, scheduleType, workCode} from "@/Data.ts";
+import {workDate, usualSchedule, scheduleType} from "@/Data.ts";
 import {DialogDemo} from "@/DialogDemo.tsx";
 import {Dialog, DialogTrigger} from "@/components/ui/dialog.tsx";
 import {useAtom} from "jotai";
-import {dateAtom, employeesAtom, overtimeIF} from "@/atom.ts";
+import {dateAtom, employeesAtom, groupInfoAtom, overtimeIF, workCodesIF} from "@/atom.ts";
 import {useAtomValue} from "jotai/index";
 
 let calendarData : Date[];
@@ -20,7 +20,7 @@ function setCalender(startDate : Date, endDate : Date) {
   }
 }
 
-function setStartTime(overtimes:overtimeIF[], date : Date) {
+function setStartTime(overtimes:overtimeIF[], date : Date, workCodes:workCodesIF[]) {
   startBgColor = "";
   const pickupData = overtimes.filter(val => {
     return new Date(val.start_date).toDateString() === date.toDateString();
@@ -28,7 +28,7 @@ function setStartTime(overtimes:overtimeIF[], date : Date) {
   if (pickupData.length === 1) {
     const startTime = new Date(pickupData[0].start_ts);
     const setWorkCode = workDate.filter(val => new Date(val.ymd).toDateString() === date.toDateString())[0].work_code;
-    const workStartTime = workCode.filter(val => val.work_code === setWorkCode)[0].start_time.split(":");
+    const workStartTime = workCodes.filter(val => val.work_code === setWorkCode)[0].start_time.split(":");
     const comparisonTime = new Date(date);
     comparisonTime.setHours(Number(workStartTime[0]))
     comparisonTime.setMinutes(Number(workStartTime[1]))
@@ -40,7 +40,7 @@ function setStartTime(overtimes:overtimeIF[], date : Date) {
   }
 }
 
-function setEndTime(overtimes:overtimeIF[], date : Date) {
+function setEndTime(overtimes:overtimeIF[], date : Date, workCodes:workCodesIF[]) {
   endBgColor=""
   const pickupData = overtimes.filter(val => {
     return new Date(val.start_date).toDateString() === date.toDateString();
@@ -48,7 +48,7 @@ function setEndTime(overtimes:overtimeIF[], date : Date) {
   if (pickupData.length === 1) {
     const endTime = new Date(pickupData[0].end_ts);
     const setWorkCode = workDate.filter(val => new Date(val.ymd).toDateString() === date.toDateString())[0].work_code;
-    const workEndTime = workCode.filter(val => val.work_code === setWorkCode)[0].end_time.split(":");
+    const workEndTime = workCodes.filter(val => val.work_code === setWorkCode)[0].end_time.split(":");
     const comparisonTime = new Date(date);
     comparisonTime.setHours(Number(workEndTime[0]))
     comparisonTime.setMinutes(Number(workEndTime[1]))
@@ -86,6 +86,7 @@ export function ClockinTimeTable() {
   const [dialogDate, setDialogDate] = useState(new Date());
   const [open, setOpen] = useState(false);
   const employees = useAtomValue(employeesAtom)
+  const groupInfo = useAtomValue(groupInfoAtom)
 
   const year : number = date.getFullYear();
   const month : number = date.getMonth()+1;
@@ -120,8 +121,8 @@ export function ClockinTimeTable() {
                 <TableRow className="bg-white h-8 text-base text-center border-b-2 border-dashed">
                 {calendarData.map(date => {
                   setSchedule(employee.employee_code,date)
-                  const startTime = setStartTime(employee.overtimes,date)
-                  const endTime = setEndTime(employee.overtimes,date)
+                  const startTime = setStartTime(employee.overtimes,date, groupInfo.work_codes)
+                  const endTime = setEndTime(employee.overtimes,date, groupInfo.work_codes)
                   return (
                     <TableCell className={`${bgColor} p-0 border-r-2`}>
                       <TableCell className={`${startBgColor} w-24 h-7 border-r-2 border-dashed p-0`}>{startTime}</TableCell>

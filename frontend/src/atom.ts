@@ -48,3 +48,20 @@ export interface scheduleIF {
 }
 
 export const employeesAtom = atom<employeeIF[]>([])
+
+export const groupCodeAtom = atom<string>("LT442");
+
+export interface groupInfoIF {
+  group_name:string;
+  work_codes:workCodesIF[]
+}
+
+export const groupInfoAtom = atom<groupInfoIF>()
+
+export interface workCodesIF {
+  work_code:string;
+  start_time: string;
+  end_time: string;
+}
+
+export const workCodesAtom = atom<workCodesIF[]>([])

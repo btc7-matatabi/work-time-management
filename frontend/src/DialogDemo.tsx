@@ -13,14 +13,14 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import {Label} from "@/components/ui/label"
-import {scheduleType, usualSchedule, workCode} from "@/Data.ts";
+import {scheduleType, usualSchedule} from "@/Data.ts";
 import {DatePickerWithRange} from "@/DatePickerWithRange.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {DateRange} from "react-day-picker";
 import {format} from "date-fns";
 import {useAtomValue} from "jotai/index";
-import {employeesAtom} from "@/atom.ts";
+import {employeesAtom, workCodesAtom} from "@/atom.ts";
 
 function scheduleRegistration(setOpen:Dispatch<SetStateAction<boolean>>, selectMember:string, date:DateRange | undefined, selectSchedule:string, selectWorkCode:string, description:string) {
 
@@ -78,6 +78,7 @@ export function DialogDemo({dialogEmployee, dialogDate, setOpen}: Props) {
   const [selectWorkCode, setSelectWorkCode] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const employees = useAtomValue(employeesAtom)
+  const workCodes = useAtomValue(workCodesAtom)
 
   useEffect(() => {
     setSelectMember(dialogEmployee)
@@ -128,7 +129,7 @@ export function DialogDemo({dialogEmployee, dialogDate, setOpen}: Props) {
             <SelectValue placeholder={""}/>
           </SelectTrigger>
           <SelectContent>
-            {workCode.map(val => {
+            {workCodes.map(val => {
               return <SelectItem value={val.work_code} className="text-lg">{val.work_code}</SelectItem>
             })}
           </SelectContent>

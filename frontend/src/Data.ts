@@ -45,10 +45,10 @@ export const workName = [
   {name: '2直', work_code: '0002'},
 ]
 
-export const workCode = [
-  { work_code: '0001', start_time: '6:30', end_time: '15:20'},
-  { work_code: '0002', start_time: '16:05', end_time: '0:40'},
-]
+// export const workCode = [
+//   { work_code: '0001', start_time: '6:30', end_time: '15:20'},
+//   { work_code: '0002', start_time: '16:05', end_time: '0:40'},
+// ]
 
 // export const employees = [
 //   { employee_code: '0000013', name: '佐々木', group_code: 'LT442', work_positions_id: 1, paid_holiday: 28},
