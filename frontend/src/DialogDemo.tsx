@@ -20,7 +20,7 @@ import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {DateRange} from "react-day-picker";
 import {format} from "date-fns";
 import {useAtomValue} from "jotai/index";
-import {employeesAtom} from "@/atom.tsx";
+import {employeesAtom} from "@/atom.ts";
 
 function scheduleRegistration(setOpen:Dispatch<SetStateAction<boolean>>, selectMember:string, date:DateRange | undefined, selectSchedule:string, selectWorkCode:string, description:string) {
 

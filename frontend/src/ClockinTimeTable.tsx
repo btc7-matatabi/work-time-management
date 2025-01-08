@@ -1,10 +1,10 @@
 import {useState} from "react";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
-import {workDate, attendanceTime, usualSchedule, scheduleType, workCode} from "@/Data.ts";
+import {workDate, usualSchedule, scheduleType, workCode} from "@/Data.ts";
 import {DialogDemo} from "@/DialogDemo.tsx";
 import {Dialog, DialogTrigger} from "@/components/ui/dialog.tsx";
 import {useAtom} from "jotai";
-import {dateAtom, employeesAtom} from "@/atom.tsx";
+import {dateAtom, employeesAtom, overtimeIF} from "@/atom.ts";
 import {useAtomValue} from "jotai/index";
 
 let calendarData : Date[];
@@ -20,10 +20,10 @@ function setCalender(startDate : Date, endDate : Date) {
   }
 }
 
-function setStartTime(employeeCode : string, date : Date) {
+function setStartTime(overtimes:overtimeIF[], date : Date) {
   startBgColor = "";
-  const pickupData = attendanceTime.filter(val => {
-    return val.employee_code === employeeCode && new Date(val.start_date).toDateString() === date.toDateString();
+  const pickupData = overtimes.filter(val => {
+    return new Date(val.start_date).toDateString() === date.toDateString();
   })
   if (pickupData.length === 1) {
     const startTime = new Date(pickupData[0].start_ts);
@@ -40,10 +40,10 @@ function setStartTime(employeeCode : string, date : Date) {
   }
 }
 
-function setEndTime(employeeCode : string, date : Date) {
+function setEndTime(overtimes:overtimeIF[], date : Date) {
   endBgColor=""
-  const pickupData = attendanceTime.filter(val => {
-    return val.employee_code === employeeCode && new Date(val.start_date).toDateString() === date.toDateString();
+  const pickupData = overtimes.filter(val => {
+    return new Date(val.start_date).toDateString() === date.toDateString();
   })
   if (pickupData.length === 1) {
     const endTime = new Date(pickupData[0].end_ts);
@@ -120,8 +120,8 @@ export function ClockinTimeTable() {
                 <TableRow className="bg-white h-8 text-base text-center border-b-2 border-dashed">
                 {calendarData.map(date => {
                   setSchedule(employee.employee_code,date)
-                  const startTime = setStartTime(employee.employee_code,date)
-                  const endTime = setEndTime(employee.employee_code,date)
+                  const startTime = setStartTime(employee.overtimes,date)
+                  const endTime = setEndTime(employee.overtimes,date)
                   return (
                     <TableCell className={`${bgColor} p-0 border-r-2`}>
                       <TableCell className={`${startBgColor} w-24 h-7 border-r-2 border-dashed p-0`}>{startTime}</TableCell>
