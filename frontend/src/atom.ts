@@ -72,3 +72,10 @@ export interface workDateIF {
 }
 
 export const workDateAtom = atom<workDateIF[]>([])
+
+export interface eventsIF {
+  ymd:string;
+  event_name:string;
+}
+
+export const eventsAtom = atom<eventsIF[]>([])

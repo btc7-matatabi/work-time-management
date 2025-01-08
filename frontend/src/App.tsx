@@ -4,7 +4,15 @@ import {Route, Routes, BrowserRouter} from "react-router-dom"
 import {ClockinTimePage} from "@/ClockinTimePage.tsx";
 import {format} from "date-fns";
 import {useAtom, useSetAtom} from "jotai";
-import {dateAtom, employeesAtom, groupCodeAtom, groupInfoAtom, workCodesAtom, workDateAtom} from "@/atom.ts";
+import {
+  dateAtom,
+  employeesAtom,
+  eventsAtom,
+  groupCodeAtom,
+  groupInfoAtom,
+  workCodesAtom,
+  workDateAtom
+} from "@/atom.ts";
 import {useAtomValue} from "jotai/index";
 
 export function App() {
@@ -15,19 +23,36 @@ export function App() {
   const setWorkCodes = useSetAtom(workCodesAtom)
   const groupCode = useAtomValue(groupCodeAtom);
   const setWorkDate = useSetAtom(workDateAtom)
+  const setEvents = useSetAtom(eventsAtom);
 
   useEffect(() => {
     //仮置き
     const leaderEmployeeCode= "0000013"
-    const paramsDate = new Date(date).setUTCDate(1)
+    const paramsDate = new Date(date).setDate(1)
 
     fetch(`http://localhost:3000/members-overtime/${leaderEmployeeCode}/${format(paramsDate,"yyyy-MM-dd")}`)
       .then(response => response.json())
-      .then(data => setEmployees(data))
+      .then(data => {
+        if (Array.isArray(data)) {
+          setEmployees(data)
+        }
+      })
 
     fetch(`http://localhost:3000/working-dates/${format(paramsDate,"yyyy-MM-dd")}/${groupCode}`)
       .then(response => response.json())
-      .then(data => setWorkDate(data))
+      .then(data =>  {
+        if (Array.isArray(data)) {
+          setWorkDate(data)
+        }
+      })
+
+    fetch(`http://localhost:3000/group-events/${format(paramsDate,"yyyy-MM-dd")}/${groupCode}`)
+      .then(response => response.json())
+      .then(data => {
+        if (Array.isArray(data)) {
+          setEvents(data)
+        }
+      })
 
   }, [date]);
 

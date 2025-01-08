@@ -62,12 +62,12 @@ export const workName = [
 //   { employee_code: '0000021', name: '山崎', group_code: 'LT442', work_positions_id: 5, paid_holiday: 15}
 // ]
 
-export const event = [
-  { group_code: 'LT442', ymd: '2024/12/11', event_name: '安全会議' },
-  { group_code: 'LT442', ymd: '2024/12/12', event_name: '安全MTG' },
-  { group_code: 'LT442', ymd: '2024/12/20', event_name: '原価会議' },
-  { group_code: 'LT442', ymd: '2024/12/25', event_name: '安全会議' }
-]
+// export const event = [
+//   { group_code: 'LT442', ymd: '2024/12/11', event_name: '安全会議' },
+//   { group_code: 'LT442', ymd: '2024/12/12', event_name: '安全MTG' },
+//   { group_code: 'LT442', ymd: '2024/12/20', event_name: '原価会議' },
+//   { group_code: 'LT442', ymd: '2024/12/25', event_name: '安全会議' }
+// ]
 
 // export const attendanceTime = [
 //   { employee_code: '0000013', start_date: '2024/12/2', start_ts: '2024/12/2 06:30:00', end_ts: '2024/12/2 15:20:00', before_overtime_flag: false, after_overtime_flag: false, overtime_minute: 0},
