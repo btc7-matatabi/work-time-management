@@ -139,21 +139,21 @@ export function OverTimeTable() {
               const zebraCss = index % 2 === 0 ? "h-7 bg-gray-200 text-base" : "h-7 text-base"
               return (
                 <>
-                  <TableRow className={zebraCss} key={index}>{overTimeData.map(overTime => {
+                  <TableRow className={zebraCss}>{overTimeData.map((overTime,index) => {
                     if(overTime > 0) {
-                      return <TableCell className="text-center border p-0">{`${Math.floor(overTime/60)}:${('00' + (overTime%60)).slice(-2)}`}</TableCell>
+                      return <TableCell className="text-center border p-0" key={index}>{`${Math.floor(overTime/60)}:${('00' + (overTime%60)).slice(-2)}`}</TableCell>
                     } else if (overTime === 0) {
-                      return <TableCell className="text-center border p-0">0</TableCell>
+                      return <TableCell className="text-center border p-0" key={index}>0</TableCell>
                     } else {
-                      return <TableCell className="border p-0"></TableCell>
+                      return <TableCell className="border p-0" key={index}></TableCell>
                     }
                   })}</TableRow>
-                  <TableRow className={zebraCss}>{scheduleData.map(schedule => {
+                  <TableRow className={zebraCss}>{scheduleData.map((schedule,index) => {
                     if(schedule !== "") {
                       const textColorCss = schedule === "年休" ? "text-center border p-0 text-red-500" : "text-center border p-0"
-                      return <TableCell className={textColorCss}>{schedule}</TableCell>
+                      return <TableCell className={textColorCss} key={index}>{schedule}</TableCell>
                     } else {
-                      return <TableCell className="text-center border p-0 "></TableCell>
+                      return <TableCell className="text-center border p-0" key={index}></TableCell>
                     }
                   })}</TableRow>
                 </>
@@ -162,11 +162,11 @@ export function OverTimeTable() {
           </TableBody>
           <TableFooter>
             <TableRow className="text-center h-14 bg-gray-400">
-              {sumOverTimeData.map(overTime => {
+              {sumOverTimeData.map((overTime, index) => {
                 if (overTime > 0) {
-                  return <TableCell className="text-center border p-0">{`${Math.floor(overTime/60)}:${('00' + (overTime%60)).slice(-2)}`}</TableCell>
+                  return <TableCell className="text-center border p-0" key={index}>{`${Math.floor(overTime/60)}:${('00' + (overTime%60)).slice(-2)}`}</TableCell>
                 } else {
-                  return <TableCell className="text-center border p-0"></TableCell>
+                  return <TableCell className="text-center border p-0" key={index}></TableCell>
                 }
               })}
             </TableRow>
