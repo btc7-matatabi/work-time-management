@@ -13,7 +13,7 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import {Label} from "@/components/ui/label"
-import {scheduleType, usualSchedule} from "@/Data.ts";
+import {scheduleType} from "@/Data.ts";
 import {DatePickerWithRange} from "@/DatePickerWithRange.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
@@ -50,7 +50,7 @@ function scheduleRegistration(setOpen:Dispatch<SetStateAction<boolean>>, selectM
       inputObj.schedule_description = description;
     }
 
-    usualSchedule.push(inputObj);
+    // usualSchedule.push(inputObj);
   }
 
   if (inputDate !== undefined && date?.to === undefined) {

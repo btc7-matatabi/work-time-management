@@ -1,10 +1,18 @@
 import {useState} from "react";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
-import {usualSchedule, scheduleType} from "@/Data.ts";
 import {DialogDemo} from "@/DialogDemo.tsx";
 import {Dialog, DialogTrigger} from "@/components/ui/dialog.tsx";
 import {useAtom} from "jotai";
-import {dateAtom, employeesAtom, groupInfoAtom, overtimeIF, workCodesIF, workDateAtom, workDateIF} from "@/atom.ts";
+import {
+  dateAtom,
+  employeesAtom,
+  groupInfoAtom,
+  overtimeIF,
+  scheduleIF,
+  workCodesIF,
+  workDateAtom,
+  workDateIF
+} from "@/atom.ts";
 import {useAtomValue} from "jotai/index";
 
 let calendarData : Date[];
@@ -65,20 +73,18 @@ function setEndTime(overtimes:overtimeIF[], date : Date, workCodes:workCodesIF[]
   }
 }
 
-function setSchedule(employeeCode : string, date : Date) {
+function setSchedule(date : Date, schedules:scheduleIF[]) {
   bgColor=""
-  const pickupSchedule = usualSchedule.filter(val => {
-    return val.employee_code === employeeCode && new Date(val.ymd).toDateString() === date.toDateString()
+  const pickupSchedule = schedules.filter(val => {
+    return new Date(val.ymd).toDateString() === date.toDateString()
   })
   if (pickupSchedule.length === 1) {
-    if (pickupSchedule[0].schedule_types_id === 2) {
+    if (pickupSchedule[0].name === "年休") {
       bgColor = "bg-red-200"
     } else {
       bgColor = "bg-gray-300"
     }
-    return scheduleType.filter(val => {
-      return val.id === pickupSchedule[0].schedule_types_id
-    })[0].name
+    return pickupSchedule[0].name
   }
 }
 
@@ -124,7 +130,6 @@ export function ClockinTimeTable() {
               <>
                 <TableRow className="bg-white h-8 text-base text-center border-b-2 border-dashed">
                 {calendarData.map(date => {
-                  setSchedule(employee.employee_code,date)
                   let startTime = "";
                   let endTime = "";
                   if (groupInfo?.work_codes !== undefined) {
@@ -141,7 +146,7 @@ export function ClockinTimeTable() {
                 </TableRow>
                 <TableRow className="h-8 text-base text-center">
                   {calendarData.map(date => {
-                    const schedule = setSchedule(employee.employee_code,date)
+                    const schedule = setSchedule(date, employee.schedules)
                       return (
                           <DialogTrigger asChild>
                             <TableCell className={`${bgColor} h-6 border-r-2 border-b-2 p-0`} onClick={() => {

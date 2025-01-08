@@ -119,27 +119,27 @@ export const workName = [
 //   { employee_code: '0000021', start_date: '2024/12/6', start_ts: '2024/12/6 06:30:00', end_ts: '2024/12/6 15:20:00', before_overtime_flag: false, after_overtime_flag: false, overtime_minute: 0},
 // ]
 
-interface Obj {
-  employee_code: string;
-  ymd: string;
-  schedule_types_id: number;
-  work_code?: string;
-  schedule_description?: string;
-}
+// interface Obj {
+//   employee_code: string;
+//   ymd: string;
+//   schedule_types_id: number;
+//   work_code?: string;
+//   schedule_description?: string;
+// }
 
-export const usualSchedule:Obj[] = [
-  { employee_code: '0000015', ymd: '2024/12/5', schedule_types_id: 2 },
-  { employee_code: '0000019', ymd: '2024/12/5', schedule_types_id: 2 },
-  { employee_code: '0000016', ymd: '2024/12/11', schedule_types_id: 2 },
-  { employee_code: '0000019', ymd: '2024/12/11', schedule_types_id: 2 },
-  { employee_code: '0000018', ymd: '2024/12/18', schedule_types_id: 2 },
-  { employee_code: '0000019', ymd: '2024/12/20', schedule_types_id: 2 },
-  { employee_code: '0000021', ymd: '2024/12/18', schedule_types_id: 5, work_code: 'B1VA', schedule_description: 'DIG入門' },
-  { employee_code: '0000021', ymd: '2024/12/19', schedule_types_id: 5, work_code: 'B1VA', schedule_description: 'DIG入門' },
-  { employee_code: '0000021', ymd: '2024/12/20', schedule_types_id: 5, work_code: 'B1VA', schedule_description: 'DIG入門' },
-  { employee_code: '0000016', ymd: '2024/12/25', schedule_types_id: 2 },
-  { employee_code: '0000020', ymd: '2024/12/27', schedule_types_id: 2 }
-]
+// export const usualSchedule:Obj[] = [
+//   { employee_code: '0000015', ymd: '2024/12/5', schedule_types_id: 2 },
+//   { employee_code: '0000019', ymd: '2024/12/5', schedule_types_id: 2 },
+//   { employee_code: '0000016', ymd: '2024/12/11', schedule_types_id: 2 },
+//   { employee_code: '0000019', ymd: '2024/12/11', schedule_types_id: 2 },
+//   { employee_code: '0000018', ymd: '2024/12/18', schedule_types_id: 2 },
+//   { employee_code: '0000019', ymd: '2024/12/20', schedule_types_id: 2 },
+//   { employee_code: '0000021', ymd: '2024/12/18', schedule_types_id: 5, work_code: 'B1VA', schedule_description: 'DIG入門' },
+//   { employee_code: '0000021', ymd: '2024/12/19', schedule_types_id: 5, work_code: 'B1VA', schedule_description: 'DIG入門' },
+//   { employee_code: '0000021', ymd: '2024/12/20', schedule_types_id: 5, work_code: 'B1VA', schedule_description: 'DIG入門' },
+//   { employee_code: '0000016', ymd: '2024/12/25', schedule_types_id: 2 },
+//   { employee_code: '0000020', ymd: '2024/12/27', schedule_types_id: 2 }
+// ]
 
 export const scheduleType = [
   { id: 1, name: '特休' },
