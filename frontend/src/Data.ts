@@ -50,17 +50,17 @@ export const workCode = [
   { work_code: '0002', start_time: '16:05', end_time: '0:40'},
 ]
 
-export const employees = [
-  { employee_code: '0000013', name: '佐々木', group_code: 'LT442', work_positions_id: 1, paid_holiday: 28},
-  { employee_code: '0000014', name: '山口', group_code: 'LT442', work_positions_id: 2, paid_holiday: 19},
-  { employee_code: '0000015', name: '松本', group_code: 'LT442', work_positions_id: 2, paid_holiday: 34.5},
-  { employee_code: '0000016', name: '井上', group_code: 'LT442', work_positions_id: 3, paid_holiday: 10.5},
-  { employee_code: '0000017', name: '木村', group_code: 'LT442', work_positions_id: 4, paid_holiday: 33},
-  { employee_code: '0000018', name: '林', group_code: 'LT442', work_positions_id: 4, paid_holiday: 32},
-  { employee_code: '0000019', name: '斎藤', group_code: 'LT442', work_positions_id: 4, paid_holiday: 14.5},
-  { employee_code: '0000020', name: '清水', group_code: 'LT442', work_positions_id: 5, paid_holiday: 27},
-  { employee_code: '0000021', name: '山崎', group_code: 'LT442', work_positions_id: 5, paid_holiday: 15}
-]
+// export const employees = [
+//   { employee_code: '0000013', name: '佐々木', group_code: 'LT442', work_positions_id: 1, paid_holiday: 28},
+//   { employee_code: '0000014', name: '山口', group_code: 'LT442', work_positions_id: 2, paid_holiday: 19},
+//   { employee_code: '0000015', name: '松本', group_code: 'LT442', work_positions_id: 2, paid_holiday: 34.5},
+//   { employee_code: '0000016', name: '井上', group_code: 'LT442', work_positions_id: 3, paid_holiday: 10.5},
+//   { employee_code: '0000017', name: '木村', group_code: 'LT442', work_positions_id: 4, paid_holiday: 33},
+//   { employee_code: '0000018', name: '林', group_code: 'LT442', work_positions_id: 4, paid_holiday: 32},
+//   { employee_code: '0000019', name: '斎藤', group_code: 'LT442', work_positions_id: 4, paid_holiday: 14.5},
+//   { employee_code: '0000020', name: '清水', group_code: 'LT442', work_positions_id: 5, paid_holiday: 27},
+//   { employee_code: '0000021', name: '山崎', group_code: 'LT442', work_positions_id: 5, paid_holiday: 15}
+// ]
 
 export const event = [
   { group_code: 'LT442', ymd: '2024/12/11', event_name: '安全会議' },

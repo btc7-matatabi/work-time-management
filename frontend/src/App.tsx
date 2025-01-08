@@ -1,45 +1,32 @@
-import {createContext, useEffect, useState, Dispatch, SetStateAction} from 'react'
+import {useEffect} from 'react'
 import {OverTimePage} from "@/OverTimePage.tsx";
 import {Route, Routes, BrowserRouter} from "react-router-dom"
 import {ClockinTimePage} from "@/ClockinTimePage.tsx";
-
-export const dateContext = createContext({} as {
-  date: Date
-  setDate: Dispatch<SetStateAction<Date>>
-})
-
-export const selectDateContext = createContext({} as {
-  selectDate: Date[]
-  setSelectDate: Dispatch<SetStateAction<Date[]>>
-})
+import {format} from "date-fns";
+import {useAtom, useSetAtom} from "jotai";
+import {dateAtom, employeesAtom} from "@/atom.tsx";
 
 export function App() {
 
-  const dt = new Date();
-  const selectDateArr:Date[] = [];
-  dt.setMonth(dt.getMonth() - 2);
-  for (let i = 0; i < 3; i++) {
-    dt.setMonth(dt.getMonth() + 1)
-    selectDateArr.push(new Date(dt))
-  }
-
-  const [date, setDate] = useState<Date>(new Date());
-  const [selectDate, setSelectDate] = useState<Date[]>(selectDateArr);
+  const [date] = useAtom(dateAtom);
+  const setEmployees = useSetAtom(employeesAtom)
 
   useEffect(() => {
+    //仮置き
+    const leaderEmployeeCode= "0000013"
+    const paramsDate = new Date(date).setUTCDate(1)
 
-  }, []);
+    fetch(`http://localhost:3000/members-overtime/${leaderEmployeeCode}/${format(paramsDate,"yyyy-MM-dd")}`)
+      .then(response => response.json())
+      .then(data => setEmployees(data))
+  }, [date]);
 
   return (
-    <dateContext.Provider value={{date, setDate}}>
-      <selectDateContext.Provider value={{selectDate, setSelectDate}}>
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<OverTimePage/>}/>
-            <Route path="/stamp-list" element={<ClockinTimePage/>}/>
-          </Routes>
-        </BrowserRouter>
-      </selectDateContext.Provider>
-    </dateContext.Provider>
+    <BrowserRouter>
+      <Routes>
+        <Route path="/" element={<OverTimePage/>}/>
+        <Route path="/stamp-list" element={<ClockinTimePage/>}/>
+      </Routes>
+    </BrowserRouter>
 )
 }

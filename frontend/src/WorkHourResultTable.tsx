@@ -1,7 +1,7 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx"
-import {useContext} from "react";
-import {dateContext} from "./App.tsx";
 import {workContents, workDate, workHourResult} from "@/Data.ts";
+import {useAtom} from "jotai";
+import {dateAtom} from "@/atom.tsx";
 
 //サンプルデータ
 
@@ -34,7 +34,7 @@ function setResult(id : number, startDate : Date, endDate : Date) {
 }
 
 export function WorkHourResultTable() {
-  const {date} = useContext(dateContext)
+  const [date] = useAtom(dateAtom)
   const year : number = date.getFullYear();
   const month : number = date.getMonth()+1;
 
@@ -66,20 +66,20 @@ export function WorkHourResultTable() {
         </TableHeader>
         <TableBody>
           {
-            workContents.map(content => {
+            workContents.map((content,index) => {
               setResult(content.id,new Date(startDate),new Date(endDate));
               return (
-              <TableRow key={content.id} className="h-10">
-                {resultTime.map(time => {
+              <TableRow key={index} className="h-10">
+                {resultTime.map((time, index) => {
                   if (time > 0) {
                     return (
-                      <TableCell className="text-center border p-1">
+                      <TableCell className="text-center border p-1" key={index}>
                         {`${Math.floor(time/60)}:${('00' + (time%60)).slice(-2)}`}
                       </TableCell>
                     )
                   } else {
                     return (
-                      <TableCell className="text-center border p-1"></TableCell>
+                      <TableCell className="text-center border p-1" key={index}></TableCell>
                     )
                   }
                 })}

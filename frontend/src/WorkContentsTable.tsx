@@ -38,11 +38,11 @@ export function WorkContentsTable() {
           </TableRow>
         </TableHeader>
         <TableBody>
-          {workContents.map((content => {
+          {workContents.map(((content, index) => {
             const viewTime = restWorkHour(content.id, content.total_work_minute)
             const totalMinute = totalWorkHour(content.id)
             return (
-              <TableRow className="h-10">
+              <TableRow className="h-10" key={index}>
                 <TableCell className={contentsCss}>{content.work_content}</TableCell>
                 <TableCell className={contentsCss}>{content.order_number}</TableCell>
                 <TableCell className={contentsCss}>{content.total_work_minute}</TableCell>
