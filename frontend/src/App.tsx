@@ -9,7 +9,7 @@ import {
   employeesAtom,
   eventsAtom,
   groupCodeAtom,
-  groupInfoAtom,
+  groupInfoAtom, scheduleTypeAtom,
   workCodesAtom,
   workDateAtom
 } from "@/atom.ts";
@@ -24,6 +24,7 @@ export function App() {
   const groupCode = useAtomValue(groupCodeAtom);
   const setWorkDate = useSetAtom(workDateAtom)
   const setEvents = useSetAtom(eventsAtom);
+  const setScheduleType = useSetAtom(scheduleTypeAtom);
 
   useEffect(() => {
     //仮置き
@@ -65,6 +66,10 @@ export function App() {
     fetch(`http://localhost:3000/work-codes`)
       .then(response => response.json())
       .then(data => setWorkCodes(data))
+
+    fetch(`http://localhost:3000/schedule-types`)
+      .then(response => response.json())
+      .then(data => setScheduleType(data))
   }, []);
 
   return (

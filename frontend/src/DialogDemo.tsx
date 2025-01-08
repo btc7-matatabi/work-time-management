@@ -13,14 +13,13 @@ import {
   SelectValue,
 } from "@/components/ui/select"
 import {Label} from "@/components/ui/label"
-import {scheduleType} from "@/Data.ts";
 import {DatePickerWithRange} from "@/DatePickerWithRange.tsx";
 import {Textarea} from "@/components/ui/textarea.tsx";
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {DateRange} from "react-day-picker";
 import {format} from "date-fns";
 import {useAtomValue} from "jotai/index";
-import {employeesAtom, workCodesAtom} from "@/atom.ts";
+import {employeesAtom, scheduleTypeAtom, workCodesAtom} from "@/atom.ts";
 
 function scheduleRegistration(setOpen:Dispatch<SetStateAction<boolean>>, selectMember:string, date:DateRange | undefined, selectSchedule:string, selectWorkCode:string, description:string) {
 
@@ -79,6 +78,7 @@ export function DialogDemo({dialogEmployee, dialogDate, setOpen}: Props) {
   const [description, setDescription] = useState<string>("");
   const employees = useAtomValue(employeesAtom)
   const workCodes = useAtomValue(workCodesAtom)
+  const scheduleType = useAtomValue(scheduleTypeAtom)
 
   useEffect(() => {
     setSelectMember(dialogEmployee)

@@ -78,4 +78,11 @@ export interface eventsIF {
   event_name:string;
 }
 
-export const eventsAtom = atom<eventsIF[]>([])
+export const eventsAtom = atom<eventsIF[]>([]);
+
+export interface scheduleTypeIF{
+  id:number;
+  name: string;
+}
+
+export const scheduleTypeAtom = atom<scheduleTypeIF[]>([]);

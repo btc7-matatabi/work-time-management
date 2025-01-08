@@ -141,17 +141,17 @@ export const workName = [
 //   { employee_code: '0000020', ymd: '2024/12/27', schedule_types_id: 2 }
 // ]
 
-export const scheduleType = [
-  { id: 1, name: '特休' },
-  { id: 2, name: '年休' },
-  { id: 3, name: '午前年休' },
-  { id: 4, name: '午後年休' },
-  { id: 5, name: '教育' },
-  { id: 6, name: '健診' },
-  { id: 7, name: '研修' },
-  { id: 8, name: '出張' },
-  { id: 9, name: 'その他'}
-]
+// export const scheduleType = [
+//   { id: 1, name: '特休' },
+//   { id: 2, name: '年休' },
+//   { id: 3, name: '午前年休' },
+//   { id: 4, name: '午後年休' },
+//   { id: 5, name: '教育' },
+//   { id: 6, name: '健診' },
+//   { id: 7, name: '研修' },
+//   { id: 8, name: '出張' },
+//   { id: 9, name: 'その他'}
+// ]
 
 export const workContents = [
   { id: 1, group_code: 'LT441', work_content: 'TODO_1 hogehoge', order_number: '0000-0000-0000-0000', total_work_minute: 360 }
