@@ -57,4 +57,4 @@ export async function seed(knex: Knex): Promise<void> {
         { employee_code: '0000047', name: '岡本', group_code: 'PW443', work_positions_id: 6, paid_holiday: 18},
         { employee_code: '0000048', name: '藤原', group_code: 'PW443', work_positions_id: 6, paid_holiday: 16}
     ]);
-};
+}

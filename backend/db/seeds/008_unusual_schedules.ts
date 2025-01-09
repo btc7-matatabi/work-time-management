@@ -18,4 +18,4 @@ export async function seed(knex: Knex): Promise<void> {
         { employee_code: '0000016', ymd: '2024/12/25', schedule_types_id: 2 },
         { employee_code: '0000020', ymd: '2024/12/27', schedule_types_id: 2 }
     ]);
-};
+}

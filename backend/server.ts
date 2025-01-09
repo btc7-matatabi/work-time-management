@@ -18,6 +18,21 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
+app.get("/users/:employeeCode/groups", wrapErrorHandler(async (req: Request, res: Response) => {
+    const employeeCode = req.params.employeeCode;
+    console.log(`GET /users/${employeeCode}/groups`);
+    const [groupCode]: { group_code: string }[] = await db('m_employees as t1')
+        .where('t1.employee_code', employeeCode) // 社員コードでフィルタリング
+        .select(
+            't1.group_code',    // 必要な列: グループコード
+        );
+    if (groupCode) {
+        res.status(200).send(groupCode);
+    } else {
+        res.status(404).send({ message: 'No data found' });
+    }
+}));
+
 app.get("/users/:id/:ymd", wrapErrorHandler(async (req: Request, res: Response) => {
     const { id, ymd } = req.params;
     console.log(`GET /users/${id}/${ymd}`);
