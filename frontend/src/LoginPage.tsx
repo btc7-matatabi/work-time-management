@@ -31,6 +31,7 @@ export default function LoginPage() {
           setOrgCd(Data[0].group_code);
           setleaderEmployeeCode(Data[0].employee_code);
           localStorage.setItem("orgCd", Data[0].group_code);
+          localStorage.setItem("leaderEmployeeCode", Data[0].employee_code);
           navigate("/overtime-list"); // ログイン成功時にリダイレクト
         }
       } else {

@@ -112,6 +112,7 @@ export interface workNameIF {
   work_code:string;
 }
 
+//todo データ変更（色情報追加）
 export const workNameAtom = atom<workNameIF[]>([
   {name: '1直', work_code: '0001'},
   {name: '2直', work_code: '0002'},
@@ -119,3 +120,5 @@ export const workNameAtom = atom<workNameIF[]>([
 
 export const orgCdAtom = atom<string>("");
 export const leaderEmployeeCodeAtom = atom<string>("");
+
+export const updateAtom = atom<boolean>(false);

@@ -67,9 +67,7 @@ function setEndTime(overtimes:overtimeIF[], date : Date, workCodes:workCodesIF[]
     if (pickupData[0].after_overtime_flag) {
       endBgColor = "bg-yellow-100"
     }
-    console.log(endTime.getMinutes())
     return `${endTime.getHours()}:${endTime.getMinutes().toString().padStart(2, '0')}`
-    //`${endTime.getHours()}:${endTime.getMinutes()}`
   } else {
     return ""
   }

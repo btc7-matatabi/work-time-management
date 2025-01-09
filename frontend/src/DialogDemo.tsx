@@ -18,10 +18,10 @@ import {Textarea} from "@/components/ui/textarea.tsx";
 import {Dispatch, SetStateAction, useEffect, useState} from "react";
 import {DateRange} from "react-day-picker";
 import {format} from "date-fns";
-import {useAtomValue} from "jotai/index";
-import {employeesAtom, scheduleTypeAtom, workCodesAtom} from "@/atom.ts";
+import {useAtomValue, useSetAtom} from "jotai";
+import {employeesAtom, scheduleTypeAtom, updateAtom, workCodesAtom} from "@/atom.ts";
 
-function scheduleRegistration(setOpen:Dispatch<SetStateAction<boolean>>, selectMember:string, date:DateRange | undefined, selectSchedule:string, selectWorkCode:string, description:string) {
+function scheduleRegistration(setOpen:Dispatch<SetStateAction<boolean>>, selectMember:string, date:DateRange | undefined, selectSchedule:string, selectWorkCode:string, description:string, setUpdate:Dispatch<SetStateAction<boolean>>) {
 
   const inputDate = date?.from
 
@@ -49,7 +49,14 @@ function scheduleRegistration(setOpen:Dispatch<SetStateAction<boolean>>, selectM
       inputObj.schedule_description = description;
     }
 
-    // usualSchedule.push(inputObj);
+    const params = {
+      method : "POST",
+      body : JSON.stringify(inputObj),
+      headers: {
+        "Content-Type": "application/json",
+      }};
+    fetch(`${process.env.VITE_URL}/unusual-schedules`, params)
+      .then(() => setUpdate(true))
   }
 
   if (inputDate !== undefined && date?.to === undefined) {
@@ -79,6 +86,7 @@ export function DialogDemo({dialogEmployee, dialogDate, setOpen}: Props) {
   const employees = useAtomValue(employeesAtom)
   const workCodes = useAtomValue(workCodesAtom)
   const scheduleType = useAtomValue(scheduleTypeAtom)
+  const setUpdate = useSetAtom(updateAtom);
 
   useEffect(() => {
     setSelectMember(dialogEmployee)
@@ -138,7 +146,7 @@ export function DialogDemo({dialogEmployee, dialogDate, setOpen}: Props) {
         <Textarea className="text-2xl col-span-3 bg-white" onChange={e => setDescription(e.target.value)}/>
       </div>
       <DialogFooter>
-        <Button type="button" className="bg-blue-500 text-2xl h-10" onClick={() => scheduleRegistration(setOpen, selectMember, date, selectSchedule, selectWorkCode, description)}>登録する</Button>
+        <Button type="button" className="bg-blue-500 text-2xl h-10" onClick={() => scheduleRegistration(setOpen, selectMember, date, selectSchedule, selectWorkCode, description, setUpdate)}>登録する</Button>
       </DialogFooter>
     </DialogContent>
   )
