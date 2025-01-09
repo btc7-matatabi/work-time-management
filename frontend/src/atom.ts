@@ -49,8 +49,6 @@ export interface scheduleIF {
 
 export const employeesAtom = atom<employeeIF[]>([])
 
-export const groupCodeAtom = atom<string>("LT442");
-
 export interface groupInfoIF {
   group_name:string;
   work_codes:workCodesIF[]
@@ -118,3 +116,6 @@ export const workNameAtom = atom<workNameIF[]>([
   {name: '1直', work_code: '0001'},
   {name: '2直', work_code: '0002'},
 ])
+
+export const orgCdAtom = atom<string>("");
+export const leaderEmployeeCodeAtom = atom<string>("");

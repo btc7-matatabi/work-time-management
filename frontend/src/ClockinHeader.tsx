@@ -47,7 +47,7 @@ export function ClockinHeader() {
       <h3 className="scroll-m-20 text-xl font-semibold tracking-tight mt-5 mb-5 p-1 bg-gray-50  rounded-r-lg">
         {`${groupInfo?.work_codes[1].start_time.slice(0,5)}~${groupInfo?.work_codes[1].start_time.slice(0,5)}`}
       </h3>
-      <Link to="/">
+      <Link to="/overtime-list">
         <Button className="bg-gray-500 m-6 text-xl">戻る</Button>
       </Link>
     </div>
