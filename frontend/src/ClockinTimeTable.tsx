@@ -41,10 +41,10 @@ function setStartTime(overtimes:overtimeIF[], date : Date, workCodes:workCodesIF
     comparisonTime.setHours(Number(workStartTime[0]))
     comparisonTime.setMinutes(Number(workStartTime[1]))
     comparisonTime.setSeconds(0)
-    if (startTime.getTime() < comparisonTime.getTime()) {
+    if (pickupData[0].before_overtime_flag) {
       startBgColor = "bg-yellow-100"
     }
-    return `${startTime.getHours()}:${startTime.getMinutes()}`
+    return `${startTime.getHours()}:${startTime.getMinutes().toString().padStart(2, '0')}`
   } else {
     return ""
   }
@@ -64,10 +64,10 @@ function setEndTime(overtimes:overtimeIF[], date : Date, workCodes:workCodesIF[]
     comparisonTime.setMinutes(Number(workEndTime[1]))
     comparisonTime.setSeconds(0)
 
-    if (endTime.getTime() > comparisonTime.getTime()) {
+    if (pickupData[0].after_overtime_flag) {
       endBgColor = "bg-yellow-100"
     }
-    return `${endTime.getHours()}:${endTime.getMinutes()}`
+    return `${endTime.getHours()}:${endTime.getMinutes().toString().padStart(2, '0')}`
   } else {
     return ""
   }

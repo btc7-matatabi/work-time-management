@@ -8,11 +8,10 @@ import {
   dateAtom,
   employeesAtom,
   eventsAtom,
-  groupInfoAtom, leaderEmployeeCodeAtom, orgCdAtom, scheduleTypeAtom, sumWorkHourResultAtom,
+  groupInfoAtom, leaderEmployeeCodeAtom, orgCdAtom, scheduleTypeAtom, sumWorkHourResultAtom, updateAtom,
   workCodesAtom, workContentsAtom,
   workDateAtom
 } from "@/atom.ts";
-import {useAtomValue} from "jotai/index";
 import LoginPage from "@/LoginPage.tsx";
 
 const URL = process.env.VITE_URL;
@@ -28,16 +27,27 @@ export function App() {
   const setScheduleType = useSetAtom(scheduleTypeAtom);
   const setWorkContents = useSetAtom(workContentsAtom);
   const [sumWorkHourResult, setSumWorkHourResult] = useAtom(sumWorkHourResultAtom);
-  const groupCode = useAtomValue(orgCdAtom);
-  const leaderEmployeeCode = useAtomValue(leaderEmployeeCodeAtom);
+  const [groupCode, setGroupCode] = useAtom(orgCdAtom);
+  const [leaderEmployeeCode, setLeaderEmployeeCode] = useAtom(leaderEmployeeCodeAtom);
+  const [update, setUpdate] = useAtom(updateAtom);
 
-  console.log(groupCode);
-  console.log(leaderEmployeeCode);
+
 
   useEffect(() => {
-    //仮置き
-    const paramsDate = new Date(date).setDate(1)
+    const groupCodeResult = localStorage.getItem("orgCd")
+    const leaderEmployeeCodeResult = localStorage.getItem("leaderEmployeeCode")
+    if (groupCodeResult !== null && groupCode === "") {
+      setGroupCode(groupCodeResult)
+    }
+    if (leaderEmployeeCodeResult !== null && leaderEmployeeCode === "") {
+      setLeaderEmployeeCode(leaderEmployeeCodeResult)
+    }
+  }, []);
 
+  useEffect(() => {
+
+    const paramsDate = new Date(date).setDate(1)
+    //組メンバー情報
     fetch(`${URL}/members-overtime/${leaderEmployeeCode}/${format(paramsDate,"yyyy-MM-dd")}`)
       .then(response => response.json())
       .then(data => {
@@ -45,7 +55,15 @@ export function App() {
           setEmployees(data)
         }
       })
+    setUpdate(false)
 
+  }, [date,leaderEmployeeCode,update]);
+
+  useEffect(() => {
+
+    const paramsDate = new Date(date).setDate(1)
+
+    //稼働日情報
     fetch(`${URL}/working-dates/${format(paramsDate,"yyyy-MM-dd")}/${groupCode}`)
       .then(response => response.json())
       .then(data =>  {
@@ -54,6 +72,7 @@ export function App() {
         }
       })
 
+    //組行事情報
     fetch(`${URL}/group-events/${format(paramsDate,"yyyy-MM-dd")}/${groupCode}`)
       .then(response => response.json())
       .then(data => {
@@ -62,6 +81,7 @@ export function App() {
         }
       })
 
+    //作業項目情報
     fetch(`${URL}/work-contents/${format(paramsDate,"yyyy-MM-dd")}/${groupCode}`)
     // fetch(`http://localhost:3000/work-contents/${format(paramsDate,"yyyy-MM-dd")}/LT441`)
       .then(response => response.json())
@@ -79,7 +99,8 @@ export function App() {
   }, [date,groupCode,leaderEmployeeCode]);
 
   useEffect(() => {
-    //仮置き
+
+    //組情報
     fetch(`${URL}/groups/${groupCode}`)
       .then(response => response.json())
       .then(data => setGroupInfo(data))

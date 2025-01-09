@@ -52,7 +52,7 @@ export function Header(){
         {workName[1].name}
       </h3>
       <h3 className="scroll-m-20 text-xl font-semibold tracking-tight mt-5 mb-5 p-1 bg-gray-50  rounded-r-lg">
-        {`${groupInfo?.work_codes[1]?.start_time.slice(0,5)}~${groupInfo?.work_codes[1].end_time.slice(0,5)}`}
+        {`${groupInfo?.work_codes[2]?.start_time.slice(0,5)}~${groupInfo?.work_codes[2].end_time.slice(0,5)}`}
       </h3>
       <Link to="/stamp-list">
         <Button className="bg-gray-500 m-6 text-xl">始業 終業時刻一覧へ</Button>
