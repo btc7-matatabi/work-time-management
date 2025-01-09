@@ -1,15 +1,15 @@
 import {Button} from "@/components/ui/button.tsx";
 import {Link} from "react-router-dom";
-import {workName} from "@/Data.ts";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {useAtom, useAtomValue} from "jotai/index";
-import {dateAtom, groupInfoAtom, selectDateAtom} from "@/atom.ts";
+import {dateAtom, groupInfoAtom, selectDateAtom, workNameAtom} from "@/atom.ts";
 
 export function ClockinHeader() {
 
   const [date, setDate] = useAtom(dateAtom);
   const [selectDate] = useAtom(selectDateAtom);
   const groupInfo = useAtomValue(groupInfoAtom)
+  const workName = useAtomValue(workNameAtom);
 
   return (
     <div className="flex">

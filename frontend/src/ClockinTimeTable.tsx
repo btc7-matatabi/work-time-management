@@ -130,6 +130,7 @@ export function ClockinTimeTable() {
               <>
                 <TableRow className="bg-white h-8 text-base text-center border-b-2 border-dashed">
                 {calendarData.map(date => {
+                  setSchedule(date, employee.schedules)
                   let startTime = "";
                   let endTime = "";
                   if (groupInfo?.work_codes !== undefined) {

@@ -89,6 +89,15 @@ export function WorkHourResultTable() {
               </TableRow>
               )})
           }
+          {[...Array(10-workContents.length)].map(val => {
+            return(
+              <TableRow key={val} className="h-10">
+                {[...Array(((endDate.getTime()-startDate.getTime()) / 1000 / 60 / 60 / 24) + 1)].map(val => {
+                  return <TableCell className="text-center border p-1" key={val}></TableCell>
+                })}
+              </TableRow>
+            )
+          })}
         </TableBody>
       </Table>
     </div>

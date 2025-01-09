@@ -108,3 +108,13 @@ export interface sumWorkHourResultIF {
 }
 
 export const sumWorkHourResultAtom = atom<sumWorkHourResultIF[]>([])
+
+export interface workNameIF {
+  name:string;
+  work_code:string;
+}
+
+export const workNameAtom = atom<workNameIF[]>([
+  {name: '1直', work_code: '0001'},
+  {name: '2直', work_code: '0002'},
+])

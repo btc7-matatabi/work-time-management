@@ -9,7 +9,7 @@ import {
   employeesAtom,
   eventsAtom,
   groupCodeAtom,
-  groupInfoAtom, scheduleTypeAtom,
+  groupInfoAtom, scheduleTypeAtom, sumWorkHourResultAtom,
   workCodesAtom, workContentsAtom,
   workDateAtom
 } from "@/atom.ts";
@@ -26,6 +26,7 @@ export function App() {
   const setEvents = useSetAtom(eventsAtom);
   const setScheduleType = useSetAtom(scheduleTypeAtom);
   const setWorkContents = useSetAtom(workContentsAtom);
+  const [sumWorkHourResult, setSumWorkHourResult] = useAtom(sumWorkHourResultAtom);
 
   useEffect(() => {
     //仮置き
@@ -56,14 +57,20 @@ export function App() {
         }
       })
 
-    fetch(`http://localhost:3000/work-contents/${format(paramsDate,"yyyy-MM-dd")}/${"groupCode"}`)
+    // fetch(`http://localhost:3000/work-contents/${format(paramsDate,"yyyy-MM-dd")}/${groupCode}`)
+    fetch(`http://localhost:3000/work-contents/${format(paramsDate,"yyyy-MM-dd")}/LT441`)
       .then(response => response.json())
       .then(data => {
         if (Array.isArray(data)) {
-          setWorkContents(data)
+          setWorkContents(data);
+          setSumWorkHourResult(sumWorkHourResult.splice(0));
+          data.map(async (val) => {
+                const res = await fetch(`http://localhost:3000/work-contents/${val.id}/sum-work-hour-results`);
+                const data = await res.json()
+                setSumWorkHourResult([...sumWorkHourResult, data]);
+          })
         }
       })
-
   }, [date]);
 
   useEffect(() => {

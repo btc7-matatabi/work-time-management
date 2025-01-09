@@ -14,13 +14,13 @@ import {Link} from "react-router-dom";
 import {useAtom, useAtomValue} from "jotai";
 
 //サンプルデータ
-import {workName} from "./Data.ts";
-import {dateAtom, groupInfoAtom, selectDateAtom} from "@/atom.ts";
+import {dateAtom, groupInfoAtom, selectDateAtom, workNameAtom} from "@/atom.ts";
 
 export function Header(){
   const [date, setDate] = useAtom(dateAtom)
   const selectDate = useAtomValue(selectDateAtom)
   const groupInfo = useAtomValue(groupInfoAtom)
+  const workName = useAtomValue(workNameAtom)
 
   return (
     <div className="flex fixed z-50 bg-slate-300 w-full">
