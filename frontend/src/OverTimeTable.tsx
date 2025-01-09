@@ -123,7 +123,7 @@ export function OverTimeTable() {
               {calendarData.map(date => {
                 const pickupWorkDate = workDate.filter(val => new Date(val.ymd).toDateString() === date.toDateString())
                 if (pickupWorkDate.length === 1) {
-                  if (pickupWorkDate[0].work_code === "0001") {
+                  if (pickupWorkDate[0].work_code === "0011") {
                     return <TableHead key={date.getDate()} className="text-center border w-16 bg-yellow-300">{date.getDate()}</TableHead>
                   } else {
                     return <TableHead key={date.getDate()} className="text-center border w-16 bg-green-300">{date.getDate()}</TableHead>
