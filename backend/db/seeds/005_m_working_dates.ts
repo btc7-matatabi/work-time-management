@@ -207,4 +207,4 @@ export async function seed(knex: Knex): Promise<void> {
         { ymd: '2025/1/30', work_types_id: '23', work_code: '0005' },
         { ymd: '2025/1/31', work_types_id: '23', work_code: '0005' }
     ]);
-};
+}

@@ -15,4 +15,4 @@ export async function seed(knex: Knex): Promise<void> {
         { work_code: '0004', start_time: '13:45', end_time: '22:35'},
         { work_code: '0005', start_time: '22:00', end_time: '6:50'}
     ]);
-};
+}

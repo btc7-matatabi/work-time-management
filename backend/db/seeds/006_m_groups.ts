@@ -12,4 +12,4 @@ export async function seed(knex: Knex): Promise<void> {
         { group_code: 'PW442', group_name: 'PW442組', work_types_id: 22 },
         { group_code: 'PW443', group_name: 'PW443組', work_types_id: 23 }
     ]);
-};
+}

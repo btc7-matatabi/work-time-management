@@ -16,4 +16,4 @@ export async function seed(knex: Knex): Promise<void> {
         { name: '出張' },
         { name: 'その他'}
     ]);
-};
+}

@@ -12,4 +12,4 @@ export async function seed(knex: Knex): Promise<void> {
         { id: 22, work_type: '3交替黄直' },
         { id: 23, work_type: '3交替黒直' }
     ]);
-};
+}

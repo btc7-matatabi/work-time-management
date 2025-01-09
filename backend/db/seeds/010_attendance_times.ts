@@ -54,4 +54,4 @@ export async function seed(knex: Knex): Promise<void> {
         { employee_code: '0000020', start_date: '2024/12/6', start_ts: '2024/12/6 06:30:00', end_ts: '2024/12/6 16:20:00', before_overtime_flag: false, after_overtime_flag: true, overtime_minute: 60},
         { employee_code: '0000021', start_date: '2024/12/6', start_ts: '2024/12/6 06:30:00', end_ts: '2024/12/6 15:20:00', before_overtime_flag: false, after_overtime_flag: false, overtime_minute: 0},
     ]);
-};
+}
