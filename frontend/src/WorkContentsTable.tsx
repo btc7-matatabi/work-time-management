@@ -9,7 +9,6 @@ const headerCss = "text-center border"
 const contentsCss = "text-center border p-1"
 
 function restWorkHour(id: number, sumWorkHourResult:sumWorkHourResultIF[]) {
-  console.log(sumWorkHourResult)
   const result = sumWorkHourResult.filter(val => val.work_contents_id === id);
   if (result.length === 1) {
     return result[0].sum_work_minute;
