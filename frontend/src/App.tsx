@@ -57,8 +57,8 @@ export function App() {
         }
       })
 
-    // fetch(`http://localhost:3000/work-contents/${format(paramsDate,"yyyy-MM-dd")}/${groupCode}`)
-    fetch(`http://localhost:3000/work-contents/${format(paramsDate,"yyyy-MM-dd")}/LT441`)
+    fetch(`http://localhost:3000/work-contents/${format(paramsDate,"yyyy-MM-dd")}/${groupCode}`)
+    // fetch(`http://localhost:3000/work-contents/${format(paramsDate,"yyyy-MM-dd")}/LT441`)
       .then(response => response.json())
       .then(data => {
         if (Array.isArray(data)) {
