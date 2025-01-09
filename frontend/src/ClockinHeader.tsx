@@ -1,14 +1,15 @@
 import {Button} from "@/components/ui/button.tsx";
 import {Link} from "react-router-dom";
-import {workCode, workName} from "@/Data.ts";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
-import {useAtom} from "jotai/index";
-import {dateAtom, selectDateAtom} from "@/atom.ts";
+import {useAtom, useAtomValue} from "jotai/index";
+import {dateAtom, groupInfoAtom, selectDateAtom, workNameAtom} from "@/atom.ts";
 
 export function ClockinHeader() {
 
   const [date, setDate] = useAtom(dateAtom);
   const [selectDate] = useAtom(selectDateAtom);
+  const groupInfo = useAtomValue(groupInfoAtom)
+  const workName = useAtomValue(workNameAtom);
 
   return (
     <div className="flex">
@@ -38,13 +39,13 @@ export function ClockinHeader() {
         {workName[0].name}
       </h3>
       <h3 className="scroll-m-20 text-xl font-semibold tracking-tight mt-5 mb-5 mr-5 p-1 bg-gray-50  rounded-r-lg">
-        {`${workCode.filter(val => val.work_code === workName[0].work_code)[0].start_time}~${workCode.filter(val => val.work_code === workName[0].work_code)[0].end_time}`}
+        {`${groupInfo?.work_codes[0].start_time.slice(0,5)}~${groupInfo?.work_codes[0].end_time.slice(0,5)}`}
       </h3>
       <h3 className="scroll-m-20 text-xl font-semibold tracking-tight mt-5 mb-5 p-1 bg-green-300 rounded-l-lg">
         {workName[1].name}
       </h3>
       <h3 className="scroll-m-20 text-xl font-semibold tracking-tight mt-5 mb-5 p-1 bg-gray-50  rounded-r-lg">
-        {`${workCode.filter(val => val.work_code === workName[1].work_code)[0].start_time}~${workCode.filter(val => val.work_code === workName[1].work_code)[0].end_time}`}
+        {`${groupInfo?.work_codes[1].start_time.slice(0,5)}~${groupInfo?.work_codes[1].start_time.slice(0,5)}`}
       </h3>
       <Link to="/">
         <Button className="bg-gray-500 m-6 text-xl">戻る</Button>

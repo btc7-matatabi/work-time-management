@@ -1,7 +1,7 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx"
-import {workContents, workDate, workHourResult} from "@/Data.ts";
 import {useAtom} from "jotai";
-import {dateAtom} from "@/atom.ts";
+import {dateAtom, workContentsAtom, workDateAtom, workHourResultIF} from "@/atom.ts";
+import {useAtomValue} from "jotai/index";
 
 //サンプルデータ
 
@@ -18,11 +18,11 @@ function setCalender(startDate : Date, endDate : Date) {
 
 let resultTime : number[];
 
-function setResult(id : number, startDate : Date, endDate : Date) {
+function setResult(startDate : Date, endDate : Date, workHourResult:workHourResultIF[]) {
   resultTime = [];
   while (startDate <= endDate) {
     const pickupData = workHourResult.filter(result => {
-      return result.work_contents_id === id && new Date(result.ymd).toDateString() === startDate.toDateString()
+      return  new Date(result.ymd).toDateString() === startDate.toDateString()
     })
     if (pickupData.length === 1) {
       resultTime.push(pickupData[0].work_minute);
@@ -35,6 +35,9 @@ function setResult(id : number, startDate : Date, endDate : Date) {
 
 export function WorkHourResultTable() {
   const [date] = useAtom(dateAtom)
+  const workDate = useAtomValue(workDateAtom);
+  const workContents = useAtomValue(workContentsAtom);
+
   const year : number = date.getFullYear();
   const month : number = date.getMonth()+1;
 
@@ -67,7 +70,7 @@ export function WorkHourResultTable() {
         <TableBody>
           {
             workContents.map((content,index) => {
-              setResult(content.id,new Date(startDate),new Date(endDate));
+              setResult(new Date(startDate),new Date(endDate), content.work_hour_results);
               return (
               <TableRow key={index} className="h-10">
                 {resultTime.map((time, index) => {
@@ -86,6 +89,15 @@ export function WorkHourResultTable() {
               </TableRow>
               )})
           }
+          {[...Array(10-workContents.length)].map(val => {
+            return(
+              <TableRow key={val} className="h-10">
+                {[...Array(((endDate.getTime()-startDate.getTime()) / 1000 / 60 / 60 / 24) + 1)].map(val => {
+                  return <TableCell className="text-center border p-1" key={val}></TableCell>
+                })}
+              </TableRow>
+            )
+          })}
         </TableBody>
       </Table>
     </div>

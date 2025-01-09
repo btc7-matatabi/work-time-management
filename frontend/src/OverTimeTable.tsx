@@ -11,10 +11,17 @@ import {
 
 
 //サンプルデータ
-import {event} from "./Data.ts";
-import {workDate} from "./Data.ts";
 import {useAtom, useAtomValue} from "jotai";
-import {dateAtom, employeeIF, employeesAtom, overtimeIF, scheduleIF} from "@/atom.ts";
+import {
+  dateAtom,
+  employeeIF,
+  employeesAtom,
+  eventsAtom,
+  eventsIF,
+  overtimeIF,
+  scheduleIF,
+  workDateAtom
+} from "@/atom.ts";
 
 let calendarData : Date[];
 let eventData : string[];
@@ -30,11 +37,11 @@ function setCalender(startDate : Date, endDate : Date) {
   }
 }
 
-function setEvent(startDate : Date, endDate : Date) {
+function setEvent(startDate : Date, endDate : Date, events:eventsIF[]) {
 
   eventData = [];
   while (startDate <= endDate) {
-    const pickupEvent = event.filter(val => {
+    const pickupEvent = events.filter(val => {
       return new Date(val.ymd).toDateString() === startDate.toDateString()
     });
     if (pickupEvent.length === 0) {
@@ -96,6 +103,8 @@ export function OverTimeTable() {
 
   const [date] = useAtom(dateAtom)
   const employees = useAtomValue(employeesAtom)
+  const workDate = useAtomValue(workDateAtom);
+  const events = useAtomValue(eventsAtom);
 
   const year : number = date.getFullYear();
   const month : number = date.getMonth()+1;
@@ -103,7 +112,7 @@ export function OverTimeTable() {
   const startDate : Date = new Date(year, month - 1, 1);
   const endDate : Date = new Date(year, month, 0);
   setCalender(new Date(startDate),new Date(endDate));
-  setEvent(new Date(startDate),new Date(endDate));
+  setEvent(new Date(startDate),new Date(endDate), events);
   setSumOverTime(new Date(startDate), new Date(endDate), employees)
 
   return (

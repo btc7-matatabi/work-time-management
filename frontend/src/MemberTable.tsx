@@ -1,9 +1,7 @@
 import {Table, TableBody, TableHead, TableFooter, TableHeader, TableRow, TableCell} from "@/components/ui/table.tsx";
-import {useAtom} from "jotai";
-import {dateAtom, employeeIF, employeesAtom, overtimeIF} from "@/atom.ts";
+import { employeeIF, employeesAtom, overtimeIF} from "@/atom.ts";
 
 //サンプルデータ
-import {usualSchedule} from "@/Data.ts";
 import {useAtomValue} from "jotai/index";
 const today = new Date('2024/12/6')
 
@@ -29,14 +27,7 @@ function allSumOverTime(employees:employeeIF[]) {
 }
 
 export function MemberTable() {
-  const [date] = useAtom(dateAtom)
   const employees = useAtomValue(employeesAtom)
-
-  const year : number = date.getFullYear();
-  const month : number = date.getMonth()+1;
-
-  const startDate : Date = new Date(year, month - 1, 1);
-  const endDate : Date = new Date(year, month, 0);
 
   const allOverTime = allSumOverTime(employees)
 
@@ -68,14 +59,11 @@ export function MemberTable() {
                 <TableCell className="text-center border">{index+1}</TableCell>
                 <TableCell className="text-center border">{employee.name}</TableCell>
                 <TableCell className="text-center border">{employee.rest_paid_holiday}</TableCell>
-                <TableCell className="text-center border">{usualSchedule.filter(data => {
-                  return data.employee_code === employee.employee_code &&
-                    data.schedule_types_id === 2;
+                <TableCell className="text-center border">{employee.schedules.filter(data => {
+                  return data.name === "年休";
                 }).length}</TableCell>
-                <TableCell className="text-center border">{usualSchedule.filter(data => {
-                  return new Date(data.ymd) <= today &&
-                    data.employee_code === employee.employee_code &&
-                    data.schedule_types_id === 2;
+                <TableCell className="text-center border">{employee.schedules.filter(data => {
+                  return new Date(data.ymd) <= today && data.name === "年休";
                 }).length}</TableCell>
                 <TableCell className="text-center border">20</TableCell>
                 <TableCell className="text-center border">
@@ -83,20 +71,23 @@ export function MemberTable() {
               </TableRow>
             )
           })}
-
         </TableBody>
         <TableFooter>
           <TableRow className="text-center h-14 bg-gray-400">
             <TableCell colSpan={3} className="text-center border">集計</TableCell>
-            <TableCell className="border">{usualSchedule.filter(data => {
-              return startDate <= new Date(data.ymd) && new Date(data.ymd) <= endDate && data.schedule_types_id === 2
-            }).reduce((sum) => {
-              return sum + 1;
+            <TableCell className="border">{employees.map(employee => {
+              return employee.schedules.filter(data => {
+                return data.name === "年休"
+              }).length
+            }).reduce((sum,val) => {
+              return sum + val;
             },0)}</TableCell>
-            <TableCell className="border">{usualSchedule.filter(data => {
-              return startDate <= new Date(data.ymd) && new Date(data.ymd) <= today && data.schedule_types_id === 2
-            }).reduce((sum) => {
-              return sum + 1;
+            <TableCell className="border">{employees.map(employee => {
+              return employee.schedules.filter(data => {
+                return new Date(data.ymd) <= today && data.name === "年休"
+              }).length
+            }).reduce((sum,val) => {
+              return sum + val;
             },0)}</TableCell>
             <TableCell className="border">{20*employees.length}</TableCell>
             <TableCell className="border">
