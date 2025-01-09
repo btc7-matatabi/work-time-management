@@ -110,12 +110,15 @@ export const sumWorkHourResultAtom = atom<sumWorkHourResultIF[]>([])
 export interface workNameIF {
   name:string;
   work_code:string;
+  bg_color:string;
 }
 
-//todo データ変更（色情報追加）
 export const workNameAtom = atom<workNameIF[]>([
-  {name: '1直', work_code: '0001'},
-  {name: '2直', work_code: '0002'},
+  {name: '1直', work_code: '0001', "bg_color": "bg-yellow-300"},
+  {name: '2直', work_code: '0002', "bg_color": "bg-green-300"},
+  {name: '1直', work_code: '0011', "bg_color": "bg-yellow-300"},
+  {name: '2直', work_code: '0012', "bg_color": "bg-green-300"},
+  {name: '2直', work_code: '0013', "bg_color": "bg-green-300"},
 ])
 
 export const orgCdAtom = atom<string>("");

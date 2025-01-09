@@ -8,7 +8,6 @@ export async function seed(knex: Knex): Promise<void> {
     await knex("m_work_codes").insert([
         { work_code: "0011", start_time: "6:30", end_time: "15:05" },
         { work_code: "0012", start_time: "16:35", end_time: "1:10" },
-        { work_code: "0013", start_time: "16:05", end_time: "0:40" },
     ]);
     //005_m_working_dates.ts
     await knex("m_working_dates").insert([
@@ -34,29 +33,25 @@ export async function seed(knex: Knex): Promise<void> {
         { ymd: "2024/12/24", work_types_id: "13", work_code: "0011" },
         { ymd: "2024/12/25", work_types_id: "13", work_code: "0011" },
         { ymd: "2024/12/26", work_types_id: "13", work_code: "0011" },
-        { ymd: "2024/12/27", work_types_id: "13", work_code: "0011" },
-        { ymd: "2024/12/28", work_types_id: "13", work_code: "0011" },
 
-        { ymd: "2025/1/1", work_types_id: "13", work_code: "0013" },
-        { ymd: "2025/1/2", work_types_id: "13", work_code: "0013" },
-        { ymd: "2025/1/3", work_types_id: "13", work_code: "0013" },
-        { ymd: "2025/1/4", work_types_id: "13", work_code: "0013" },
-        { ymd: "2025/1/5", work_types_id: "13", work_code: "0013" },
-        { ymd: "2025/1/6", work_types_id: "13", work_code: "0013" },
-        { ymd: "2025/1/7", work_types_id: "13", work_code: "0013" },
-        { ymd: "2025/1/8", work_types_id: "13", work_code: "0013" },
-        { ymd: "2025/1/9", work_types_id: "13", work_code: "0013" },
-        { ymd: "2025/1/10", work_types_id: "13", work_code: "0013" },
+        { ymd: "2025/1/6", work_types_id: "13", work_code: "0012" },
+        { ymd: "2025/1/7", work_types_id: "13", work_code: "0012" },
+        { ymd: "2025/1/8", work_types_id: "13", work_code: "0012" },
+        { ymd: "2025/1/9", work_types_id: "13", work_code: "0012" },
+        { ymd: "2025/1/10", work_types_id: "13", work_code: "0012" },
+
         { ymd: "2025/1/13", work_types_id: "13", work_code: "0011" },
         { ymd: "2025/1/14", work_types_id: "13", work_code: "0011" },
         { ymd: "2025/1/15", work_types_id: "13", work_code: "0011" },
         { ymd: "2025/1/16", work_types_id: "13", work_code: "0011" },
         { ymd: "2025/1/17", work_types_id: "13", work_code: "0011" },
-        { ymd: "2025/1/20", work_types_id: "13", work_code: "0013" },
-        { ymd: "2025/1/21", work_types_id: "13", work_code: "0013" },
-        { ymd: "2025/1/22", work_types_id: "13", work_code: "0013" },
-        { ymd: "2025/1/23", work_types_id: "13", work_code: "0013" },
+
+        { ymd: "2025/1/20", work_types_id: "13", work_code: "0012" },
+        { ymd: "2025/1/21", work_types_id: "13", work_code: "0012" },
+        { ymd: "2025/1/22", work_types_id: "13", work_code: "0012" },
+        { ymd: "2025/1/23", work_types_id: "13", work_code: "0012" },
         { ymd: "2025/1/24", work_types_id: "13", work_code: "0012" },
+
         { ymd: "2025/1/27", work_types_id: "13", work_code: "0011" },
         { ymd: "2025/1/28", work_types_id: "13", work_code: "0011" },
         { ymd: "2025/1/29", work_types_id: "13", work_code: "0011" },
