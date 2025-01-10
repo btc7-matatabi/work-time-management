@@ -125,3 +125,5 @@ export const orgCdAtom = atom<string>("");
 export const leaderEmployeeCodeAtom = atom<string>("");
 
 export const updateAtom = atom<boolean>(false);
+
+export const changeItemsAtom = atom<string[]>([])
