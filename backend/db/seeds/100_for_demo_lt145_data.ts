@@ -133,9 +133,9 @@ export async function seed(knex: Knex): Promise<void> {
 
     //012_work_hour_results.ts
     await knex("work_hour_results").insert([
-        { work_contents_id: 2, ymd: '2025/1/6', work_minute: 30 },
-        { work_contents_id: 2, ymd: '2025/1/8', work_minute: 30 },
-        { work_contents_id: 3, ymd: '2025/1/7', work_minute: 10 },
+        { work_contents_id: 8, ymd: '2025/1/6', work_minute: 30 },
+        { work_contents_id: 8, ymd: '2025/1/8', work_minute: 30 },
+        { work_contents_id: 9, ymd: '2025/1/7', work_minute: 10 },
     ]);
     // 新規013_m_account.ts.ts
     await knex("m_accounts").insert([
