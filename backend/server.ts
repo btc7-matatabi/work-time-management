@@ -253,11 +253,12 @@ app.get("/group-events/:ymd/:groupCode",wrapErrorHandler(async (req: Request, re
     console.log(`GET /group-events/${ymd}/${groupCode}`);
     const ym01 = forceFirstDayOfMonth(ymd);
 
-    const results: { ymd: string, event_name: string }[]  = await db('group_events as t1')
+    const results: { id: number, ymd: string, event_name: string }[]  = await db('group_events as t1')
         .where('t1.group_code', groupCode)
         .andWhere('t1.ymd', '>=', ym01)
         .andWhere('t1.ymd', '<', db.raw(`?::date + INTERVAL '1 month'`, [ym01]))
         .select(
+            't1.id',
             db.raw("to_char(t1.ymd, 'YYYY-MM-DD') as ymd"),
             't1.event_name'
         )
@@ -398,8 +399,8 @@ app.post('/work-contents', wrapErrorHandler(async (req: Request, res: Response) 
 }));
 
 app.put("/work-contents/:id",wrapErrorHandler(async (req: Request, res: Response) => {
-    const { group_code, work_content, order_number, total_work_minute }: WorkContentCreate = req.body;
-    const workContentsCreateObj: WorkContentCreate = { group_code, work_content, order_number, total_work_minute};
+    const { work_content, order_number, total_work_minute }: WorkContentCreate = req.body;
+    const workContentsCreateObj: WorkContentCreate = { work_content, order_number, total_work_minute};
     const id = Number(req.params.id);
     console.log(`PUT /work-contents/${id}`);
 
@@ -437,6 +438,43 @@ app.post('/work-contents/:id/work-hour-results', wrapErrorHandler(async (req: Re
     }
 }));
 
+app.post('/group-events', wrapErrorHandler(async (req: Request, res: Response) => {
+    const { group_code, ymd, event_name } = req.body;
+    const eventObj = { group_code, ymd, event_name };
+    console.log(`POST /group-events`);
+    const [resultId]: { id: number }[] = await db('group_events').insert( eventObj, ['id']);
+    console.log("resultId",resultId);
+    if (resultId) {
+        res.status(201).send(resultId);
+    } else {
+        res.status(400).send({ message: 'NG' });
+    }
+}));
+
+app.put('/group-events/:id', wrapErrorHandler(async (req: Request, res: Response) => {
+    const { event_name } = req.body;
+    const id = Number(req.params.id);
+    console.log(`PUT /group-events`);
+    const [resultId]: { id: number }[] = await db('group_events').where("id", id).update( {event_name}, ['id']);
+    console.log("resultId",resultId);
+    if (resultId) {
+        res.status(201).send(resultId);
+    } else {
+        res.status(400).send({ message: 'NG' });
+    }
+}));
+
+app.delete('/group-events/:id', wrapErrorHandler(async (req: Request, res: Response) => {
+    const id = Number(req.params.id);
+    console.log(`PUT /group-events`);
+    const [resultId]: { id: number }[] = await db('group_events').where("id", id).returning('id').del();
+    console.log("resultId",resultId);
+    if (resultId) {
+        res.status(201).send(resultId);
+    } else {
+        res.status(400).send({ message: 'NG' });
+    }
+}));
 
 /* 新時間管理システムmocのためのendpoint */
 
@@ -511,10 +549,14 @@ app.get("/attendanceInfos/:group_code/:ymd", wrapErrorHandler(async (req: Reques
             db.raw("case when sub.name = '年休' then sub.name else '' end as holiday"), // 年休があるときは年休の表示。
             db.raw("case when sub.work_code is not null then sub.start_time else t4.start_time end as start_to_work_time"),
             db.raw("case when sub.work_code is not null then sub.end_time else t4.end_time end as end_to_work_time"),
-            db.raw("to_char(t5.start_ts AT TIME ZONE 'Asia/Tokyo', 'HH24') as start_hour"),
-            db.raw("to_char(t5.start_ts AT TIME ZONE 'Asia/Tokyo', 'MI') as start_minute"),
-            db.raw("to_char(t5.end_ts AT TIME ZONE 'Asia/Tokyo', 'HH24') as end_hour"),
-            db.raw("to_char(t5.end_ts AT TIME ZONE 'Asia/Tokyo', 'MI') as end_minute"),
+            db.raw("case when sub.work_code is not null then to_char(sub.start_time, 'HH24') " +
+                "else to_char(t5.start_ts AT TIME ZONE 'Asia/Tokyo', 'HH24') end as start_hour"),
+            db.raw("case when sub.work_code is not null then to_char(sub.start_time, 'MI') " +
+                "else to_char(t5.start_ts AT TIME ZONE 'Asia/Tokyo', 'MI') end as start_minute"),
+            db.raw("case when sub.work_code is not null then to_char(sub.end_time, 'HH24') " +
+                "else to_char(t5.end_ts AT TIME ZONE 'Asia/Tokyo', 'HH24') end as end_hour"),
+            db.raw("case when sub.work_code is not null then to_char(sub.end_time, 'MI') " +
+                "else to_char(t5.end_ts AT TIME ZONE 'Asia/Tokyo', 'MI') end as end_minute"),
             "t5.overtime_minute" //残業時間の表示
         );
         // console.log(query.toString());
