@@ -509,12 +509,12 @@ app.get("/attendanceInfos/:group_code/:ymd", wrapErrorHandler(async (req: Reques
             db.raw("to_char(t5.start_date, 'YYYY-MM-DD') as start_date"), // 必要列: 開始日 start_dateをフォーマット
             db.raw("case when sub.work_code is not null then sub.work_code else t4.work_code end as work_code"), // unusual_scheduleか通常workかで切り替え
             db.raw("case when sub.name = '年休' then sub.name else '' end as holiday"), // 年休があるときは年休の表示。
-            db.raw("case when sub.work_code is not null then sub.start_time else t4.start_time end as startToWorkTime"),
-            db.raw("case when sub.work_code is not null then sub.end_time else t4.end_time end as endToWorkTime"),
-            db.raw("to_char(t5.start_ts AT TIME ZONE 'Asia/Tokyo', 'HH24') as startHour"),
-            db.raw("to_char(t5.start_ts AT TIME ZONE 'Asia/Tokyo', 'MI') as startMinute"),
-            db.raw("to_char(t5.end_ts AT TIME ZONE 'Asia/Tokyo', 'HH24') as endHour"),
-            db.raw("to_char(t5.end_ts AT TIME ZONE 'Asia/Tokyo', 'MI') as endMinute"),
+            db.raw("case when sub.work_code is not null then sub.start_time else t4.start_time end as start_to_work_time"),
+            db.raw("case when sub.work_code is not null then sub.end_time else t4.end_time end as end_to_work_time"),
+            db.raw("to_char(t5.start_ts AT TIME ZONE 'Asia/Tokyo', 'HH24') as start_hour"),
+            db.raw("to_char(t5.start_ts AT TIME ZONE 'Asia/Tokyo', 'MI') as start_minute"),
+            db.raw("to_char(t5.end_ts AT TIME ZONE 'Asia/Tokyo', 'HH24') as end_hour"),
+            db.raw("to_char(t5.end_ts AT TIME ZONE 'Asia/Tokyo', 'MI') as end_minute"),
             "t5.overtime_minute" //残業時間の表示
         );
         // console.log(query.toString());
