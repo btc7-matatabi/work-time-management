@@ -16,7 +16,7 @@ import {
 } from "@/atom.ts";
 import {useAtomValue} from "jotai/index";
 import {Input} from "@/components/ui/input.tsx";
-import {format} from "date-fns";
+// import {format} from "date-fns";
 
 let calendarData : Date[];
 
@@ -46,6 +46,9 @@ function setStartTime(overtimes:overtimeIF[], date : Date, workCodes:workCodesIF
     }
     return `${startTime.getHours()}:${startTime.getMinutes().toString().padStart(2, '0')}`
   } else {
+    if (element !== null) {
+      element.style.backgroundColor = "#ffffff"
+    }
     return ""
   }
 }
@@ -69,6 +72,9 @@ function setEndTime(overtimes:overtimeIF[], date : Date, workCodes:workCodesIF[]
     }
     return `${endTime.getHours()}:${endTime.getMinutes().toString().padStart(2, '0')}`
   } else {
+    if (element !== null) {
+      element.style.backgroundColor = "#ffffff"
+    }
     return ""
   }
 }
@@ -78,6 +84,9 @@ function setSchedule(date : Date, schedules:scheduleIF[], id:string) {
   elements.push(document.getElementById(id));
   elements.push(document.getElementById(id.slice( 0, -8 ) + "start"));
   elements.push(document.getElementById(id.slice( 0, -8 ) + "end"));
+  if(elements[0] !== null){
+    elements[0].style.backgroundColor = "#ffffff"
+  }
   const pickupSchedule = schedules.filter(val => {
     return new Date(val.ymd).toDateString() === date.toDateString()
   })
@@ -91,7 +100,7 @@ function setSchedule(date : Date, schedules:scheduleIF[], id:string) {
     } else {
       elements.map(element => {
         if (element !== null) {
-          element.style.backgroundColor = "#d1d5db"//red-200
+          element.style.backgroundColor = "#d1d5db"//gray
         }
       })
     }
@@ -119,7 +128,7 @@ function dataChange(id:string, defTime:string, inputText:string, changeItems:str
       )
     }
   }
-  console.log(element?.innerText)
+  console.log(element?.textContent)
 }
 
 export function ClockinTimeTable() {
@@ -174,7 +183,7 @@ export function ClockinTimeTable() {
                   return (
                     <TableCell className="p-0 border-r-2">
                       <TableCell id={`${employee.employee_code}_${date}_start_cell`} className="border-r-2 border-dashed p-0">
-                        <Input id={`${employee.employee_code}_${date}_start`} className={`p-0 text-center`} type="text" defaultValue={startTime} onChange={(e) => {
+                        <Input id={`${employee.employee_code}_${date}_start`} className={`p-0 text-center bg-white`} type="text" defaultValue={startTime} onChange={(e) => {
                           dataChange(`${employee.employee_code}_${date}_start`,startTime,e.target.value, changeItems, setChangeItems)
                         }}/>
                       </TableCell>

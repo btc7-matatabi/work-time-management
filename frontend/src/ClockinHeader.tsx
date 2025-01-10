@@ -2,7 +2,7 @@ import {Button} from "@/components/ui/button.tsx";
 import {Link} from "react-router-dom";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {useAtom, useAtomValue} from "jotai/index";
-import {dateAtom, groupInfoAtom, selectDateAtom, workNameAtom} from "@/atom.ts";
+import {changeItemsAtom, dateAtom, groupInfoAtom, selectDateAtom, workNameAtom} from "@/atom.ts";
 
 export function ClockinHeader() {
 
@@ -10,6 +10,7 @@ export function ClockinHeader() {
   const [selectDate] = useAtom(selectDateAtom);
   const groupInfo = useAtomValue(groupInfoAtom)
   const workName = useAtomValue(workNameAtom);
+  const [changeItems,setChangeItems] = useAtom(changeItemsAtom);
 
   return (
     <div className="flex">
@@ -48,8 +49,11 @@ export function ClockinHeader() {
         {`${groupInfo?.work_codes[1].start_time.slice(0,5)}~${groupInfo?.work_codes[1].end_time.slice(0,5)}`}
       </h3>
       <Link to="/overtime-list">
-        <Button className="bg-gray-500 m-6 text-xl">戻る</Button>
+        <Button className="bg-gray-500 m-6 text-xl" onClick={() => {
+          setChangeItems([]);
+        }}>戻る</Button>
       </Link>
+      {changeItems.length !== 0 && <Button className="bg-blue-400 m-6 text-xl">勤怠変更箇所を保存</Button>}
     </div>
   )
 }
