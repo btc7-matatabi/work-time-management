@@ -52,7 +52,7 @@ type WorkContentReturn = {
 };
 
 type WorkContentCreate= {
-  group_code: string;
+  group_code?: string;
   work_content: string;
   order_number?: string;
   total_work_minute?: number;
