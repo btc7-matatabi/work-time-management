@@ -291,7 +291,7 @@ app.get("/work-contents/:ymd/:groupCode",wrapErrorHandler(async (req: Request, r
     console.log(`GET /work-contents/${ymd}/${groupCode}`);
     const ym01 = forceFirstDayOfMonth(ymd);
 
-    const baseWorkContents: WorkContent[] = await db('work_contents as t1').where('t1.group_code', groupCode);
+    const baseWorkContents: WorkContent[] = await db('work_contents as t1').where('t1.group_code', groupCode).orderBy("id");
 
     const rtn: Promise<WorkContentReturn>[] = baseWorkContents.map(async (wc: WorkContent) => {
         const work_hour_results: { ymd: string, work_minute: number}[] = await db('work_hour_results as t1')

@@ -1,15 +1,15 @@
 import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx"
 
-//サンプルデータ
+import {useAtom} from "jotai";
 import {useAtomValue} from "jotai/index";
 import {
   sumWorkHourResultAtom,
   sumWorkHourResultIF,
   workContentsAtom,
   workContentsIF,
-  workHourResultIF
+  workHourResultIF,
+  UpdateWorkContents, updateWorkContentsAtom,
 } from "@/atom.ts";
-import {useState} from "react";
 
 //CSS
 const headerCss = "text-center border"
@@ -30,25 +30,16 @@ function totalWorkHour(workHourResult:workHourResultIF[]) {
   },0)
 }
 
-type UpdateWorkContents = {
-  id: number
-  work_content?:string;
-  order_number?:string;
-  total_work_minute?:number;
-  work_hour_results?:workHourResultIF[];
-}
-
-// 入力変更時の処理
-
 export function WorkContentsTable() {
 
   const workContents = useAtomValue(workContentsAtom);
   const sumWorkHourResult = useAtomValue(sumWorkHourResultAtom);
-  const [inputWorkContents, setInputWorkContents] = useState<UpdateWorkContents[]>([]);
+  const [updateWorkContents, setUpdateWorkContents] = useAtom(updateWorkContentsAtom);
 
+  // 入力変更時の処理
   const handleInputChange = (id: number, key: keyof UpdateWorkContents, newValue: string) => {
-    console.log("inputWorkContents: ", inputWorkContents);
-    setInputWorkContents((prev) : UpdateWorkContents[] => {
+    console.log("updateWorkContents: ", updateWorkContents);
+    setUpdateWorkContents((prev) : UpdateWorkContents[] => {
       // 初期データ（variableA）から変更対象のアイテムを取得
       const originalItem = workContents.find((item) => item.id === id);
       if (!originalItem) return prev;
@@ -84,7 +75,7 @@ export function WorkContentsTable() {
 
   // 表示する値を決定
   const getDisplayValue = (id: number, key: keyof workContentsIF): string => {
-    const modifiedItem = inputWorkContents.find((item) => item.id === id);
+    const modifiedItem = updateWorkContents.find((item) => item.id === id);
     if (modifiedItem && modifiedItem[key] !== undefined) {
       return modifiedItem[key] as string;
     }
@@ -93,14 +84,12 @@ export function WorkContentsTable() {
   };
 
   const getBackgroundColor = (id: number, key: keyof workContentsIF): string => {
-    const modifiedItem = inputWorkContents.find((item) => item.id === id);
+    const modifiedItem = updateWorkContents.find((item) => item.id === id);
     if (modifiedItem && modifiedItem[key] !== undefined) {
       return '#dae4ef'; // 変更があった場合の背景色
     }
     return ''; //todo デフォルトの背景色
   };
-
-
 
   return(
     <div className="flex-shrink-0">
