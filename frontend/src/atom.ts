@@ -95,6 +95,14 @@ export interface workContentsIF {
   work_hour_results:workHourResultIF[];
 }
 
+export type UpdateWorkContents = {
+  id?: number
+  work_content?:string;
+  order_number?:string;
+  total_work_minute?:number;
+  work_hour_results?:workHourResultIF[];
+}
+
 export interface workHourResultIF {
   ymd:string;
   work_minute:number;
@@ -102,10 +110,14 @@ export interface workHourResultIF {
 
 export const workContentsAtom = atom<workContentsIF[]>([]);
 
+export const updateWorkContentsAtom = atom<UpdateWorkContents[]>([]);
+
 export interface sumWorkHourResultIF {
   work_contents_id: number;
     sum_work_minute: number;
 }
+
+export const workHourResultAtom = atom<workHourResultIF[]>([]);
 
 export const sumWorkHourResultAtom = atom<sumWorkHourResultIF[]>([])
 

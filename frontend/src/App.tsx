@@ -84,12 +84,11 @@ export function App() {
 
     //作業項目情報
     fetch(`${URL}/work-contents/${format(paramsDate,"yyyy-MM-dd")}/${groupCode}`)
-    // fetch(`http://localhost:3000/work-contents/${format(paramsDate,"yyyy-MM-dd")}/LT441`)
       .then(response => response.json())
       .then(data => {
         if (Array.isArray(data)) {
           setWorkContents(data);
-          setSumWorkHourResult(sumWorkHourResult.splice(0));
+          setSumWorkHourResult([]);
           data.map(async (val) => {
                 const res = await fetch(`${URL}/work-contents/${val.id}/sum-work-hour-results`);
                 const data = await res.json()
