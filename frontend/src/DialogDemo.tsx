@@ -94,13 +94,12 @@ function scheduleDelete(id:string,setOpen:Dispatch<SetStateAction<boolean>>,setU
 }
 
 type Props = {
-  dialogEmployee: string
-  dialogDate: Date
-  dialogId:number;
-  setOpen: Dispatch<SetStateAction<boolean>>
+  dialogEmployee: string;
+  dialogDate: Date;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
-export function DialogDemo({dialogEmployee, dialogDate, dialogId, setOpen}: Props) {
+export function DialogDemo({dialogEmployee, dialogDate, setOpen}: Props) {
 
   const [date, setDate] = useState<DateRange | undefined>()
   const [selectMember, setSelectMember] = useState<string>(dialogEmployee);
@@ -124,6 +123,13 @@ export function DialogDemo({dialogEmployee, dialogDate, dialogId, setOpen}: Prop
 
   const labelCss = "text-xl"
   const defaultMember = dialogEmployee !== "" ? employees.filter(val => val.employee_code === dialogEmployee)[0].name : "";
+  let defaultSchedule = "年休";
+
+  const selectItem = employees.find(employee => employee.employee_code === dialogEmployee)
+    ?.schedules.filter(schedule => schedule.ymd === format(dialogDate,"yyyy-MM-dd"))[0]
+  if (selectItem?.id !== undefined) {
+    defaultSchedule = selectItem.name;
+  }
 
   return (
     <DialogContent>
@@ -147,7 +153,7 @@ export function DialogDemo({dialogEmployee, dialogDate, dialogId, setOpen}: Prop
         <Label className={labelCss}>予定内容</Label>
         <Select onValueChange={setSelectSchedule}>
           <SelectTrigger className="w-80 col-span-3 text-lg bg-white">
-            <SelectValue placeholder={"年休"}/>
+            <SelectValue placeholder={defaultSchedule}/>
           </SelectTrigger>
           <SelectContent>
             {scheduleType.map(val => {
@@ -170,8 +176,8 @@ export function DialogDemo({dialogEmployee, dialogDate, dialogId, setOpen}: Prop
         <Textarea className="text-2xl col-span-3 bg-white" onChange={e => setDescription(e.target.value)}/>
       </div>
       <DialogFooter>
-        {dialogId && <Button type="button" className="bg-gray-500 text-2xl h-10 w-40 mr-10" onClick={() => scheduleDelete(dialogId,setOpen,setUpdate)}>削除</Button>}
-        <Button type="button" className="bg-blue-500 text-2xl h-10 w-40" onClick={() => scheduleRegistration(dialogId, setOpen, selectMember, date, selectSchedule, selectWorkCode, description, setUpdate)}>登録する</Button>
+        {selectItem?.id !== undefined && <Button type="button" className="bg-gray-500 text-2xl h-10 w-40 mr-10" onClick={() => scheduleDelete(selectItem?.id,setOpen,setUpdate)}>削除</Button>}
+        <Button type="button" className="bg-blue-500 text-2xl h-10 w-40" onClick={() => scheduleRegistration(selectItem?.id, setOpen, selectMember, date, selectSchedule, selectWorkCode, description, setUpdate)}>登録する</Button>
       </DialogFooter>
     </DialogContent>
   )

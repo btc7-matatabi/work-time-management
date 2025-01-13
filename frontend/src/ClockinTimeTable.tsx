@@ -169,7 +169,6 @@ export function ClockinTimeTable() {
   const [date] = useAtom(dateAtom);
   const [dialogEmployee, setDialogEmployee] = useState("");
   const [dialogDate, setDialogDate] = useState(new Date());
-  const [dialogId, setDialogId] = useState(undefined);
   const [open, setOpen] = useState(false);
   const employees = useAtomValue(employeesAtom)
   const groupInfo = useAtomValue(groupInfoAtom)
@@ -238,9 +237,6 @@ export function ClockinTimeTable() {
                             <TableCell id={`${employee.employee_code}_${date}_schedule`} className="h-6 border-r-2 border-b-2 p-0" onClick={() => {
                               setDialogEmployee(employee.employee_code);
                               setDialogDate(date);
-                              setDialogId(employees
-                                .find(employee => employee.employee_code === dialogEmployee)
-                                ?.schedules.filter(schedule => schedule.ymd === format(dialogDate,"yyyy-MM-dd"))[0]?.id);
                             }}>{schedule}</TableCell>
                           </DialogTrigger>
                         )
@@ -249,7 +245,7 @@ export function ClockinTimeTable() {
               </>
             )
           })}
-            <DialogDemo setOpen={setOpen} dialogEmployee={dialogEmployee} dialogDate={dialogDate} dialogId={dialogId}/>
+            <DialogDemo setOpen={setOpen} dialogEmployee={dialogEmployee} dialogDate={dialogDate}/>
           </Dialog>
         </TableBody>
       </Table>
