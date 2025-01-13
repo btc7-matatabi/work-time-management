@@ -55,6 +55,9 @@ function setStartTime(overtimes:overtimeIF[], date : Date, workCodes:workCodesIF
 
 function setEndTime(overtimes:overtimeIF[], date : Date, workCodes:workCodesIF[], workDate:workDateIF[],id:string) {
   const element = document.getElementById(id);
+  if (element !== null) {
+    element.style.backgroundColor = "#ffffff"
+  }
   const pickupData = overtimes.filter(val => {
     return new Date(val.start_date).toDateString() === date.toDateString();
   })
@@ -82,8 +85,8 @@ function setEndTime(overtimes:overtimeIF[], date : Date, workCodes:workCodesIF[]
 function setSchedule(date : Date, schedules:scheduleIF[], id:string) {
   const elements = [];
   elements.push(document.getElementById(id));
-  elements.push(document.getElementById(id.slice( 0, -8 ) + "start"));
-  elements.push(document.getElementById(id.slice( 0, -8 ) + "end"));
+  elements.push(document.getElementById(id.slice( 0, -8 ) + "start_cell"));
+  elements.push(document.getElementById(id.slice( 0, -8 ) + "end_cell"));
   if(elements[0] !== null){
     elements[0].style.backgroundColor = "#ffffff"
   }
@@ -183,7 +186,7 @@ export function ClockinTimeTable() {
                   return (
                     <TableCell className="p-0 border-r-2">
                       <TableCell id={`${employee.employee_code}_${date}_start_cell`} className="border-r-2 border-dashed p-0">
-                        <Input id={`${employee.employee_code}_${date}_start`} className={`p-0 text-center bg-white`} type="text" defaultValue={startTime} onChange={(e) => {
+                        <Input id={`${employee.employee_code}_${date}_start`} className={`p-0 text-center`} type="text" defaultValue={startTime} onChange={(e) => {
                           dataChange(`${employee.employee_code}_${date}_start`,startTime,e.target.value, changeItems, setChangeItems)
                         }}/>
                       </TableCell>
