@@ -88,7 +88,7 @@ export function App() {
       .then(data => {
         if (Array.isArray(data)) {
           setWorkContents(data);
-          setSumWorkHourResult(sumWorkHourResult.splice(0));
+          setSumWorkHourResult([]);
           data.map(async (val) => {
                 const res = await fetch(`${URL}/work-contents/${val.id}/sum-work-hour-results`);
                 const data = await res.json()

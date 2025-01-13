@@ -2,7 +2,14 @@ import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableR
 
 //サンプルデータ
 import {useAtomValue} from "jotai/index";
-import {sumWorkHourResultAtom, sumWorkHourResultIF, workContentsAtom, workHourResultIF} from "@/atom.ts";
+import {
+  sumWorkHourResultAtom,
+  sumWorkHourResultIF,
+  workContentsAtom,
+  workContentsIF,
+  workHourResultIF
+} from "@/atom.ts";
+import {useState} from "react";
 
 //CSS
 const headerCss = "text-center border"
@@ -23,10 +30,77 @@ function totalWorkHour(workHourResult:workHourResultIF[]) {
   },0)
 }
 
+type UpdateWorkContents = {
+  id: number
+  work_content?:string;
+  order_number?:string;
+  total_work_minute?:number;
+  work_hour_results?:workHourResultIF[];
+}
+
+// 入力変更時の処理
+
 export function WorkContentsTable() {
 
   const workContents = useAtomValue(workContentsAtom);
   const sumWorkHourResult = useAtomValue(sumWorkHourResultAtom);
+  const [inputWorkContents, setInputWorkContents] = useState<UpdateWorkContents[]>([]);
+
+  const handleInputChange = (id: number, key: keyof UpdateWorkContents, newValue: string) => {
+    console.log("inputWorkContents: ", inputWorkContents);
+    setInputWorkContents((prev) : UpdateWorkContents[] => {
+      // 初期データ（variableA）から変更対象のアイテムを取得
+      const originalItem = workContents.find((item) => item.id === id);
+      if (!originalItem) return prev;
+
+      // 変更された値が元の値と同じ場合
+      if (newValue === originalItem[key]) {
+        // `variableB`から該当する変更箇所を削除
+        return prev.map((item) => {
+          if (item.id === id) {
+            const updatedItem = { ...item };
+            delete updatedItem[key]; // 変更箇所を削除
+
+            // 他の変更が残っていなければエントリ全体を削除
+            return Object.keys(updatedItem).length > 1 ? updatedItem : null;
+          }
+          return item;
+        }).filter(item => item !== null); // nullを除外
+      }
+
+      const existingItem = prev.find((item) => item.id === id);
+      if (existingItem) {
+        // 既存エントリがある場合は更新
+        return prev.map((item) =>
+            item.id === id ? { ...item, [key]: newValue } : item
+        );
+      } else {
+        // 初めての変更の場合は新規追加
+        return [...prev, { id, [key]: newValue }];
+      }
+    });
+  };
+
+
+  // 表示する値を決定
+  const getDisplayValue = (id: number, key: keyof workContentsIF): string => {
+    const modifiedItem = inputWorkContents.find((item) => item.id === id);
+    if (modifiedItem && modifiedItem[key] !== undefined) {
+      return modifiedItem[key] as string;
+    }
+    const originalItem = workContents.find((item) => item.id === id);
+    return originalItem ? originalItem[key] as string : '';
+  };
+
+  const getBackgroundColor = (id: number, key: keyof workContentsIF): string => {
+    const modifiedItem = inputWorkContents.find((item) => item.id === id);
+    if (modifiedItem && modifiedItem[key] !== undefined) {
+      return '#dae4ef'; // 変更があった場合の背景色
+    }
+    return ''; //todo デフォルトの背景色
+  };
+
+
 
   return(
     <div className="flex-shrink-0">
@@ -46,9 +120,32 @@ export function WorkContentsTable() {
             const totalMinute = totalWorkHour(content.work_hour_results)
             return (
               <TableRow className="h-10" key={index}>
-                <TableCell className={contentsCss}>{content.work_content}</TableCell>
-                <TableCell className={contentsCss}>{content.order_number}</TableCell>
-                <TableCell className={contentsCss}>{content.total_work_minute}</TableCell>
+                <TableCell className={contentsCss}
+                           style={{backgroundColor: getBackgroundColor(content.id, 'work_content')}}
+                >
+                  <input
+                      value={getDisplayValue(content.id, 'work_content')} // 表示する値を決定
+                      style={{ backgroundColor: 'transparent' }}
+                      onChange={(e) => handleInputChange(content.id, 'work_content', e.target.value)}
+                  />
+                </TableCell>
+                <TableCell className={contentsCss}
+                           style={{backgroundColor: getBackgroundColor(content.id, 'order_number')}}
+                >
+                  <input
+                      value={getDisplayValue(content.id, 'order_number')} // 表示する値を決定
+                      style={{ backgroundColor: 'transparent' }}
+                      onChange={(e) => handleInputChange(content.id, 'order_number', e.target.value)}
+                  />
+                </TableCell>
+                <TableCell className={contentsCss}
+                           style={{backgroundColor: getBackgroundColor(content.id, 'total_work_minute')}}>
+                  <input
+                      value={getDisplayValue(content.id, 'total_work_minute')} // 表示する値を決定
+                      style={{ backgroundColor: 'transparent' , width: '50px'}}
+                      onChange={(e) => handleInputChange(content.id, 'total_work_minute', e.target.value)}
+                  />
+                </TableCell>
                 <TableCell
                   className={contentsCss}>{`${Math.floor(viewTime / 60)}:${('00' + (viewTime % 60)).slice(-2)}`}</TableCell>
                 <TableCell
