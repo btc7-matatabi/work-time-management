@@ -21,7 +21,7 @@ import {format} from "date-fns";
 import {useAtomValue, useSetAtom} from "jotai";
 import {employeesAtom, scheduleTypeAtom, updateAtom, workCodesAtom} from "@/atom.ts";
 
-function scheduleRegistration(setOpen:Dispatch<SetStateAction<boolean>>, selectMember:string, date:DateRange | undefined, selectSchedule:string, selectWorkCode:string, description:string, setUpdate:Dispatch<SetStateAction<boolean>>) {
+function scheduleRegistration(id:number, setOpen:Dispatch<SetStateAction<boolean>>, selectMember:string, date:DateRange | undefined, selectSchedule:string, selectWorkCode:string, description:string, setUpdate:Dispatch<SetStateAction<boolean>>) {
 
   const inputDate = date?.from
 
@@ -49,31 +49,54 @@ function scheduleRegistration(setOpen:Dispatch<SetStateAction<boolean>>, selectM
       inputObj.schedule_description = description;
     }
 
-    const params = {
-      method : "POST",
-      body : JSON.stringify(inputObj),
-      headers: {
-        "Content-Type": "application/json",
-      }};
-    fetch(`${process.env.VITE_URL}/unusual-schedules`, params)
-      .then(() => setUpdate(true))
+    if (id === undefined) {
+      return  {
+        method : "POST",
+        body : JSON.stringify(inputObj),
+        headers: {
+          "Content-Type": "application/json",
+        }};
+    } else {
+      return {
+        method : "PUT",
+        body: JSON.stringify(inputObj),
+        headers: {
+          "Content-Type": "application/json",
+        }};
+    }
+
   }
 
-  if (inputDate !== undefined && date?.to === undefined) {
-    inputItem(inputDate);
-  } else if(inputDate !== undefined && date?.to !== undefined) {
-    while (inputDate <= date.to) {
-      inputItem(inputDate);
-      inputDate.setDate(inputDate.getDate() + 1);
+  if (id === undefined) {
+    if (inputDate !== undefined && date?.to === undefined) {
+      fetch(`${process.env.VITE_URL}/unusual-schedules`, inputItem(inputDate))
+        .then(() => setUpdate(true))
+    } else if(inputDate !== undefined && date?.to !== undefined) {
+      while (inputDate <= date.to) {
+        fetch(`${process.env.VITE_URL}/unusual-schedules`, inputItem(inputDate))
+          .then(() => setUpdate(true))
+        inputDate.setDate(inputDate.getDate() + 1);
+      }
     }
+  } else {
+    fetch(`${process.env.VITE_URL}/unusual-schedules/${id}`, inputItem(inputDate))
+      .then(() => setUpdate(true))
   }
   setOpen(false);
 }
 
+function scheduleDelete(id:string,setOpen:Dispatch<SetStateAction<boolean>>,setUpdate:Dispatch<SetStateAction<boolean>>) {
+  const params = {method : "DELETE"};
+  fetch(`${process.env.VITE_URL}/unusual-schedules/${id}`, params)
+    .then(() => {
+      setUpdate(true);
+      setOpen(false)});
+}
+
 type Props = {
-  dialogEmployee: string
-  dialogDate: Date
-  setOpen: Dispatch<SetStateAction<boolean>>
+  dialogEmployee: string;
+  dialogDate: Date;
+  setOpen: Dispatch<SetStateAction<boolean>>;
 }
 
 export function DialogDemo({dialogEmployee, dialogDate, setOpen}: Props) {
@@ -100,6 +123,13 @@ export function DialogDemo({dialogEmployee, dialogDate, setOpen}: Props) {
 
   const labelCss = "text-xl"
   const defaultMember = dialogEmployee !== "" ? employees.filter(val => val.employee_code === dialogEmployee)[0].name : "";
+  let defaultSchedule = "年休";
+
+  const selectItem = employees.find(employee => employee.employee_code === dialogEmployee)
+    ?.schedules.filter(schedule => schedule.ymd === format(dialogDate,"yyyy-MM-dd"))[0]
+  if (selectItem?.id !== undefined) {
+    defaultSchedule = selectItem.name;
+  }
 
   return (
     <DialogContent>
@@ -123,7 +153,7 @@ export function DialogDemo({dialogEmployee, dialogDate, setOpen}: Props) {
         <Label className={labelCss}>予定内容</Label>
         <Select onValueChange={setSelectSchedule}>
           <SelectTrigger className="w-80 col-span-3 text-lg bg-white">
-            <SelectValue placeholder={"年休"}/>
+            <SelectValue placeholder={defaultSchedule}/>
           </SelectTrigger>
           <SelectContent>
             {scheduleType.map(val => {
@@ -146,7 +176,8 @@ export function DialogDemo({dialogEmployee, dialogDate, setOpen}: Props) {
         <Textarea className="text-2xl col-span-3 bg-white" onChange={e => setDescription(e.target.value)}/>
       </div>
       <DialogFooter>
-        <Button type="button" className="bg-blue-500 text-2xl h-10" onClick={() => scheduleRegistration(setOpen, selectMember, date, selectSchedule, selectWorkCode, description, setUpdate)}>登録する</Button>
+        {selectItem?.id !== undefined && <Button type="button" className="bg-gray-500 text-2xl h-10 w-40 mr-10" onClick={() => scheduleDelete(selectItem?.id,setOpen,setUpdate)}>削除</Button>}
+        <Button type="button" className="bg-blue-500 text-2xl h-10 w-40" onClick={() => scheduleRegistration(selectItem?.id, setOpen, selectMember, date, selectSchedule, selectWorkCode, description, setUpdate)}>登録する</Button>
       </DialogFooter>
     </DialogContent>
   )

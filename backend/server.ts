@@ -148,12 +148,13 @@ app.get("/members-overtime/:id/:ymd", wrapErrorHandler(async (req: Request, res:
         .orderBy('t1.work_positions_id');
 
     const rtn: Promise<MembersOvertime>[]  = baseEmployees.map(async (employee) => {
-        const schedules: {ymd: string, name: string}[] =  await db('unusual_schedules as t1')
+        const schedules: {id:number, ymd: string, name: string}[] =  await db('unusual_schedules as t1')
             .join('m_schedule_types as t2', 't1.schedule_types_id', 't2.id')
             .where('employee_code', employee.employee_code)
             .andWhere('t1.ymd', '>=', ym01)
             .andWhere('t1.ymd', '<', db.raw(`?::date + INTERVAL '1 month'`, [ym01]))
             .select(
+                't1.id',
                 db.raw("to_char(t1.ymd AT TIME ZONE 'Asia/Tokyo', 'YYYY-MM-DD') as ymd"),
                 't2.name'
             );

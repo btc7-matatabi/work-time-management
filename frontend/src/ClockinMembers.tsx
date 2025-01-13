@@ -18,7 +18,7 @@ export function ClockinMembers() {
           </TableHeader>
         <TableBody>
           {employees.map((employee, index) => {
-            const zebraCss = index % 2 === 0 ? "h-16 bg-gray-200" : "h-16"
+            const zebraCss = index % 2 === 0 ? "h-[74px] bg-gray-200" : "h-[74px]"
             return (
               <TableRow className={zebraCss} key={index}>
                 <TableCell className="text-center border">{index+1}</TableCell>

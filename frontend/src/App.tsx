@@ -18,7 +18,7 @@ const URL = process.env.VITE_URL;
 
 export function App() {
 
-  const [date] = useAtom(dateAtom);
+  const [date, setDate] = useAtom(dateAtom);
   const setEmployees = useSetAtom(employeesAtom)
   const setGroupInfo = useSetAtom(groupInfoAtom)
   const setWorkCodes = useSetAtom(workCodesAtom)
@@ -42,6 +42,7 @@ export function App() {
     if (leaderEmployeeCodeResult !== null && leaderEmployeeCode === "") {
       setLeaderEmployeeCode(leaderEmployeeCodeResult)
     }
+
   }, []);
 
   useEffect(() => {
