@@ -1,6 +1,6 @@
 import { atom } from 'jotai';
 
-export const dateAtom = atom<Date>(new Date())
+export const dateAtom = atom<Date>(new Date)
 
 const dt = new Date();
 const selectDateArr:Date[] = [];
@@ -27,6 +27,7 @@ export interface employeeIF {
       ],
       schedules:[
         {
+          id:number,
           ymd:string,
           name:string
         }
@@ -43,8 +44,9 @@ export interface overtimeIF {
 }
 
 export interface scheduleIF {
-  ymd:string,
-  name:string
+  id:number;
+  ymd:string;
+  name:string;
 }
 
 export const employeesAtom = atom<employeeIF[]>([])
@@ -126,4 +128,11 @@ export const leaderEmployeeCodeAtom = atom<string>("");
 
 export const updateAtom = atom<boolean>(false);
 
-export const changeItemsAtom = atom<string[]>([])
+export interface changeItemsIF {
+  id:string
+  employee_code:string;
+  start_date:string;
+  ts:string
+  start_end:string;
+}
+export const changeItemsAtom = atom<changeItemsIF[]>([])

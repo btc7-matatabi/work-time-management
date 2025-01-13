@@ -4,7 +4,7 @@ import {DialogDemo} from "@/DialogDemo.tsx";
 import {Dialog, DialogTrigger} from "@/components/ui/dialog.tsx";
 import {useAtom} from "jotai";
 import {
-  changeItemsAtom,
+  changeItemsAtom, changeItemsIF,
   dateAtom,
   employeesAtom,
   groupInfoAtom,
@@ -16,6 +16,7 @@ import {
 } from "@/atom.ts";
 import {useAtomValue} from "jotai/index";
 import {Input} from "@/components/ui/input.tsx";
+import {format} from "date-fns";
 // import {format} from "date-fns";
 
 let calendarData : Date[];
@@ -30,6 +31,9 @@ function setCalender(startDate : Date, endDate : Date) {
 
 function setStartTime(overtimes:overtimeIF[], date : Date, workCodes:workCodesIF[], workDate:workDateIF[],id:string){
   const element = document.getElementById(id);
+  if (element !== null) {
+    element.style.backgroundColor = "#ffffff"
+  }
   const pickupData = overtimes.filter(val => {
     return new Date(val.start_date).toDateString() === date.toDateString();
   })
@@ -111,27 +115,53 @@ function setSchedule(date : Date, schedules:scheduleIF[], id:string) {
   }
 }
 
-function dataChange(id:string, defTime:string, inputText:string, changeItems:string[], setChangeItems:Dispatch<SetStateAction<string[]>>) {
-  const element = document.getElementById(id);
-  // const inputTimeArray = inputText.split(":");
-  // const ts = new Date(id.split("_")[1]);
-  // ts.setHours(Number(inputTimeArray[0]));
-  // ts.setMinutes(Number(inputTimeArray[1]));
-  // const inputData = format(ts,"yyyy/MM/dd HH:mm:ss")
+function dataChange(change_id:string, defTime:string, inputText:string, changeItems:changeItemsIF[], setChangeItems:Dispatch<SetStateAction<changeItemsIF[]>>) {
+  const element = document.getElementById(change_id);
+  const inputItem = change_id.split("_")
+  const inputTimeArray = inputText.split(":");
+  const ts = new Date(inputItem[1]);
+  ts.setHours(Number(inputTimeArray[0]));
+  ts.setMinutes(Number(inputTimeArray[1]));
+  const input_ts = format(ts,"yyyy/MM/dd HH:mm:ss")
   if (element !== null) {
     if (defTime !== inputText) {
       element.style.backgroundColor = "#bbf7d0"
-      if (!changeItems.includes(id)) {
-        setChangeItems([...changeItems, id])
+      if (changeItems.find(({id}) => id === change_id) === undefined) {
+        setChangeItems([...changeItems, {
+          id:change_id,
+          employee_code:inputItem[0],
+          start_date:format(inputItem[1],"yyyy/MM/dd"),
+          ts:input_ts,
+          start_end:inputItem[2]}])
+      } else {
+        setChangeItems(
+          changeItems.map((item) => {
+            if (item.id === change_id) {
+              return {
+                id: change_id,
+                employee_code: inputItem[0],
+                start_date: format(inputItem[1],"yyyy/MM/dd"),
+                ts: input_ts,
+                start_end: inputItem[2]
+              }
+            } else {
+              return {
+                id: item.id,
+                employee_code: item.employee_code,
+                start_date: item.start_date,
+                ts: item.ts,
+                start_end: item.start_end
+              }
+            }
+          }))
       }
     } else {
       element.style.backgroundColor = ""
       setChangeItems(
-        changeItems.filter((item) => (item !== id))
+        changeItems.filter((item) => (item.id !== change_id))
       )
     }
   }
-  console.log(element?.textContent)
 }
 
 export function ClockinTimeTable() {
@@ -139,6 +169,7 @@ export function ClockinTimeTable() {
   const [date] = useAtom(dateAtom);
   const [dialogEmployee, setDialogEmployee] = useState("");
   const [dialogDate, setDialogDate] = useState(new Date());
+  const [dialogId, setDialogId] = useState(undefined);
   const [open, setOpen] = useState(false);
   const employees = useAtomValue(employeesAtom)
   const groupInfo = useAtomValue(groupInfoAtom)
@@ -207,6 +238,9 @@ export function ClockinTimeTable() {
                             <TableCell id={`${employee.employee_code}_${date}_schedule`} className="h-6 border-r-2 border-b-2 p-0" onClick={() => {
                               setDialogEmployee(employee.employee_code);
                               setDialogDate(date);
+                              setDialogId(employees
+                                .find(employee => employee.employee_code === dialogEmployee)
+                                ?.schedules.filter(schedule => schedule.ymd === format(dialogDate,"yyyy-MM-dd"))[0]?.id);
                             }}>{schedule}</TableCell>
                           </DialogTrigger>
                         )
@@ -215,7 +249,7 @@ export function ClockinTimeTable() {
               </>
             )
           })}
-            <DialogDemo setOpen={setOpen} dialogEmployee={dialogEmployee} dialogDate={dialogDate}/>
+            <DialogDemo setOpen={setOpen} dialogEmployee={dialogEmployee} dialogDate={dialogDate} dialogId={dialogId}/>
           </Dialog>
         </TableBody>
       </Table>
