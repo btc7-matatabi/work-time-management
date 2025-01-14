@@ -21,7 +21,7 @@ import {format} from "date-fns";
 import {useAtomValue, useSetAtom} from "jotai";
 import {employeesAtom, scheduleTypeAtom, updateAtom, workCodesAtom} from "@/atom.ts";
 
-function scheduleRegistration(id:number, setOpen:Dispatch<SetStateAction<boolean>>, selectMember:string, date:DateRange | undefined, selectSchedule:string, selectWorkCode:string, description:string, setUpdate:Dispatch<SetStateAction<boolean>>) {
+function scheduleRegistration(id:number | undefined, setOpen:Dispatch<SetStateAction<boolean>>, selectMember:string, date:DateRange | undefined, selectSchedule:string, selectWorkCode:string, description:string, setUpdate:Dispatch<SetStateAction<boolean>>) {
 
   const inputDate = date?.from
 
@@ -79,13 +79,15 @@ function scheduleRegistration(id:number, setOpen:Dispatch<SetStateAction<boolean
       }
     }
   } else {
-    fetch(`${process.env.VITE_URL}/unusual-schedules/${id}`, inputItem(inputDate))
-      .then(() => setUpdate(true))
+    if (inputDate !== undefined) {
+      fetch(`${process.env.VITE_URL}/unusual-schedules/${id}`, inputItem(inputDate))
+        .then(() => setUpdate(true))
+    }
   }
   setOpen(false);
 }
 
-function scheduleDelete(id:string,setOpen:Dispatch<SetStateAction<boolean>>,setUpdate:Dispatch<SetStateAction<boolean>>) {
+function scheduleDelete(id:number,setOpen:Dispatch<SetStateAction<boolean>>,setUpdate:Dispatch<SetStateAction<boolean>>) {
   const params = {method : "DELETE"};
   fetch(`${process.env.VITE_URL}/unusual-schedules/${id}`, params)
     .then(() => {
