@@ -144,7 +144,7 @@ export interface changeItemsIF {
   id:string
   employee_code:string;
   start_date:string;
-  ts:string
+  ts:string;
   start_end:string;
 }
 export const changeItemsAtom = atom<changeItemsIF[]>([])

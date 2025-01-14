@@ -178,8 +178,8 @@ export function DialogDemo({dialogEmployee, dialogDate, setOpen}: Props) {
         <Textarea className="text-2xl col-span-3 bg-white" onChange={e => setDescription(e.target.value)}/>
       </div>
       <DialogFooter>
-        {selectItem?.id !== undefined && <Button type="button" className="bg-gray-500 text-2xl h-10 w-40 mr-10" onClick={() => scheduleDelete(selectItem?.id,setOpen,setUpdate)}>削除</Button>}
-        <Button type="button" className="bg-blue-500 text-2xl h-10 w-40" onClick={() => scheduleRegistration(selectItem?.id, setOpen, selectMember, date, selectSchedule, selectWorkCode, description, setUpdate)}>登録する</Button>
+        {selectItem?.id !== undefined && <Button type="button" className="bg-gray-500 text-2xl h-10 w-40 mr-10 hover:bg-gray-400" onClick={() => scheduleDelete(selectItem?.id,setOpen,setUpdate)}>削除</Button>}
+        <Button type="button" className="text-2xl h-10 w-40" onClick={() => scheduleRegistration(selectItem?.id, setOpen, selectMember, date, selectSchedule, selectWorkCode, description, setUpdate)}>登録する</Button>
       </DialogFooter>
     </DialogContent>
   )

@@ -38,18 +38,19 @@ export function ClockinHeader() {
           </SelectContent>
         </Select>
       </div>
-      <h3 className="scroll-m-20 text-xl font-semibold tracking-tight mt-5 mb-5 p-1 bg-yellow-300 rounded-l-lg">
-        {workName[0].name}
-      </h3>
-      <h3 className="scroll-m-20 text-xl font-semibold tracking-tight mt-5 mb-5 mr-5 p-1 bg-gray-50  rounded-r-lg">
-        {`${groupInfo?.work_codes[0].start_time.slice(0,5)}~${groupInfo?.work_codes[0].end_time.slice(0,5)}`}
-      </h3>
-      <h3 className="scroll-m-20 text-xl font-semibold tracking-tight mt-5 mb-5 p-1 bg-green-300 rounded-l-lg">
-        {workName[1].name}
-      </h3>
-      <h3 className="scroll-m-20 text-xl font-semibold tracking-tight mt-5 mb-5 p-1 bg-gray-50  rounded-r-lg">
-        {`${groupInfo?.work_codes[1].start_time.slice(0,5)}~${groupInfo?.work_codes[1].end_time.slice(0,5)}`}
-      </h3>
+      {groupInfo?.work_codes.map(workCodeVal => {
+        const pickupWorkData = workName.filter(workNameVal => workNameVal.work_code === workCodeVal.work_code)[0]
+        return (
+          <>
+            <h3 className={`scroll-m-20 text-xl font-semibold tracking-tight mt-5 mb-5 p-1 ${pickupWorkData.bg_color} rounded-l-lg border`}>
+              {pickupWorkData.name}
+            </h3>
+            <h3 className="scroll-m-20 text-xl font-semibold tracking-tight mt-5 mb-5 mr-5 p-1 bg-gray-50  rounded-r-lg border">
+              {`${workCodeVal.start_time.slice(0, 5)}~${workCodeVal.end_time.slice(0, 5)}`}
+            </h3>
+          </>
+        )
+      })}
       <Link to="/overtime-list">
         <Button className="bg-gray-500 m-6 text-xl" onClick={() => {
           setChangeItems([]);

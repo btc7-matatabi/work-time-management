@@ -18,7 +18,7 @@ const URL = process.env.VITE_URL;
 
 export function App() {
 
-  const [date, setDate] = useAtom(dateAtom);
+  const [date] = useAtom(dateAtom);
   const setEmployees = useSetAtom(employeesAtom)
   const setGroupInfo = useSetAtom(groupInfoAtom)
   const setWorkCodes = useSetAtom(workCodesAtom)
