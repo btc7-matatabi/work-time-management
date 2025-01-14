@@ -1,6 +1,6 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
 import {useAtomValue} from "jotai/index";
-import {CONTENTS_COLOR, employeesAtom} from "@/atom.ts";
+import {employeesAtom} from "@/atom.ts";
 
 export function ClockinMembers() {
 
@@ -18,7 +18,7 @@ export function ClockinMembers() {
           </TableHeader>
         <TableBody>
           {employees.map((employee, index) => {
-            const zebraCss = index % 2 === 0 ? `h-[74px] bg-[${CONTENTS_COLOR.zebra}]` : "h-[74px]"
+            const zebraCss = index % 2 === 0 ? `h-[74px] bg-[#EAF7EA]` : "h-[74px]"
             return (
               <TableRow className={zebraCss} key={index}>
                 <TableCell className="text-center border">{index+1}</TableCell>
