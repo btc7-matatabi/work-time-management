@@ -23,7 +23,7 @@ export function Header(){
   const workName = useAtomValue(workNameAtom)
 
   return (
-    <div className="flex fixed z-50 bg-green-50 w-full">
+    <div className="flex fixed z-50 bg-[#f5f5f5] w-full">
       <h2 className="scroll-m-20 p-6 text-2xl font-semibold tracking-tight first:mt-0">
         {groupInfo?.group_name}
       </h2>
@@ -57,7 +57,7 @@ export function Header(){
       })}
 
       <Link to="/stamp-list">
-        <Button className="bg-gray-500 m-6 text-xl">始業 終業時刻一覧へ</Button>
+        <Button className="m-6 text-xl">始業 終業時刻一覧へ</Button>
       </Link>
     </div>
   )

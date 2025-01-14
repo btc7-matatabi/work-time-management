@@ -128,11 +128,11 @@ export interface workNameIF {
 }
 
 export const workNameAtom = atom<workNameIF[]>([
-  {name: '1直', work_code: '0001', "bg_color": "bg-yellow-300"},
-  {name: '2直', work_code: '0002', "bg_color": "bg-green-300"},
-  {name: '1直', work_code: '0011', "bg_color": "bg-yellow-300"},
-  {name: '2直', work_code: '0012', "bg_color": "bg-green-300"},
-  {name: '2直', work_code: '0013', "bg_color": "bg-green-300"},
+  {name: '1直', work_code: '0001', "bg_color": "bg-[#EAEEC1]"},
+  {name: '2直', work_code: '0002', "bg_color": "bg-[#D7DCEB]"},
+  {name: '1直', work_code: '0011', "bg_color": "bg-[#EAEEC1]"},
+  {name: '2直', work_code: '0012', "bg_color": "bg-[#D7DCEB]"},
+  {name: '2直', work_code: '0013', "bg_color": "bg-[#D7DCEB]"},
 ])
 
 export const orgCdAtom = atom<string>("");
@@ -148,3 +148,21 @@ export interface changeItemsIF {
   start_end:string;
 }
 export const changeItemsAtom = atom<changeItemsIF[]>([])
+
+export interface contentsColorIF {
+  firstWork:string;
+  secondWork:string;
+  zebra:string;
+  usualSchedule_holiday:string;
+  usualSchedule_other:string;
+  overtime_bg:string;
+}
+
+export const CONTENTS_COLOR:contentsColorIF = {
+  firstWork:"bg-[#EAEEC1]",
+  secondWork:"bg-[#D7DCEB]",
+  zebra:"#EAF7EA",
+  usualSchedule_holiday:"#F6B1B6",
+  usualSchedule_other:"#F4F4F4",
+  overtime_bg:"#F5FFD5"
+}

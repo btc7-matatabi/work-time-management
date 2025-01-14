@@ -1,6 +1,6 @@
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx"
 import {useAtom} from "jotai";
-import {dateAtom, groupInfoAtom, workContentsAtom, workDateAtom, workHourResultIF} from "@/atom.ts";
+import {CONTENTS_COLOR, dateAtom, groupInfoAtom, workContentsAtom, workDateAtom, workHourResultIF} from "@/atom.ts";
 import {useAtomValue} from "jotai/index";
 
 //サンプルデータ
@@ -37,7 +37,7 @@ export function WorkHourResultTable() {
   const [date] = useAtom(dateAtom)
   const workDate = useAtomValue(workDateAtom);
   const workContents = useAtomValue(workContentsAtom);
-  const groupInfo = useAtomValue(groupInfoAtom)
+  const groupInfo = useAtomValue(groupInfoAtom);
 
   const year : number = date.getFullYear();
   const month : number = date.getMonth()+1;
@@ -56,10 +56,10 @@ export function WorkHourResultTable() {
               if (pickupWorkDate.length === 1) {
                 if (pickupWorkDate[0].work_code === groupInfo?.work_codes[0].work_code) {
                   return <TableHead key={date.getDate()}
-                                    className="text-center border w-16 bg-yellow-300">{date.getDate()}</TableHead>
+                                    className={`text-center border w-32 ${CONTENTS_COLOR.firstWork}`}>{date.getDate()}</TableHead>
                 } else {
                   return <TableHead key={date.getDate()}
-                                    className="text-center border w-16 bg-green-300">{date.getDate()}</TableHead>
+                                    className={`text-center border w-32 ${CONTENTS_COLOR.secondWork}`}>{date.getDate()}</TableHead>
                 }
               } else {
                 return <TableHead key={date.getDate()}

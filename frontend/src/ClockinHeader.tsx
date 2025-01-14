@@ -52,7 +52,7 @@ export function ClockinHeader() {
         )
       })}
       <Link to="/overtime-list">
-        <Button className="bg-gray-500 m-6 text-xl" onClick={() => {
+        <Button className="m-6 text-xl" onClick={() => {
           setChangeItems([]);
         }}>戻る</Button>
       </Link>

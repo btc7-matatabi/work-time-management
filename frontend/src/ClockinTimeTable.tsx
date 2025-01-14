@@ -4,7 +4,7 @@ import {DialogDemo} from "@/DialogDemo.tsx";
 import {Dialog, DialogTrigger} from "@/components/ui/dialog.tsx";
 import {useAtom} from "jotai";
 import {
-  changeItemsAtom, changeItemsIF,
+  changeItemsAtom, changeItemsIF, CONTENTS_COLOR,
   dateAtom,
   employeesAtom,
   groupInfoAtom,
@@ -29,10 +29,14 @@ function setCalender(startDate : Date, endDate : Date) {
   }
 }
 
-function setStartTime(overtimes:overtimeIF[], date : Date, workCodes:workCodesIF[], workDate:workDateIF[],id:string){
+function setStartTime(overtimes:overtimeIF[], date : Date, workCodes:workCodesIF[], workDate:workDateIF[],id:string,index:number){
   const element = document.getElementById(id);
   if (element !== null) {
-    element.style.backgroundColor = "#ffffff"
+    if (index % 2 === 0) {
+      element.style.backgroundColor = CONTENTS_COLOR.zebra
+    } else {
+      element.style.backgroundColor = "#ffffff"
+    }
   }
   const pickupData = overtimes.filter(val => {
     return new Date(val.start_date).toDateString() === date.toDateString();
@@ -46,21 +50,29 @@ function setStartTime(overtimes:overtimeIF[], date : Date, workCodes:workCodesIF
     comparisonTime.setMinutes(Number(workStartTime[1]))
     comparisonTime.setSeconds(0)
     if (pickupData[0].before_overtime_flag && element !== null) {
-        element.style.backgroundColor = "#fef9c3"//yellow-100
+        element.style.backgroundColor = CONTENTS_COLOR.overtime_bg//yellow-100
     }
     return `${startTime.getHours()}:${startTime.getMinutes().toString().padStart(2, '0')}`
   } else {
     if (element !== null) {
-      element.style.backgroundColor = "#ffffff"
+      if (index % 2 === 0) {
+        element.style.backgroundColor = CONTENTS_COLOR.zebra
+      } else {
+        element.style.backgroundColor = "#ffffff"
+      }
     }
     return ""
   }
 }
 
-function setEndTime(overtimes:overtimeIF[], date : Date, workCodes:workCodesIF[], workDate:workDateIF[],id:string) {
+function setEndTime(overtimes:overtimeIF[], date : Date, workCodes:workCodesIF[], workDate:workDateIF[],id:string,index:number) {
   const element = document.getElementById(id);
   if (element !== null) {
-    element.style.backgroundColor = "#ffffff"
+    if (index % 2 === 0) {
+      element.style.backgroundColor = CONTENTS_COLOR.zebra
+    } else {
+      element.style.backgroundColor = "#ffffff"
+    }
   }
   const pickupData = overtimes.filter(val => {
     return new Date(val.start_date).toDateString() === date.toDateString();
@@ -75,24 +87,32 @@ function setEndTime(overtimes:overtimeIF[], date : Date, workCodes:workCodesIF[]
     comparisonTime.setSeconds(0)
 
     if (pickupData[0].after_overtime_flag && element !== null) {
-      element.style.backgroundColor = "#fef9c3"//yellow-100
+      element.style.backgroundColor = CONTENTS_COLOR.overtime_bg//yellow-100
     }
     return `${endTime.getHours()}:${endTime.getMinutes().toString().padStart(2, '0')}`
   } else {
     if (element !== null) {
-      element.style.backgroundColor = "#ffffff"
+      if (index % 2 === 0) {
+        element.style.backgroundColor = CONTENTS_COLOR.zebra
+      } else {
+        element.style.backgroundColor = "#ffffff"
+      }
     }
     return ""
   }
 }
 
-function setSchedule(date : Date, schedules:scheduleIF[], id:string) {
+function setSchedule(date : Date, schedules:scheduleIF[], id:string, index:number) {
   const elements = [];
   elements.push(document.getElementById(id));
   elements.push(document.getElementById(id.slice( 0, -8 ) + "start_cell"));
   elements.push(document.getElementById(id.slice( 0, -8 ) + "end_cell"));
   if(elements[0] !== null){
-    elements[0].style.backgroundColor = "#ffffff"
+    if (index % 2 === 0) {
+      elements[0].style.backgroundColor = CONTENTS_COLOR.zebra
+    } else {
+      elements[0].style.backgroundColor = "#ffffff"
+    }
   }
   const pickupSchedule = schedules.filter(val => {
     return new Date(val.ymd).toDateString() === date.toDateString()
@@ -101,13 +121,13 @@ function setSchedule(date : Date, schedules:scheduleIF[], id:string) {
     if (pickupSchedule[0].name === "年休") {
       elements.map(element => {
         if (element !== null) {
-          element.style.backgroundColor = "#fecaca"//red-200
+          element.style.backgroundColor = CONTENTS_COLOR.usualSchedule_holiday//red-200
         }
       })
     } else {
       elements.map(element => {
         if (element !== null) {
-          element.style.backgroundColor = "#d1d5db"//gray
+          element.style.backgroundColor = CONTENTS_COLOR.usualSchedule_other//gray
         }
       })
     }
@@ -125,7 +145,7 @@ function dataChange(change_id:string, defTime:string, inputText:string, changeIt
   const input_ts = format(ts,"yyyy/MM/dd HH:mm:ss")
   if (element !== null) {
     if (defTime !== inputText) {
-      element.style.backgroundColor = "#bbf7d0"
+      element.style.backgroundColor = "#93c5fd"
       if (changeItems.find(({id}) => id === change_id) === undefined) {
         setChangeItems([...changeItems, {
           id:change_id,
@@ -190,9 +210,9 @@ export function ClockinTimeTable() {
               const pickupWorkDate = workDate.filter(val => new Date(val.ymd).toDateString() === date.toDateString())
               if (pickupWorkDate.length === 1) {
                 if (pickupWorkDate[0].work_code === groupInfo?.work_codes[0].work_code) {
-                  return <TableHead key={date.getDate()} className="text-center border w-32 bg-yellow-300">{date.getDate()}</TableHead>
+                  return <TableHead key={date.getDate()} className={`text-center border w-32 ${CONTENTS_COLOR.firstWork}`}>{date.getDate()}</TableHead>
                 } else {
-                  return <TableHead key={date.getDate()} className="text-center border w-32 bg-green-300">{date.getDate()}</TableHead>
+                  return <TableHead key={date.getDate()} className={`text-center border w-32 ${CONTENTS_COLOR.secondWork}`}>{date.getDate()}</TableHead>
                 }
               } else {
                 return <TableHead key={date.getDate()} className="text-center border w-32 text-red-600">{date.getDate()}</TableHead>
@@ -202,7 +222,7 @@ export function ClockinTimeTable() {
         </TableHeader>
         <TableBody>
           <Dialog open={open} onOpenChange={setOpen}>
-          {employees.map(employee => {
+          {employees.map((employee,index) => {
             return (
               <>
                 <TableRow className="bg-white h-9 text-base text-center border-b-2 border-dashed">
@@ -210,8 +230,8 @@ export function ClockinTimeTable() {
                   let startTime = "";
                   let endTime = "";
                   if (groupInfo?.work_codes !== undefined) {
-                    startTime = setStartTime(employee.overtimes,date, groupInfo.work_codes,workDate,`${employee.employee_code}_${date}_start_cell`)
-                    endTime = setEndTime(employee.overtimes,date, groupInfo.work_codes,workDate,`${employee.employee_code}_${date}_end_cell`)
+                    startTime = setStartTime(employee.overtimes,date, groupInfo.work_codes,workDate,`${employee.employee_code}_${date}_start_cell`,index)
+                    endTime = setEndTime(employee.overtimes,date, groupInfo.work_codes,workDate,`${employee.employee_code}_${date}_end_cell`,index)
                   }
                   return (
                     <TableCell className="p-0 border-r-2">
@@ -231,7 +251,7 @@ export function ClockinTimeTable() {
                 </TableRow>
                 <TableRow className="h-9 text-base text-center">
                   {calendarData.map(date => {
-                    const schedule = setSchedule(date, employee.schedules,`${employee.employee_code}_${date}_schedule`)
+                    const schedule = setSchedule(date, employee.schedules,`${employee.employee_code}_${date}_schedule`,index)
                       return (
                           <DialogTrigger asChild>
                             <TableCell id={`${employee.employee_code}_${date}_schedule`} className="h-6 border-r-2 border-b-2 p-0" onClick={() => {
