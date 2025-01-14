@@ -133,6 +133,8 @@ export const workNameAtom = atom<workNameIF[]>([
   {name: '1直', work_code: '0011', "bg_color": "bg-[#EAEEC1]"},
   {name: '2直', work_code: '0012', "bg_color": "bg-[#D7DCEB]"},
   {name: '2直', work_code: '0013', "bg_color": "bg-[#D7DCEB]"},
+  {name: '1直', work_code: '0020', "bg_color": "bg-[#EAEEC1]"},
+  {name: '2直', work_code: '0021', "bg_color": "bg-[#D7DCEB]"},
 ])
 
 export const orgCdAtom = atom<string>("");
