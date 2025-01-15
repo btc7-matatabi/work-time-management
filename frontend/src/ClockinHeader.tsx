@@ -2,7 +2,8 @@ import {Button} from "@/components/ui/button.tsx";
 import {Link} from "react-router-dom";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {useAtom, useAtomValue} from "jotai/index";
-import {dateAtom, groupInfoAtom, selectDateAtom, workNameAtom} from "@/atom.ts";
+import {changeItemsAtom, dateAtom, groupInfoAtom, selectDateAtom, updateAtom, workNameAtom} from "@/atom.ts";
+import {useSetAtom} from "jotai";
 
 export function ClockinHeader() {
 
@@ -10,6 +11,8 @@ export function ClockinHeader() {
   const [selectDate] = useAtom(selectDateAtom);
   const groupInfo = useAtomValue(groupInfoAtom)
   const workName = useAtomValue(workNameAtom);
+  const [changeItems,setChangeItems] = useAtom(changeItemsAtom);
+  const setUpdate = useSetAtom(updateAtom);
 
   return (
     <div className="flex">
@@ -35,21 +38,52 @@ export function ClockinHeader() {
           </SelectContent>
         </Select>
       </div>
-      <h3 className="scroll-m-20 text-xl font-semibold tracking-tight mt-5 mb-5 p-1 bg-yellow-300 rounded-l-lg">
-        {workName[0].name}
-      </h3>
-      <h3 className="scroll-m-20 text-xl font-semibold tracking-tight mt-5 mb-5 mr-5 p-1 bg-gray-50  rounded-r-lg">
-        {`${groupInfo?.work_codes[0].start_time.slice(0,5)}~${groupInfo?.work_codes[0].end_time.slice(0,5)}`}
-      </h3>
-      <h3 className="scroll-m-20 text-xl font-semibold tracking-tight mt-5 mb-5 p-1 bg-green-300 rounded-l-lg">
-        {workName[1].name}
-      </h3>
-      <h3 className="scroll-m-20 text-xl font-semibold tracking-tight mt-5 mb-5 p-1 bg-gray-50  rounded-r-lg">
-        {`${groupInfo?.work_codes[1].start_time.slice(0,5)}~${groupInfo?.work_codes[1].end_time.slice(0,5)}`}
-      </h3>
+      {groupInfo?.work_codes.map(workCodeVal => {
+        const pickupWorkData = workName.filter(workNameVal => workNameVal.work_code === workCodeVal.work_code)[0]
+        return (
+          <>
+            <h3 className={`scroll-m-20 text-xl font-semibold tracking-tight mt-5 mb-5 p-1 ${pickupWorkData.bg_color} rounded-l-lg border`}>
+              {pickupWorkData.name}
+            </h3>
+            <h3 className="scroll-m-20 text-xl font-semibold tracking-tight mt-5 mb-5 mr-5 p-1 bg-gray-50  rounded-r-lg border">
+              {`${workCodeVal.start_time.slice(0, 5)}~${workCodeVal.end_time.slice(0, 5)}`}
+            </h3>
+          </>
+        )
+      })}
       <Link to="/overtime-list">
-        <Button className="bg-gray-500 m-6 text-xl">戻る</Button>
+        <Button className="m-6 text-xl" onClick={() => {
+          setChangeItems([]);
+        }}>戻る</Button>
       </Link>
+      {changeItems.length !== 0 && <Button className="bg-blue-400 m-6 text-xl" onClick={() => {
+        changeItems.map(item => {
+          const body:{
+            employee_code:string;
+            start_date:string;
+            start_ts?:string;
+            end_ts?:string;
+          } = {
+            employee_code:item.employee_code,
+            start_date:item.start_date,
+          }
+          if(item.start_end === "start") {
+            body.start_ts = item.ts
+          } else {
+            body.end_ts = item.ts
+          }
+          const params = {
+            method : "POST",
+            body : JSON.stringify(body),
+            headers: {
+              "Content-Type": "application/json",
+            }};
+          fetch(`${process.env.VITE_URL}/attendance-time`, params)
+            .then(() => setUpdate(true));
+        })
+        location.reload();
+        setChangeItems([]);
+      }}>勤怠変更箇所を保存</Button>}
     </div>
   )
 }

@@ -41,6 +41,7 @@ export function App() {
     if (leaderEmployeeCodeResult !== null && leaderEmployeeCode === "") {
       setLeaderEmployeeCode(leaderEmployeeCodeResult)
     }
+
   }, []);
 
   useEffect(() => {

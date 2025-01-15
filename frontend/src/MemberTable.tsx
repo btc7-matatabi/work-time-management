@@ -1,5 +1,5 @@
 import {Table, TableBody, TableHead, TableFooter, TableHeader, TableRow, TableCell} from "@/components/ui/table.tsx";
-import { employeeIF, employeesAtom, overtimeIF} from "@/atom.ts";
+import {employeeIF, employeesAtom, overtimeIF} from "@/atom.ts";
 
 //サンプルデータ
 import {useAtomValue} from "jotai/index";
@@ -52,7 +52,7 @@ export function MemberTable() {
         </TableHeader>
         <TableBody>
           {employees.map((employee, index) => {
-            const zebraCss = index % 2 === 0 ? "h-14 bg-gray-200" : "h-14"
+            const zebraCss = index % 2 === 0 ? `h-14 bg-[#EAF7EA]` : "h-14"
             const sumTime= sumOverTime(employee.overtimes)
             return (
               <TableRow className={zebraCss} key={index}>

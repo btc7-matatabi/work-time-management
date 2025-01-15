@@ -13,11 +13,12 @@ import {
 //サンプルデータ
 import {useAtom, useAtomValue} from "jotai";
 import {
+  CONTENTS_COLOR,
   dateAtom,
   employeeIF,
   employeesAtom,
   eventsAtom,
-  eventsIF,
+  eventsIF, groupInfoAtom,
   overtimeIF,
   scheduleIF,
   workDateAtom
@@ -105,6 +106,7 @@ export function OverTimeTable() {
   const employees = useAtomValue(employeesAtom)
   const workDate = useAtomValue(workDateAtom);
   const events = useAtomValue(eventsAtom);
+  const groupInfo = useAtomValue(groupInfoAtom);
 
   const year : number = date.getFullYear();
   const month : number = date.getMonth()+1;
@@ -123,10 +125,10 @@ export function OverTimeTable() {
               {calendarData.map(date => {
                 const pickupWorkDate = workDate.filter(val => new Date(val.ymd).toDateString() === date.toDateString())
                 if (pickupWorkDate.length === 1) {
-                  if (pickupWorkDate[0].work_code === "0011") {
-                    return <TableHead key={date.getDate()} className="text-center border w-16 bg-yellow-300">{date.getDate()}</TableHead>
+                  if (pickupWorkDate[0].work_code === groupInfo?.work_codes[0].work_code) {
+                    return <TableHead key={date.getDate()} className={`text-center border w-16 ${CONTENTS_COLOR.firstWork}`}>{date.getDate()}</TableHead>
                   } else {
-                    return <TableHead key={date.getDate()} className="text-center border w-16 bg-green-300">{date.getDate()}</TableHead>
+                    return <TableHead key={date.getDate()} className={`text-center border w-16 ${CONTENTS_COLOR.secondWork}`}>{date.getDate()}</TableHead>
                   }
                 } else {
                   return <TableHead key={date.getDate()} className="text-center border w-16 text-red-600">{date.getDate()}</TableHead>
@@ -141,7 +143,7 @@ export function OverTimeTable() {
             {employees.map((employee,index) => {
               setOverTime(new Date(startDate),new Date(endDate), employee.overtimes);
               setSchedule(new Date(startDate),new Date(endDate), employee.schedules);
-              const zebraCss = index % 2 === 0 ? "h-7 bg-gray-200 text-base" : "h-7 text-base"
+              const zebraCss = index % 2 === 0 ? `h-7 bg-[${CONTENTS_COLOR.zebra}] text-base` : "h-7 text-base"
               return (
                 <>
                   <TableRow className={zebraCss}>{overTimeData.map((overTime,index) => {
