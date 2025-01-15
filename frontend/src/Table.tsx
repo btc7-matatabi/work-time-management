@@ -5,8 +5,8 @@ import {WorkHourResultTable} from "@/WorkHourResultTable.tsx";
 import {ScrollArea, ScrollBar} from "@/components/ui/scroll-area.tsx";
 import {Button} from "@/components/ui/button.tsx";
 
-import {updateWorkContentsAtom} from "@/atom.ts";
-import {useAtomValue} from "jotai/index";
+import {updateWorkContentsAtom, refreshWorkContentsAtom, orgCdAtom} from "@/atom.ts";
+import {useAtomValue, useSetAtom} from "jotai/index";
 
 // import {dateAtom, orgCdAtom, sumWorkHourResultAtom, updateWorkContentsAtom, workContentsAtom} from "@/atom.ts";
 // import {useAtom, useAtomValue} from "jotai/index";
@@ -15,16 +15,18 @@ import {useAtomValue} from "jotai/index";
 
 export function Table() {
     const updateWorkContents  = useAtomValue(updateWorkContentsAtom);
+    const setRefreshWorkContents = useSetAtom(refreshWorkContentsAtom);
     // const paramsDate = useAtomValue(dateAtom);
-    // const groupCode = useAtomValue(orgCdAtom);
+    const groupCode = useAtomValue(orgCdAtom);
+    const setUpdateWorkContents = useSetAtom(updateWorkContentsAtom);
     // const setWorkContents = useSetAtom(workContentsAtom);
     // const [sumWorkHourResult, setSumWorkHourResult] = useAtom(sumWorkHourResultAtom);
 
 
-    function saveWorkContents(){
+    async function saveWorkContents(){
 
-        updateWorkContents.map(async (uwc) =>{
-            if(uwc?.id){
+        const promises = updateWorkContents.map(async (uwc) =>{
+            if(uwc?.id && uwc.id > 0){
                 const params = {
                     method: "PUT",
                     body: JSON.stringify(uwc),
@@ -32,35 +34,25 @@ export function Table() {
                         "Content-Type": "application/json",
                     }
                 }
+                console.log("PUT: ", uwc);
                 await fetch(`${process.env.VITE_URL}/work-contents/${uwc.id}`, params);
+            } else if(uwc?.id && uwc.id < 0) {
+                delete uwc['id'];
+                uwc['group_code'] = groupCode;
+                const params = {
+                    method: "POST",
+                    body: JSON.stringify(uwc),
+                    headers: {
+                        "Content-Type": "application/json",
+                    }
+                };
+                console.log("POST: ", uwc);
+                await fetch(`${process.env.VITE_URL}/work-contents`, params);
             }
-            // todo 新規作成のデータの形式考える
-                // else {
-            //     const params = {
-            //         method: "POST",
-            //         body: JSON.stringify(uwc),
-            //         headers: {
-            //             "Content-Type": "application/json",
-            //         }
-            //     };
-            //     fetch(`${process.env.VITE_URL}/work-contents`, params);
-            // }
         })
-
-        // //todo 作業項目情報更新
-        // fetch(`${URL}/work-contents/${format(paramsDate,"yyyy-MM-dd")}/${groupCode}`)
-        //     .then(response => response.json())
-        //     .then(data => {
-        //         if (Array.isArray(data)) {
-        //             setWorkContents(data);
-        //             setSumWorkHourResult([]);
-        //             data.map(async (val) => {
-        //                 const res = await fetch(`${URL}/work-contents/${val.id}/sum-work-hour-results`);
-        //                 const data = await res.json()
-        //                 setSumWorkHourResult([...sumWorkHourResult, data]);
-        //             })
-        //         }
-        //     })
+        await Promise.all(promises);
+        setUpdateWorkContents([]);
+        setRefreshWorkContents(prev => prev +1);
     }
 
     return(

@@ -91,15 +91,18 @@ export interface workContentsIF {
   id: number;
   work_content:string;
   order_number:string;
-  total_work_minute:number;
+  total_work_minute:number | null;
+  sum_work_minute: number | null;
   work_hour_results:workHourResultIF[];
 }
 
 export type UpdateWorkContents = {
-  id?: number
+  id?: number;
+  group_code?: string;
   work_content?:string;
   order_number?:string;
   total_work_minute?:number;
+  sum_work_minute?: number | null;
   work_hour_results?:workHourResultIF[];
 }
 
@@ -142,6 +145,8 @@ export const leaderEmployeeCodeAtom = atom<string>("");
 
 export const updateAtom = atom<boolean>(false);
 
+export const refreshWorkContentsAtom = atom<number>(0);
+
 export interface changeItemsIF {
   id:string
   employee_code:string;
@@ -149,6 +154,7 @@ export interface changeItemsIF {
   ts:string;
   start_end:string;
 }
+
 export const changeItemsAtom = atom<changeItemsIF[]>([])
 
 export interface contentsColorIF {

@@ -8,8 +8,8 @@ import {
   dateAtom,
   employeesAtom,
   eventsAtom,
-  groupInfoAtom, leaderEmployeeCodeAtom, orgCdAtom, scheduleTypeAtom, sumWorkHourResultAtom, updateAtom,
-  workCodesAtom, workContentsAtom,
+  groupInfoAtom, leaderEmployeeCodeAtom, orgCdAtom, refreshWorkContentsAtom, scheduleTypeAtom, updateAtom,
+  workCodesAtom, workContentsAtom, workContentsIF,
   workDateAtom
 } from "@/atom.ts";
 import LoginPage from "@/LoginPage.tsx";
@@ -26,12 +26,11 @@ export function App() {
   const setEvents = useSetAtom(eventsAtom);
   const setScheduleType = useSetAtom(scheduleTypeAtom);
   const setWorkContents = useSetAtom(workContentsAtom);
-  const [sumWorkHourResult, setSumWorkHourResult] = useAtom(sumWorkHourResultAtom);
+  // const [sumWorkHourResult, setSumWorkHourResult] = useAtom(sumWorkHourResultAtom);
   const [groupCode, setGroupCode] = useAtom(orgCdAtom);
   const [leaderEmployeeCode, setLeaderEmployeeCode] = useAtom(leaderEmployeeCodeAtom);
   const [update, setUpdate] = useAtom(updateAtom);
-
-
+  const [refreshWorkContents] = useAtom(refreshWorkContentsAtom);
 
   useEffect(() => {
     const groupCodeResult = localStorage.getItem("orgCd")
@@ -85,18 +84,19 @@ export function App() {
     //作業項目情報
     fetch(`${URL}/work-contents/${format(paramsDate,"yyyy-MM-dd")}/${groupCode}`)
       .then(response => response.json())
-      .then(data => {
+      .then(async(data) => {
         if (Array.isArray(data)) {
-          setWorkContents(data);
-          setSumWorkHourResult([]);
-          data.map(async (val) => {
-                const res = await fetch(`${URL}/work-contents/${val.id}/sum-work-hour-results`);
-                const data = await res.json()
-                setSumWorkHourResult([...sumWorkHourResult, data]);
+          const dataWithSum = data.map(async (val) => {
+            const res = await fetch(`${URL}/work-contents/${val.id}/sum-work-hour-results`);
+            const sumWorkHourResult = await res.json();
+            val["sum_work_minute"] = sumWorkHourResult.sum_work_minute;
+            return val;
           })
+          const wc: workContentsIF[] = await Promise.all(dataWithSum);
+          setWorkContents(wc);
         }
       })
-  }, [date,groupCode,leaderEmployeeCode]);
+  }, [date,groupCode,leaderEmployeeCode, refreshWorkContents]);
 
   useEffect(() => {
 
@@ -122,5 +122,5 @@ export function App() {
         <Route path="/stamp-list" element={<ClockinTimePage/>}/>
       </Routes>
     </BrowserRouter>
-)
+  )
 }
