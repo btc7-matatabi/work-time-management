@@ -3,41 +3,57 @@ import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableR
 import {useAtom} from "jotai";
 import {useAtomValue} from "jotai/index";
 import {
-  sumWorkHourResultAtom,
-  sumWorkHourResultIF,
+  // sumWorkHourResultAtom,
+  // sumWorkHourResultIF,
   workContentsAtom,
   workContentsIF,
   workHourResultIF,
   UpdateWorkContents, updateWorkContentsAtom,
 } from "@/atom.ts";
-
+import {Input} from "@/components/ui/input.tsx";
 //CSS
 const headerCss = "text-center border"
-const contentsCss = "text-center border p-1"
+const contentsCss = "text-center border p-0"
 
-function restWorkHour(id: number, sumWorkHourResult:sumWorkHourResultIF[]) {
-  const result = sumWorkHourResult.filter(val => val.work_contents_id === id);
-  if (result.length === 1) {
-    return result[0].sum_work_minute;
+function restWorkHour(wc: workContentsIF) {
+  if(wc.total_work_minute && wc.sum_work_minute) {
+    return (wc.total_work_minute * 60 - wc.sum_work_minute);
   } else {
     return 0;
   }
 }
 
-function totalWorkHour(workHourResult:workHourResultIF[]) {
+function totalWorkMinute(workHourResult:workHourResultIF[]) {
   return workHourResult.reduce((sum, time) => {
     return sum + time.work_minute
   },0)
 }
 
+function generateWorkContents(existWorkContents: workContentsIF[]) {
+  const workContents10 : workContentsIF[] = [...existWorkContents];
+  [...Array(10-existWorkContents.length)].map((_, i) => {
+    const tmpId = -i - 1;
+    const obj: workContentsIF = {
+      id: tmpId,
+      work_content: '',
+      order_number: '',
+      total_work_minute: null,
+      sum_work_minute: null,
+      work_hour_results: []
+    };
+    workContents10.push(obj);
+  })
+  return workContents10;
+}
+
 export function WorkContentsTable() {
 
-  const workContents = useAtomValue(workContentsAtom);
-  const sumWorkHourResult = useAtomValue(sumWorkHourResultAtom);
+  const existWorkContents = useAtomValue(workContentsAtom);
+  const workContents = generateWorkContents(existWorkContents);
   const [updateWorkContents, setUpdateWorkContents] = useAtom(updateWorkContentsAtom);
 
   // 入力変更時の処理
-  const handleInputChange = (id: number, key: keyof UpdateWorkContents, newValue: string) => {
+  const handleInputChange = (id: number, key: keyof workContentsIF, newValue: string) => {
     console.log("updateWorkContents: ", updateWorkContents);
     setUpdateWorkContents((prev) : UpdateWorkContents[] => {
       // 初期データ（variableA）から変更対象のアイテムを取得
@@ -72,7 +88,6 @@ export function WorkContentsTable() {
     });
   };
 
-
   // 表示する値を決定
   const getDisplayValue = (id: number, key: keyof workContentsIF): string => {
     const modifiedItem = updateWorkContents.find((item) => item.id === id);
@@ -105,14 +120,15 @@ export function WorkContentsTable() {
         </TableHeader>
         <TableBody>
           {workContents.map((content, index) => {
-            const viewTime = restWorkHour(content.id,sumWorkHourResult)
-            const totalMinute = totalWorkHour(content.work_hour_results)
+            const totalMinuteThisMonth = totalWorkMinute(content.work_hour_results)
+            const viewTime = restWorkHour(content);
             return (
               <TableRow className="h-10" key={index}>
                 <TableCell className={contentsCss}
                            style={{backgroundColor: getBackgroundColor(content.id, 'work_content')}}
                 >
-                  <input
+                  <Input
+                      className={`p-0 text-center text-xl`}
                       value={getDisplayValue(content.id, 'work_content')} // 表示する値を決定
                       style={{ backgroundColor: 'transparent' }}
                       onChange={(e) => handleInputChange(content.id, 'work_content', e.target.value)}
@@ -121,7 +137,8 @@ export function WorkContentsTable() {
                 <TableCell className={contentsCss}
                            style={{backgroundColor: getBackgroundColor(content.id, 'order_number')}}
                 >
-                  <input
+                  <Input
+                      className={`p-0 text-center text-xl`}
                       value={getDisplayValue(content.id, 'order_number')} // 表示する値を決定
                       style={{ backgroundColor: 'transparent' }}
                       onChange={(e) => handleInputChange(content.id, 'order_number', e.target.value)}
@@ -129,27 +146,19 @@ export function WorkContentsTable() {
                 </TableCell>
                 <TableCell className={contentsCss}
                            style={{backgroundColor: getBackgroundColor(content.id, 'total_work_minute')}}>
-                  <input
+                  <Input
+                      className={`p-0 text-center text-xl`}
                       value={getDisplayValue(content.id, 'total_work_minute')} // 表示する値を決定
-                      style={{ backgroundColor: 'transparent' , width: '50px'}}
+                      style={{ backgroundColor: 'transparent'}}
                       onChange={(e) => handleInputChange(content.id, 'total_work_minute', e.target.value)}
                   />
                 </TableCell>
                 <TableCell
-                  className={contentsCss}>{`${Math.floor(viewTime / 60)}:${('00' + (viewTime % 60)).slice(-2)}`}</TableCell>
+                  className={contentsCss}>{`${Math.floor(viewTime / 60)}:${('00' + (viewTime % 60)).slice(-2)}`}
+                </TableCell>
                 <TableCell
-                  className={contentsCss}>{`${Math.floor(totalMinute / 60)}:${('00' + (totalMinute % 60)).slice(-2)}`}</TableCell>
-              </TableRow>
-            )
-          })}
-          {[...Array(10-workContents.length)].map(val => {
-            return (
-              <TableRow className="h-10" key={val}>
-                <TableCell className={contentsCss}></TableCell>
-                <TableCell className={contentsCss}></TableCell>
-                <TableCell className={contentsCss}></TableCell>
-                <TableCell className={contentsCss}></TableCell>
-                <TableCell className={contentsCss}></TableCell>
+                  className={contentsCss}>{`${Math.floor(totalMinuteThisMonth / 60)}:${('00' + (totalMinuteThisMonth % 60)).slice(-2)}`}
+                </TableCell>
               </TableRow>
             )
           })}
